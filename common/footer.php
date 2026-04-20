@@ -87,11 +87,11 @@
                                     <h3 class="fw-title">Quick Contact</h3>
 
                                     <div class="clearlinks">                                
-                                <strong>T.</strong> <a href="tel:+9197000020369">+91 970000 20369</a>
+                                <strong>T.</strong> <a href="tel:+9197000020369">+91 93926 85811</a>
                             </div>
                             
                             <div class="clearlinks">
-                                <strong>E.</strong> <a href="mailto:operations@supergifts.in">operations@supergifts.in</a>
+                                <strong>E.</strong> <a href="mailto:operations@supergifts.in">info@supergifts.in</a>
                             </div>
 
                                 </div>
