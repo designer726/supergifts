@@ -1,0 +1,7 @@
+RewriteEngine On
+
+
+# Resolve .php file for extensionless PHP URLs
+RewriteRule ^([^/.]+)$ $1.php [L]
+RewriteCond %{SERVER_PORT} 80
+RewriteRule ^(.*)$ https://www.supergifts.in/$1 [R,L]
