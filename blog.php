@@ -140,6 +140,31 @@
                                 </div>
                             </div>
                             <!-- End Post 3 -->
+
+                            <!-- Post 4 -->
+                            <div class="blog-item box-shadow round p-4 p-md-5">
+                                <h2 class="blog-item-title"><a href="post4.php">Maximizing ROI with Customized Corporate Gifts</a></h2>
+                                <div class="blog-item-data">
+                                    <a href="#"><i class="mi-clock size-16"></i> September 28, 2024</a>
+                                    <span class="separator">&nbsp;</span>
+                                    <a href="#"><i class="mi-user size-16"></i> SGIPL Team</a>
+                                    <span class="separator">&nbsp;</span>
+                                    <i class="mi-folder size-16"></i>
+                                    <a href="#">Corporate</a>, <a href="#">Marketing</a>
+                                </div>
+                                <div class="blog-media">
+                                    <a href="post4.php"><img src="images/blog/post-prev-4.jpg" alt="Blog Post 4" /></a>
+                                </div>
+                                <div class="mb-30">
+                                    <p class="mb-0">
+                                        Learn how personalized gifting strategies can significantly boost your customer retention and brand loyalty.
+                                    </p>
+                                </div>
+                                <div class="blog-item-foot">
+                                    <a href="post4.php" class="btn btn-mod btn-round btn-medium btn-gray">Read More</a>
+                                </div>
+                            </div>
+                            <!-- End Post 4 -->
                             
                         </div>
                         <!-- End Content -->
