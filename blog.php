@@ -68,7 +68,7 @@
                             
                             <!-- Post 1--> 
                             <div class="blog-item box-shadow round p-4 p-md-5">
-                                <h2 class="blog-item-title"><a href="blog_details?BlogDetails=first-post">Welcome to Our New Blog Series on Reselling Trends</a></h2>
+                                <h2 class="blog-item-title"><a href="post1.php">Welcome to Our New Blog Series on Reselling Trends</a></h2>
                                 <div class="blog-item-data">
                                     <a href="#"><i class="mi-clock size-16"></i> October 15, 2024</a>
                                     <span class="separator">&nbsp;</span>
@@ -78,7 +78,7 @@
                                     <a href="#">Blog</a>, <a href="#">Reselling</a>
                                 </div>
                                 <div class="blog-media">
-                                    <a href="blog_details?BlogDetails=first-post"><img src="images/blog/post-prev-1.jpg" alt="Blog Post 1" /></a>
+                                    <a href="post1.php"><img src="images/blog/post-prev-1.jpg" alt="Blog Post 1" /></a>
                                 </div>
                                 <div class="mb-30">
                                     <p class="mb-0">
@@ -86,14 +86,14 @@
                                     </p>
                                 </div>
                                 <div class="blog-item-foot">
-                                    <a href="blog_details?BlogDetails=first-post" class="btn btn-mod btn-round btn-medium btn-gray">Read More</a>
+                                    <a href="post1.php" class="btn btn-mod btn-round btn-medium btn-gray">Read More</a>
                                 </div>
                             </div>
                             <!-- End Post 1 -->
 
                             <!-- Post 2 -->
                             <div class="blog-item box-shadow round p-4 p-md-5">
-                                <h2 class="blog-item-title"><a href="blog_details?BlogDetails=second-post">Top 5 Tips for B2B Branding Success</a></h2>
+                                <h2 class="blog-item-title"><a href="post2.php">Top 5 Tips for B2B Branding Success</a></h2>
                                 <div class="blog-item-data">
                                     <a href="#"><i class="mi-clock size-16"></i> October 10, 2024</a>
                                     <span class="separator">&nbsp;</span>
@@ -103,7 +103,7 @@
                                     <a href="#">Branding</a>, <a href="#">B2B</a>
                                 </div>
                                 <div class="blog-media">
-                                    <a href="blog_details?BlogDetails=second-post"><img src="images/blog/post-prev-2.jpg" alt="Blog Post 2" /></a>
+                                    <a href="post2.php"><img src="images/blog/post-prev-2.jpg" alt="Blog Post 2" /></a>
                                 </div>
                                 <div class="mb-30">
                                     <p class="mb-0">
@@ -111,14 +111,14 @@
                                     </p>
                                 </div>
                                 <div class="blog-item-foot">
-                                    <a href="blog_details?BlogDetails=second-post" class="btn btn-mod btn-round btn-medium btn-gray">Read More</a>
+                                    <a href="post2.php" class="btn btn-mod btn-round btn-medium btn-gray">Read More</a>
                                 </div>
                             </div>
                             <!-- End Post 2 -->
 
                             <!-- Post 3 -->
                             <div class="blog-item box-shadow round p-4 p-md-5">
-                                <h2 class="blog-item-title"><a href="blog_details?BlogDetails=third-post">Future of Gifts and Stationery Industry</a></h2>
+                                <h2 class="blog-item-title"><a href="post3.php">Future of Gifts and Stationery Industry</a></h2>
                                 <div class="blog-item-data">
                                     <a href="#"><i class="mi-clock size-16"></i> October 05, 2024</a>
                                     <span class="separator">&nbsp;</span>
@@ -128,7 +128,7 @@
                                     <a href="#">Industry</a>, <a href="#">Trends</a>
                                 </div>
                                 <div class="blog-media">
-                                    <a href="blog_details?BlogDetails=third-post"><img src="images/blog/post-prev-3.jpg" alt="Blog Post 3" /></a>
+                                    <a href="post3.php"><img src="images/blog/post-prev-3.jpg" alt="Blog Post 3" /></a>
                                 </div>
                                 <div class="mb-30">
                                     <p class="mb-0">
@@ -136,7 +136,7 @@
                                     </p>
                                 </div>
                                 <div class="blog-item-foot">
-                                    <a href="blog_details?BlogDetails=third-post" class="btn btn-mod btn-round btn-medium btn-gray">Read More</a>
+                                    <a href="post3.php" class="btn btn-mod btn-round btn-medium btn-gray">Read More</a>
                                 </div>
                             </div>
                             <!-- End Post 3 -->
