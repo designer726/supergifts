@@ -45,25 +45,31 @@
                                     
                                     <ul class="fw-menu clearlist">
                                         <li>
-                                            <a href="#" rel="noopener nofollow" target="_blank">
+                                            <a href="https://www.facebook.com/people/Super-Gifts-India-Private-Limited/100090976219801/" rel="noopener nofollow" target="_blank">
                                                 <i class="fa-facebook"></i>
                                                 Facebook
                                             </a>
                                         </li>
                                         <li>
+                                            <a href="https://www.instagram.com/supergifts_official/" rel="noopener nofollow" target="_blank">
+                                                <i class="fa-youtube"></i>
+                                                Instagram
+                                            </a>
+                                        </li>
+                                        <!-- <li>
                                             <a href="#" rel="noopener nofollow" target="_blank">
                                                 <i class="fa-youtube"></i>
                                                 Youtube
                                             </a>
-                                        </li>
-                                        <li>
+                                        </li> -->
+                                        <!-- <li>
                                             <a href="#" rel="noopener nofollow" target="_blank">
                                                 <i class="fa-pinterest"></i>
                                                 Pinterest
                                             </a>
-                                        </li>
+                                        </li> -->
                                         <li>
-                                            <a href="#" rel="noopener nofollow" target="_blank">
+                                            <a href="https://www.linkedin.com/in/supergifts/" rel="noopener nofollow" target="_blank">
                                                 <i class="fa-linkedin"></i>
                                                 LinkedIn
                                             </a>
