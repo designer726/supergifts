@@ -29,6 +29,7 @@
                              <li><a href="clients"  <?php if($pagename == "clients.php"){echo "class='active'";} ?> >Clients</a> </li>
                              <li><a href="events"  <?php if($pagename == "events.php"){echo "class='active'";} ?>>News  </a> </li>
                              <li><a href="Careers"  <?php if($pagename == "Careers.php"){echo "class='active'";} ?>>Careers  </a> </li>
+                             <li><a href="blog"  <?php if($pagename == "blog.php"){echo "class='active'";} ?>>Blog  </a> </li>
                          <!--    <li><a href="#" >Location & Loyalty </a> </li> -->
                              <li><a href="contact" <?php if($pagename == "contact.php"){echo "class='active'";} ?>>Contact Us </a></li>
                             <!-- End Item With Sub -->                            
