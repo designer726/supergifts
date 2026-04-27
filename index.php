@@ -325,9 +325,9 @@
             </section> -->
 
             <!-- New code for authorised and other brand partners sections, replacing the old trusted brand partners section. -->
-            
+
             <!-- Authorised Brand Partners Section -->
-            <section class="page-section" id="authorised-brands">
+            <!-- <section class="page-section" id="authorised-brands">
                 <div class="container">
                     <h2 class="section-title mb-30 text-center">Authorised Brand Partners</h2>
                     <p class="mb-50 text-center">Click on logos to download respective catalog</p>
@@ -361,10 +361,10 @@
                         ?>
                     </ul>
                 </div>
-            </section>
+            </section> -->
 
             <!-- We Also Deal with This Brands Section -->
-            <section class="page-section" id="other-brands">
+            <!-- <section class="page-section" id="other-brands">
                 <div class="container">
                     <h2 class="section-title mb-30 text-center">We Also Deal with This Brands</h2>
                     <p class="mb-50 text-center">Click on logos to download respective catalog</p>
@@ -398,7 +398,72 @@
                         ?>
                     </ul>
                 </div>
+            </section> -->
+
+            <!-- Authorised Brand Partners Section -->
+            <section class="page-section" id="authorised-brands">
+                <div class="container">
+                    <h2 class="section-title mb-30 text-center">Authorised Brand Partners</h2>
+                    <p class="mb-50 text-center">Click on logos to view products</p>
+                    <ul class="works-grid work-grid-6 work-grid-gut-lg masonry" id="authorised-work-grid">
+                        <?php
+                        $conn_auth = new mysqli("localhost", "superehc_aiir", "Aiir@8097000970", "superehc_sgipl");
+                        if ($conn_auth->connect_error) die("Connection failed: " . $conn_auth->connect_error);
+                        $result_auth = $conn_auth->query("SELECT * FROM brandlogo WHERE flag = 1 ORDER BY seqence ASC");
+                        if ($result_auth->num_rows > 0) {
+                            while ($row = $result_auth->fetch_assoc()) { ?>
+                                <li class="work-item mix development">
+                                    <div class="work-img">
+                                        <div class="work-img-bg wow-p scalexIn"></div>
+                                        <a href="brand-products?brand=<?= $row['id'] ?>">
+                                            <img class="aiir_brand_img"
+                                                src="images/brandlogo/<?= 'image' . $row['imageno'] . '.jpg' ?>"
+                                                alt="<?= htmlspecialchars($row['brandname']) ?>" />
+                                        </a>
+                                    </div>
+                                </li>
+                        <?php }
+                        } else {
+                            echo "0 results";
+                        }
+                        $conn_auth->close();
+                        ?>
+                    </ul>
+                </div>
             </section>
+
+            <!-- We Also Deal with This Brands Section -->
+            <section class="page-section" id="other-brands">
+                <div class="container">
+                    <h2 class="section-title mb-30 text-center">We Also Deal with This Brands</h2>
+                    <p class="mb-50 text-center">Click on logos to view products</p>
+                    <ul class="works-grid work-grid-6 work-grid-gut-lg masonry" id="other-work-grid">
+                        <?php
+                        $conn_other = new mysqli("localhost", "superehc_aiir", "Aiir@8097000970", "superehc_sgipl");
+                        if ($conn_other->connect_error) die("Connection failed: " . $conn_other->connect_error);
+                        $result_other = $conn_other->query("SELECT * FROM brandlogo WHERE flag = 0 ORDER BY seqence ASC");
+                        if ($result_other->num_rows > 0) {
+                            while ($row = $result_other->fetch_assoc()) { ?>
+                                <li class="work-item mix development">
+                                    <div class="work-img">
+                                        <div class="work-img-bg wow-p scalexIn"></div>
+                                        <a href="brand-products?brand=<?= $row['id'] ?>">
+                                            <img class="aiir_brand_img"
+                                                src="images/brandlogo/<?= 'image' . $row['imageno'] . '.jpg' ?>"
+                                                alt="<?= htmlspecialchars($row['brandname']) ?>" />
+                                        </a>
+                                    </div>
+                                </li>
+                        <?php }
+                        } else {
+                            echo "0 results";
+                        }
+                        $conn_other->close();
+                        ?>
+                    </ul>
+                </div>
+            </section>
+
 
 
 
