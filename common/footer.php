@@ -1,145 +1,55 @@
-  <!-- Footer -->
-  <footer class="page-section footer bg-gray-light-1 pb-30">
-                <div class="container">
-                    
-                    <div class="row pb-120 pb-sm-80 pb-xs-50">
-                                                
-                        <div class="col-md-4 col-lg-3 text-gray mb-sm-50">
-                            
-                            <div class="mb-30">
-                                <img src="images/logo.png"  alt="SGIPL" style="width: 158px;"/>
-                            </div>
-                            
-                            <p>
-                            With a legacy of excellence, we take pride in our extensive experience, catering to over 140+ gifting companies and serving more than 100 clients & with offices across Mumbai, Hyderabad & Bengaluru.
-
-                            </p>
-                            
-                           
-                            
-                        </div>
-                        
-                        <div class="col-md-7 offset-md-1 offset-lg-2">                            
-                            <div class="row mt-n30">
-                                
-                                <!-- Footer Widget -->
-                                <div class="col-sm-4 mt-30">
-                                    
-                                    <h3 class="fw-title">Company</h3>
-                                    
-                                    <ul class="fw-menu clearlist">                                        
-                                        <li><a href="about">About</a></li>
-                                        <li><a href="services">Services</a></li>
-                                        <li><a href="index#brandb2b">Partners</a></li>
-                                        <li><a href="events">News</a></li>
-                                        <li><a href="contact">Contact</a></li>
-                                    </ul>
-                                    
-                                </div>
-                                <!-- End Footer Widget -->
-                                
-                                <!-- Footer Widget -->
-                                <div class="col-sm-4 mt-30">
-                                    
-                                    <h3 class="fw-title">Social Media</h3>
-                                    
-                                    <ul class="fw-menu clearlist">
-                                        <li>
-                                            <a href="https://www.facebook.com/people/Super-Gifts-India-Private-Limited/100090976219801/" rel="noopener nofollow" target="_blank">
-                                                <i class="fa-facebook"></i>
-                                                Facebook
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="https://www.instagram.com/supergifts_official/" rel="noopener nofollow" target="_blank">
-                                                <i class="fa-youtube"></i>
-                                                Instagram
-                                            </a>
-                                        </li>
-                                        <!-- <li>
-                                            <a href="#" rel="noopener nofollow" target="_blank">
-                                                <i class="fa-youtube"></i>
-                                                Youtube
-                                            </a>
-                                        </li> -->
-                                        <!-- <li>
-                                            <a href="#" rel="noopener nofollow" target="_blank">
-                                                <i class="fa-pinterest"></i>
-                                                Pinterest
-                                            </a>
-                                        </li> -->
-                                        <li>
-                                            <a href="https://www.linkedin.com/in/supergifts/" rel="noopener nofollow" target="_blank">
-                                                <i class="fa-linkedin"></i>
-                                                LinkedIn
-                                            </a>
-                                        </li>
-                                    </ul>
-                                    
-                                </div>
-                                <!-- End Footer Widget -->
-                                
-                                <!-- Footer Widget -->
-                                <div class="col-sm-4 mt-30">
-                                    
-                                    <h3 class="fw-title">Legal & Press</h3>
-                                    
-                                    <ul class="fw-menu clearlist">                                     
-                                        <li><a href="PrivacyPolicy">Privacy Policy</a></li>
-                                        <li><a href="TermandCondition">Terms & Conditions</a></li>
-                                        <!--<li><a href="#">Presskit</a></li>  -->
-                                    </ul>
-                                    <p></p>
-                                    <h3 class="fw-title">Quick Contact</h3>
-
-                                    <div class="clearlinks">                                
-                                <strong>T.</strong> <a href="tel:+9197000020369">+91 93926 85811</a>
-                            </div>
-                            
-                            <div class="clearlinks">
-                                <strong>E.</strong> <a href="mailto:operations@supergifts.in">info@supergifts.in</a>
-                            </div>
-
-                                </div>
-                                <!-- End Footer Widget -->                                
-                                
-                            </div>                            
-                        </div>
-                        
-                    </div>
-                    
-                    <!-- Footer Text -->
-                    <div class="row text-gray">
-                        
-                        <div class="col-md-4 col-lg-3">
-                            <b>© SGIPL 2024.</b>
-                        </div>
-                        
-                        <div class="col-md-7 offset-md-1 offset-lg-2 clearfix">
-                            
-                            <b>Based in Hyderabad, Mumbai, Bengaluru.</b>
-                            
-                            <!-- Back to Top Link -->
-                            <div class="local-scroll float-end mt-n20 mt-sm-10">
-                                <a href="#top" class="link-to-top">                                
-                                    <i class="mi-arrow-up size-24"></i>
-                                    <span class="visually-hidden">Scroll to top</span>
-                                </a>
-                            </div>
-                            <!-- End Back to Top Link -->
-                            
-                        </div>
-                        
-                    </div>
-                    <!-- End Footer Text --> 
-                    
-                 </div>                 
-
-                 <div class="whatsapplink" > 
-                    <a href="https://web.whatsapp.com/send?phone=+919967404027&text=Hello SGIPL, Need to enqurey"><img src="images/whatsapp_icon.svg" /></a> <span> Need Help?</span>
-</div>
-            </footer>
-            <!-- End Footer -->
+  <!-- Modern Footer -->
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="logo-wrap" style="margin-bottom:0">
+          <div class="logo-icon">🎁</div>
+          <div class="logo-text" style="color:#fff">Super<span>Gifts</span></div>
+        </div>
+        <p>India's leading corporate gifting platform. Premium quality, custom branding, and seamless logistics — all in one place.</p>
+        <div class="socials">
+          <a href="https://www.linkedin.com/in/supergifts/" rel="noopener nofollow" target="_blank" class="soc-btn">🔗</a>
+          <a href="https://www.facebook.com/people/Super-Gifts-India-Private-Limited/100090976219801/" rel="noopener nofollow" target="_blank" class="soc-btn">📘</a>
+          <a href="https://www.instagram.com/supergifts_official/" rel="noopener nofollow" target="_blank" class="soc-btn">📸</a>
+          <a href="#" rel="noopener nofollow" target="_blank" class="soc-btn">🐦</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>For Resellers</h5>
+        <ul>
+          <li><a href="services">Services</a></li>
+          <li><a href="contact">Bulk Inquiry</a></li>
+          <li><a href="#">Signup</a></li>
+          <li><a href="#">Partner Portal</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>For Corporates</h5>
+        <ul>
+          <li><a href="services">Branding</a></li>
+          <li><a href="services">Logistics</a></li>
+          <li><a href="services">Packaging</a></li>
+          <li><a href="services">After Sales</a></li>
+          <li><a href="contact">Request Proposal</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Company</h5>
+        <ul>
+          <li><a href="about">About Us</a></li>
+          <li><a href="#">Our Team</a></li>
+          <li><a href="events">News</a></li>
+          <li><a href="reviews">Reviews</a></li>
+          <li><a href="contact">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 <span>SuperGifts</span>. All rights reserved.</p>
+      <p>Made with ❤️ in Hyderabad, India</p>
+    </div>
+  </footer>
+  <!-- End Modern Footer -->
         
         </div>
         <!-- End Page Wrap -->      
