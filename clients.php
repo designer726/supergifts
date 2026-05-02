@@ -1,4 +1,38 @@
-<?php $pagename = basename($_SERVER['PHP_SELF']); ?>
+<?php
+$pagename = basename($_SERVER['PHP_SELF']);
+
+$brandPartners = [];
+$alsoDealWith = [];
+
+function findBrandLogoPath($imageno) {
+    $root = rtrim($_SERVER['DOCUMENT_ROOT'], '/\\') . '/supergifts/';
+    foreach (['.jpg', '.jpeg', '.png', '.webp'] as $ext) {
+        $file = $root . 'images/brandlogo/image' . intval($imageno) . $ext;
+        if (file_exists($file)) {
+            return 'images/brandlogo/image' . intval($imageno) . $ext;
+        }
+    }
+    return 'images/brandlogo/image' . intval($imageno) . '.jpg';
+}
+
+$brandDb = new mysqli("localhost", "superehc_aiir", "Aiir@8097000970", "superehc_sgipl");
+if (!$brandDb->connect_error) {
+    $sql = "SELECT id, brandname, imageno, flag FROM brandlogo ORDER BY flag DESC, seqence ASC, brandname ASC";
+    if ($result = $brandDb->query($sql)) {
+        while ($row = $result->fetch_assoc()) {
+            $logo = findBrandLogoPath($row['imageno']);
+            $item = ['id' => $row['id'], 'brandname' => $row['brandname'], 'logoUrl' => $logo];
+            if (intval($row['flag']) === 1) {
+                $brandPartners[] = $item;
+            } else {
+                $alsoDealWith[] = $item;
+            }
+        }
+        $result->free();
+    }
+    $brandDb->close();
+}
+?>
 <!DOCTYPE html>
 
 <html lang="en">
@@ -344,21 +378,41 @@ Would like to complement the entire team for great service and product
                         
                         <div class="row wow fadeInUpShort">
                             <div class="col-md-12">
-                            <h2 class="section-title-tiny mb-30 text-center">Trusted Brand Partners</h2>
-                                <div class="small-item-carousel black owl-carousel mb-0">
-                                    <?php for($i=1;$i<20;$i++) {?>
-                                    <!-- Logo Item -->
-                                    <div class="logo-item">
-                                        <img class="aiir_brand_img" src="images/brandlogo/<?php echo "image".$i.".jpg"; ?>" width="150" height="90" alt="SGIPL" />
+                                <h2 class="section-title-tiny mb-30 text-center">Authorised Brand Partners</h2>
+                                <?php if (!empty($brandPartners)): ?>
+                                    <div class="small-item-carousel black owl-carousel mb-0">
+                                        <?php foreach ($brandPartners as $brand): ?>
+                                            <div class="logo-item">
+                                                <a href="brand-products.php?brand=<?= intval($brand['id']) ?>">
+                                                    <img class="aiir_brand_img" src="<?= htmlspecialchars($brand['logoUrl']) ?>" width="150" height="90" alt="<?= htmlspecialchars($brand['brandname']) ?>" />
+                                                </a>
+                                            </div>
+                                        <?php endforeach; ?>
                                     </div>
-                                    <!-- End Logo Item -->
-                                    <?php } ?>
-                                    
-                                </div>
-                                    
-                             </div>
-                         </div>
-                        
+                                <?php else: ?>
+                                    <p class="text-center">No authorised brand partners are available right now.</p>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                        <div class="row wow fadeInUpShort mt-4">
+                            <div class="col-md-12">
+                                <h2 class="section-title-tiny mb-30 text-center">Also Deal With</h2>
+                                <?php if (!empty($alsoDealWith)): ?>
+                                    <div class="small-item-carousel black owl-carousel mb-0">
+                                        <?php foreach ($alsoDealWith as $brand): ?>
+                                            <div class="logo-item">
+                                                <a href="brand-products.php?brand=<?= intval($brand['id']) ?>">
+                                                    <img class="aiir_brand_img" src="<?= htmlspecialchars($brand['logoUrl']) ?>" width="150" height="90" alt="<?= htmlspecialchars($brand['brandname']) ?>" />
+                                                </a>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                <?php else: ?>
+                                    <p class="text-center">No "Also Deal With" brands are available right now.</p>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                     
                      </div>
                 </section>
                 <!-- End Logotypes -->
