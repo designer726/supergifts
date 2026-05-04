@@ -88,5 +88,57 @@
             $('.Count').each(function() {
                 observer.observe(this);
             });
+
+            // Product Carousel Auto-Scroll Functionality
+            let currentSlide = 0;
+            const carousel = document.getElementById('productCarousel');
+            const slides = document.querySelectorAll('.carousel-slide');
+            const dots = document.querySelectorAll('.carousel-dots .dot');
+            const slideWidth = slides[0] ? slides[0].offsetWidth + 20 : 0; // Including gap
+
+            function scrollCarousel(direction) {
+                currentSlide += direction;
+                if (currentSlide >= slides.length - 2) {
+                    currentSlide = 0;
+                } else if (currentSlide < 0) {
+                    currentSlide = Math.max(0, slides.length - 3);
+                }
+                updateCarousel();
+            }
+
+            function updateCarousel() {
+                if (carousel) {
+                    carousel.scrollLeft = currentSlide * slideWidth;
+                }
+                updateDots();
+            }
+
+            function updateDots() {
+                dots.forEach((dot, index) => {
+                    dot.classList.remove('active');
+                });
+                if (dots[Math.floor(currentSlide / 2)]) {
+                    dots[Math.floor(currentSlide / 2)].classList.add('active');
+                }
+            }
+
+            function goToSlide(index) {
+                currentSlide = index * 2;
+                updateCarousel();
+            }
+
+            function autoScroll() {
+                scrollCarousel(1);
+            }
+
+            // Auto-scroll every 5 seconds
+            if (carousel) {
+                setInterval(autoScroll, 5000);
+                updateDots();
+            }
+
+            // Make functions globally available
+            window.scrollCarousel = scrollCarousel;
+            window.goToSlide = goToSlide;
         });
     </script>
