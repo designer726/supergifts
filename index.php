@@ -239,12 +239,12 @@ if (!$brandDb->connect_error) {
                 </div>
             </section>
 
-            <!-- Modern Contact Section -->
-            <section class="contact-section" id="contact">
-                <div class="contact-container">
+            <!-- Modern Contact Section - Professional -->
+            <section class="contact-section-home" id="contact">
+                <div class="container">
                     <div class="contact-header">
-                        <h2 class="section-title">Get In Touch <span class="pill">Let's Connect</span></h2>
-                        <p class="contact-subtitle">Have a question or ready to place an order? Reach out to us and we'll get back to you within 24 hours.</p>
+                        <h2 class="section-title">Get In Touch <span class="pill">Quick Contact</span></h2>
+                        <p class="contact-sub">Ready for corporate gifting? Connect instantly. Multiple offices nationwide.</p>
                     </div>
                     
                     <div class="contact-content">
