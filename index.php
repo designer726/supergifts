@@ -263,7 +263,7 @@ if (!$brandDb->connect_error) {
                                 <div class="info-icon">📱</div>
                                 <div>
                                     <div class="info-label">Phone</div>
-                                    <div class="info-value">+91 8097 000 970</div>
+                                    <div class="info-value"><a href="tel:+918097000970" style="color: var(--brand-orange); text-decoration: none; font-weight: 600;">+91 8097 000 970</a></div>
                                 </div>
                             </div>
                             
@@ -271,7 +271,7 @@ if (!$brandDb->connect_error) {
                                 <div class="info-icon">✉️</div>
                                 <div>
                                     <div class="info-label">Email</div>
-                                    <div class="info-value">info@supergifts.in</div>
+                                    <div class="info-value"><a href="mailto:info@supergifts.in" style="color: var(--brand-orange); text-decoration: none; font-weight: 600;">info@supergifts.in</a></div>
                                 </div>
                             </div>
                             
@@ -279,40 +279,49 @@ if (!$brandDb->connect_error) {
                                 <div class="info-icon">🕐</div>
                                 <div>
                                     <div class="info-label">Business Hours</div>
-                                    <div class="info-value">Monday - Friday: 9:00 AM - 6:00 PM<br>Saturday: 10:00 AM - 4:00 PM<br>Sunday: Closed</div>
+                                    <div class="info-value">
+                                        <strong>Monday - Friday:</strong> 9:00 AM - 6:00 PM<br>
+                                        <strong>Saturday:</strong> 10:00 AM - 4:00 PM<br>
+                                        <strong>Sunday:</strong> Closed
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="contact-socials">
-                                <a href="https://www.linkedin.com/company/super-gifts" target="_blank" class="social-link">LinkedIn</a>
-                                <a href="https://www.instagram.com/supergifts/" target="_blank" class="social-link">Instagram</a>
-                                <a href="https://www.facebook.com/supergifts" target="_blank" class="social-link">Facebook</a>
+                                <a href="https://www.linkedin.com/company/super-gifts" target="_blank" class="social-link">🔗 LinkedIn</a>
+                                <a href="https://www.instagram.com/supergifts/" target="_blank" class="social-link">📸 Instagram</a>
+                                <a href="https://www.facebook.com/supergifts" target="_blank" class="social-link">f Facebook</a>
                             </div>
                         </div>
 
                         <div class="contact-form-wrapper">
                             <form class="contact-form" method="POST" action="submit-review.php">
                                 <div class="form-group">
-                                    <input type="text" name="name" placeholder="Your Name" required>
+                                    <label for="name">Your Name</label>
+                                    <input type="text" id="name" name="name" placeholder="John Doe" required>
                                 </div>
                                 
                                 <div class="form-group">
-                                    <input type="email" name="email" placeholder="Your Email" required>
+                                    <label for="email">Your Email</label>
+                                    <input type="email" id="email" name="email" placeholder="john@example.com" required>
                                 </div>
                                 
                                 <div class="form-group">
-                                    <input type="text" name="company" placeholder="Company Name">
+                                    <label for="company">Company Name</label>
+                                    <input type="text" id="company" name="company" placeholder="Your Company">
                                 </div>
                                 
                                 <div class="form-group">
-                                    <input type="tel" name="phone" placeholder="Phone Number">
+                                    <label for="phone">Phone Number</label>
+                                    <input type="tel" id="phone" name="phone" placeholder="+91 XXXXX XXXXX">
                                 </div>
                                 
                                 <div class="form-group">
-                                    <textarea name="message" placeholder="Your Message" rows="5" required></textarea>
+                                    <label for="message">Your Message</label>
+                                    <textarea id="message" name="message" placeholder="Tell us about your gifting needs..." rows="5" required></textarea>
                                 </div>
                                 
-                                <button type="submit" class="btn-primary">Send Message</button>
+                                <button type="submit" class="btn-primary">Send Message →</button>
                             </form>
                         </div>
                     </div>
