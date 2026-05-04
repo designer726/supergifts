@@ -1232,6 +1232,241 @@ footer {
 }
 
 /* ══════════════════════════════════════════
+   PRODUCT CAROUSEL SECTION
+═══════════════════════════════════════════ */
+
+.products-carousel-section {
+  background: linear-gradient(180deg, #FDF6DC 0%, var(--white) 100%); /* PREMIUM UPDATE - Gold to White */
+  padding: 60px 32px;
+  border-top: 2px solid #E5DCC8; /* PREMIUM UPDATE - Gold border */
+  border-bottom: 2px solid #E5DCC8; /* PREMIUM UPDATE - Gold border */
+}
+
+.carousel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 40px;
+}
+
+.carousel-header .section-title {
+  color: #0D2B55; /* PREMIUM UPDATE - Navy */
+  margin-bottom: 0;
+}
+
+.carousel-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.carousel-track {
+  display: flex;
+  gap: 20px;
+  overflow: hidden;
+  scroll-behavior: smooth;
+  flex: 1;
+  scroll-snap-type: x mandatory;
+}
+
+.carousel-slide {
+  min-width: calc(100% / 3 - 14px);
+  scroll-snap-align: start;
+  transition: transform 0.3s ease;
+}
+
+.carousel-slide:hover {
+  transform: translateY(-4px);
+}
+
+.product-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1.5px solid #E5DCC8; /* PREMIUM UPDATE - Gold border */
+  box-shadow: var(--card-shadow);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-card:hover {
+  border-color: #D4AF37; /* PREMIUM UPDATE - Gold */
+  box-shadow: 0 12px 32px rgba(13, 43, 85, 0.15); /* PREMIUM UPDATE - Navy shadow */
+  transform: translateY(-6px);
+}
+
+.product-image {
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.product-icon {
+  font-size: 64px;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.product-body {
+  padding: 20px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.product-tag {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #D4AF37; /* PREMIUM UPDATE - Gold */
+  margin-bottom: 8px;
+}
+
+.product-name {
+  font-family: var(--ff-display);
+  font-size: 16px;
+  font-weight: 700;
+  color: #0D2B55; /* PREMIUM UPDATE - Navy */
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+
+.product-desc {
+  font-size: 12px;
+  color: #B8C9E0; /* PREMIUM UPDATE - Silver Blue */
+  line-height: 1.5;
+  margin-bottom: 12px;
+  flex-grow: 1;
+}
+
+.product-price {
+  font-family: var(--ff-display);
+  font-size: 18px;
+  font-weight: 700;
+  color: #D4AF37; /* PREMIUM UPDATE - Gold */
+}
+
+.carousel-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #D4AF37; /* PREMIUM UPDATE - Gold */
+  color: #0D2B55; /* PREMIUM UPDATE - Navy */
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.carousel-btn:hover {
+  background: #B8962E; /* PREMIUM UPDATE - Gold Dark */
+  transform: scale(1.1);
+}
+
+.carousel-btn.prev {
+  order: -1;
+}
+
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #E5DCC8; /* PREMIUM UPDATE - Gold border */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.dot:hover {
+  background: #D4AF37; /* PREMIUM UPDATE - Gold */
+  transform: scale(1.2);
+}
+
+.dot.active {
+  background: #D4AF37; /* PREMIUM UPDATE - Gold */
+  width: 28px;
+  border-radius: 5px;
+}
+
+/* Responsive Carousel */
+@media (max-width: 1024px) {
+  .carousel-slide {
+    min-width: calc(100% / 2 - 10px);
+  }
+
+  .products-carousel-section {
+    padding: 40px 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .carousel-slide {
+    min-width: 100%;
+  }
+
+  .carousel-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .carousel-header .section-title {
+    font-size: 18px;
+  }
+
+  .see-all {
+    align-self: flex-end;
+  }
+
+  .product-image {
+    height: 150px;
+  }
+
+  .product-icon {
+    font-size: 48px;
+  }
+
+  .product-name {
+    font-size: 14px;
+  }
+
+  .carousel-btn {
+    width: 38px;
+    height: 38px;
+    font-size: 16px;
+  }
+
+  .products-carousel-section {
+    padding: 30px 16px;
+  }
+}
+
+/* ══════════════════════════════════════════
    RESPONSIVE DESIGN
 ═══════════════════════════════════════════ */
 

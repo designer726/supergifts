@@ -130,6 +130,106 @@ if (!$brandDb->connect_error) {
                 </div>
             </div>
 
+            <!-- New Brand Products Carousel Section -->
+            <section class="products-carousel-section">
+                <div class="carousel-header">
+                    <div class="section-title">New Brand Products <span class="pill">Premium Collection</span></div>
+                    <a href="products.php" class="see-all">Browse All →</a>
+                </div>
+                
+                <div class="carousel-container">
+                    <button class="carousel-btn prev" onclick="scrollCarousel(-1)">❮</button>
+                    
+                    <div class="carousel-track" id="productCarousel">
+                        <!-- Product 1 -->
+                        <div class="carousel-slide product-card">
+                            <div class="product-image" style="background: linear-gradient(135deg, #0D2B55, #1A4080);">
+                                <span class="product-icon">🎁</span>
+                            </div>
+                            <div class="product-body">
+                                <div class="product-tag">Premium</div>
+                                <h4 class="product-name">Leather Portfolio</h4>
+                                <p class="product-desc">Premium leather portfolio with custom branding</p>
+                                <div class="product-price">₹2,499</div>
+                            </div>
+                        </div>
+
+                        <!-- Product 2 -->
+                        <div class="carousel-slide product-card">
+                            <div class="product-image" style="background: linear-gradient(135deg, #1A4080, #0D2B55);">
+                                <span class="product-icon">💼</span>
+                            </div>
+                            <div class="product-body">
+                                <div class="product-tag">Corporate</div>
+                                <h4 class="product-name">Executive Pen Set</h4>
+                                <p class="product-desc">Luxury pen set with engraving options</p>
+                                <div class="product-price">₹1,299</div>
+                            </div>
+                        </div>
+
+                        <!-- Product 3 -->
+                        <div class="carousel-slide product-card">
+                            <div class="product-image" style="background: linear-gradient(135deg, #D4AF37, #B8962E);">
+                                <span class="product-icon">🏆</span>
+                            </div>
+                            <div class="product-body">
+                                <div class="product-tag">Best Seller</div>
+                                <h4 class="product-name">Crystal Trophy</h4>
+                                <p class="product-desc">Elegant crystal trophy for awards</p>
+                                <div class="product-price">₹3,999</div>
+                            </div>
+                        </div>
+
+                        <!-- Product 4 -->
+                        <div class="carousel-slide product-card">
+                            <div class="product-image" style="background: linear-gradient(135deg, #071624, #0D2B55);">
+                                <span class="product-icon">☕</span>
+                            </div>
+                            <div class="product-body">
+                                <div class="product-tag">Popular</div>
+                                <h4 class="product-name">Custom Mug & Cup</h4>
+                                <p class="product-desc">Ceramic mug with company logo printing</p>
+                                <div class="product-price">₹349</div>
+                            </div>
+                        </div>
+
+                        <!-- Product 5 -->
+                        <div class="carousel-slide product-card">
+                            <div class="product-image" style="background: linear-gradient(135deg, #B8962E, #D4AF37);">
+                                <span class="product-icon">🎯</span>
+                            </div>
+                            <div class="product-body">
+                                <div class="product-tag">Trending</div>
+                                <h4 class="product-name">Desk Organizer</h4>
+                                <p class="product-desc">Wooden desk organizer with branding</p>
+                                <div class="product-price">₹1,799</div>
+                            </div>
+                        </div>
+
+                        <!-- Product 6 -->
+                        <div class="carousel-slide product-card">
+                            <div class="product-image" style="background: linear-gradient(135deg, #0D2B55, #071624);">
+                                <span class="product-icon">📱</span>
+                            </div>
+                            <div class="product-body">
+                                <div class="product-tag">Tech Gift</div>
+                                <h4 class="product-name">Phone Stand</h4>
+                                <p class="product-desc">Premium metal phone stand holder</p>
+                                <div class="product-price">₹799</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="carousel-btn next" onclick="scrollCarousel(1)">❯</button>
+                </div>
+
+                <div class="carousel-dots" id="carouselDots">
+                    <span class="dot active" onclick="goToSlide(0)"></span>
+                    <span class="dot" onclick="goToSlide(1)"></span>
+                    <span class="dot" onclick="goToSlide(2)"></span>
+                </div>
+            </section>
+
             <!-- Modern Current Updates Section -->
             <section class="updates-section">
                 <div class="updates-header">
