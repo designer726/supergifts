@@ -1,4 +1,38 @@
-<?php $pagename = basename($_SERVER['PHP_SELF']); ?>
+<?php
+$pagename = basename($_SERVER['PHP_SELF']);
+
+$brandPartners = [];
+$alsoDealWith = [];
+
+function findBrandLogoPath($imageno) {
+    $root = rtrim($_SERVER['DOCUMENT_ROOT'], '/\\') . '/supergifts/';
+    foreach (['.jpg', '.jpeg', '.png', '.webp'] as $ext) {
+        $file = $root . 'images/brandlogo/image' . intval($imageno) . $ext;
+        if (file_exists($file)) {
+            return 'images/brandlogo/image' . intval($imageno) . $ext;
+        }
+    }
+    return 'images/brandlogo/image' . intval($imageno) . '.jpg';
+}
+
+$brandDb = new mysqli("localhost", "superehc_aiir", "Aiir@8097000970", "superehc_sgipl");
+if (!$brandDb->connect_error) {
+    $sql = "SELECT id, brandname, imageno, flag FROM brandlogo ORDER BY flag DESC, seqence ASC, brandname ASC";
+    if ($result = $brandDb->query($sql)) {
+        while ($row = $result->fetch_assoc()) {
+            $logo = findBrandLogoPath($row['imageno']);
+            $item = ['id' => $row['id'], 'brandname' => $row['brandname'], 'logoUrl' => $logo];
+            if (intval($row['flag']) === 1) {
+                $brandPartners[] = $item;
+            } else {
+                $alsoDealWith[] = $item;
+            }
+        }
+        $result->free();
+    }
+    $brandDb->close();
+}
+?>
 <!DOCTYPE html>
 
 <html lang="en">
@@ -49,28 +83,36 @@
             <!-- Brand Partners & Add-on Services Section -->
             <div class="two-col">
                 <div class="col-panel">
-                    <div class="section-title">Brand Partners <span class="pill">500+ Brands</span></div>
-                    <div class="brand-grid">
-                        <div class="brand-chip">🏷 Boat</div>
-                        <div class="brand-chip">🏷 Sony</div>
-                        <div class="brand-chip">🏷 Apple</div>
-                        <div class="brand-chip">🏷 Samsung</div>
-                        <div class="brand-chip">🏷 Dell</div>
-                        <div class="brand-chip">🏷 HP</div>
-                        <div class="brand-chip">🏷 Canon</div>
-                        <div class="brand-chip">🏷 Nikon</div>
-                        <div class="brand-chip">🏷 Titan</div>
-                        <div class="brand-chip">🏷 Fossil</div>
-                        <div class="brand-chip">🏷 Lumix</div>
-                        <div class="brand-chip">🏷 Bose</div>
-                        <div class="brand-chip">🏷 JBL</div>
-                        <div class="brand-chip">🏷 Sennheiser</div>
-                        <div class="brand-chip">🏷 Audio-Technica</div>
-                        <div class="brand-chip">🏷 GoPro</div>
-                        <div class="brand-chip">🏷 DJI</div>
-                        <div class="brand-chip">🏷 Garmin</div>
-                        <div class="brand-chip">🏷 Fitbit</div>
-                        <div class="brand-chip">🏷 Xiaomi</div>
+                    <div class="section-title">Brand Partners <span class="pill"><?= count($brandPartners) + count($alsoDealWith) ?> Brands</span></div>
+                    <div class="brand-section">
+                        <div class="mb-4">
+                            <div class="section-subtitle" style="font-size:14px;font-weight:700;margin-bottom:12px;color:#333;">Authorised</div>
+                            <?php if (!empty($brandPartners)): ?>
+                                <div class="brand-grid">
+                                    <?php foreach ($brandPartners as $brand): ?>
+                                        <a class="brand-chip" href="brand-products.php?brand=<?= intval($brand['id']) ?>" style="padding:12px;min-height:80px;text-decoration:none;display:flex;align-items:center;justify-content:center;">
+                                            <img src="<?= htmlspecialchars($brand['logoUrl']) ?>" alt="<?= htmlspecialchars($brand['brandname']) ?>" style="max-width:100%;max-height:50px;object-fit:contain;" />
+                                        </a>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php else: ?>
+                                <p class="text-center" style="margin:0;color:#666;">No authorised brand partners are available.</p>
+                            <?php endif; ?>
+                        </div>
+                        <div>
+                            <div class="section-subtitle" style="font-size:14px;font-weight:700;margin-bottom:12px;color:#333;">Also Deal With</div>
+                            <?php if (!empty($alsoDealWith)): ?>
+                                <div class="brand-grid">
+                                    <?php foreach ($alsoDealWith as $brand): ?>
+                                        <a class="brand-chip" href="brand-products.php?brand=<?= intval($brand['id']) ?>" style="padding:12px;min-height:80px;text-decoration:none;display:flex;align-items:center;justify-content:center;">
+                                            <img src="<?= htmlspecialchars($brand['logoUrl']) ?>" alt="<?= htmlspecialchars($brand['brandname']) ?>" style="max-width:100%;max-height:50px;object-fit:contain;" />
+                                        </a>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php else: ?>
+                                <p class="text-center" style="margin:0;color:#666;">No "Also Deal With" brands are available.</p>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </div>
                 <div class="col-panel">
@@ -150,7 +192,7 @@
                         <div class="stars">★★★★★</div>
                         <div class="review-text">"Super Gifts delivered 5,000 custom gift boxes flawlessly. Every pack was perfectly branded and arrived on time. Exceptional service!"</div>
                         <div class="reviewer">
-                            <div class="avatar" style="background:linear-gradient(135deg,#e74c3c,#f39c12)">R</div>
+                            <div class="avatar" style="background:linear-gradient(135deg,#FF5E1A,#FFB800)">R</div>
                             <div><div class="reviewer-name">Rahul Mehta</div><div class="reviewer-role">Procurement Head, TCS</div></div>
                         </div>
                     </div>
@@ -158,7 +200,7 @@
                         <div class="stars">★★★★★</div>
                         <div class="review-text">"We've been ordering quarterly for 2 years. Product quality is consistently excellent and the after-sales support is second to none."</div>
                         <div class="reviewer">
-                            <div class="avatar" style="background:linear-gradient(135deg,#1a3a52,#f39c12)">P</div>
+                            <div class="avatar" style="background:linear-gradient(135deg,#00C4A0,#0F1D3A)">P</div>
                             <div><div class="reviewer-name">Priya Sharma</div><div class="reviewer-role">HR Manager, Infosys</div></div>
                         </div>
                     </div>
@@ -166,7 +208,7 @@
                         <div class="stars">★★★★☆</div>
                         <div class="review-text">"The bulk order facility and inventory management saved us weeks of effort. Highly recommend for large enterprise gifting needs."</div>
                         <div class="reviewer">
-                            <div class="avatar" style="background:linear-gradient(135deg,#f39c12,#e74c3c)">A</div>
+                            <div class="avatar" style="background:linear-gradient(135deg,#FFB800,#FF5E1A)">A</div>
                             <div><div class="reviewer-name">Arjun Nair</div><div class="reviewer-role">Operations Lead, HDFC</div></div>
                         </div>
                     </div>
@@ -176,22 +218,22 @@
             <!-- Modern Trust Section -->
             <section class="trust-section">
                 <div class="trust-card">
-                    <div class="trust-icon" style="background:#ffe8e4">🏆</div>
+                    <div class="trust-icon" style="background:#FFF0E0">🏆</div>
                     <h4>500+</h4>
                     <p>Brand Partners across categories and price ranges</p>
                 </div>
                 <div class="trust-card">
-                    <div class="trust-icon" style="background:#e8f2f8">🚚</div>
+                    <div class="trust-icon" style="background:#E0FFF8">🚚</div>
                     <h4>48hr</h4>
                     <p>Express delivery across 500+ cities in India</p>
                 </div>
                 <div class="trust-card">
-                    <div class="trust-icon" style="background:#fef5e8">⭐</div>
+                    <div class="trust-icon" style="background:#FFF8E0">⭐</div>
                     <h4>10K+</h4>
                     <p>Successful corporate gift orders delivered</p>
                 </div>
                 <div class="trust-card">
-                    <div class="trust-icon" style="background:#e8f0f8">🔒</div>
+                    <div class="trust-icon" style="background:#E0EAFF">🔒</div>
                     <h4>100%</h4>
                     <p>Secure payments and quality assurance guarantee</p>
                 </div>
@@ -199,32 +241,81 @@
 
             <!-- Modern Contact Section -->
             <section class="contact-section" id="contact">
-                <div>
-                    <div class="section-title">Contact Us <span class="pill">Get in Touch</span></div>
-                    <p class="contact-sub">Looking for bulk gifting, branding, or a custom proposal? Drop us a message and our team will respond within 24 hours.</p>
-                    <div class="contact-info">
-                        <div class="info-row"><div class="info-icon">📍</div><span>123 Gift District, Hyderabad, Telangana 500001</span></div>
-                        <div class="info-row"><div class="info-icon">📱</div><span>+91 98765 43210</span></div>
-                        <div class="info-row"><div class="info-icon">✉️</div><span>hello@supergifts.in</span></div>
-                        <div class="info-row"><div class="info-icon">🕐</div><span>Mon–Sat: 9am – 7pm IST</span></div>
+                <div class="contact-container">
+                    <div class="contact-header">
+                        <h2 class="section-title">Get In Touch <span class="pill">Let's Connect</span></h2>
+                        <p class="contact-subtitle">Have a question or ready to place an order? Reach out to us and we'll get back to you within 24 hours.</p>
                     </div>
-                </div>
-                <div class="form-grid">
-                    <div class="form-row">
-                        <div class="field-group"><label>First Name</label><input type="text" placeholder="Rahul"></div>
-                        <div class="field-group"><label>Last Name</label><input type="text" placeholder="Mehta"></div>
+                    
+                    <div class="contact-content">
+                        <div class="contact-info">
+                            <h4>Contact Information</h4>
+                            
+                            <div class="info-item">
+                                <div class="info-icon">📍</div>
+                                <div>
+                                    <div class="info-label">Address</div>
+                                    <div class="info-value">Hyderabad, India</div>
+                                </div>
+                            </div>
+                            
+                            <div class="info-item">
+                                <div class="info-icon">📱</div>
+                                <div>
+                                    <div class="info-label">Phone</div>
+                                    <div class="info-value">+91 8097 000 970</div>
+                                </div>
+                            </div>
+                            
+                            <div class="info-item">
+                                <div class="info-icon">✉️</div>
+                                <div>
+                                    <div class="info-label">Email</div>
+                                    <div class="info-value">info@supergifts.in</div>
+                                </div>
+                            </div>
+                            
+                            <div class="info-item">
+                                <div class="info-icon">🕐</div>
+                                <div>
+                                    <div class="info-label">Business Hours</div>
+                                    <div class="info-value">Monday - Friday: 9:00 AM - 6:00 PM<br>Saturday: 10:00 AM - 4:00 PM<br>Sunday: Closed</div>
+                                </div>
+                            </div>
+
+                            <div class="contact-socials">
+                                <a href="https://www.linkedin.com/company/super-gifts" target="_blank" class="social-link">LinkedIn</a>
+                                <a href="https://www.instagram.com/supergifts/" target="_blank" class="social-link">Instagram</a>
+                                <a href="https://www.facebook.com/supergifts" target="_blank" class="social-link">Facebook</a>
+                            </div>
+                        </div>
+
+                        <div class="contact-form-wrapper">
+                            <form class="contact-form" method="POST" action="submit-review.php">
+                                <div class="form-group">
+                                    <input type="text" name="name" placeholder="Your Name" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <input type="email" name="email" placeholder="Your Email" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <input type="text" name="company" placeholder="Company Name">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <input type="tel" name="phone" placeholder="Phone Number">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <textarea name="message" placeholder="Your Message" rows="5" required></textarea>
+                                </div>
+                                
+                                <button type="submit" class="btn-primary">Send Message</button>
+                            </form>
+                        </div>
                     </div>
-                    <div class="field-group"><label>Company</label><input type="text" placeholder="Tata Consultancy Services"></div>
-                    <div class="form-row">
-                        <div class="field-group"><label>Email</label><input type="email" placeholder="rahul@company.com"></div>
-                        <div class="field-group"><label>Phone</label><input type="tel" placeholder="+91 98765 43210"></div>
-                    </div>
-                    <div class="field-group">
-                        <label>Enquiry Type</label>
-                        <select><option>Select enquiry type...</option><option>Bulk Order</option><option>Branding & Packaging</option><option>Corporate Proposal</option><option>Reseller Partnership</option></select>
-                    </div>
-                    <div class="field-group"><label>Message</label><textarea rows="3" placeholder="Tell us about your gifting requirements..."></textarea></div>
-                    <button class="btn-primary" style="width:100%;padding:13px">Send Message →</button>
                 </div>
             </section>
             <!-- End Modern Contact Section -->
