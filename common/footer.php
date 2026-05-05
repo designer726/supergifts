@@ -5,8 +5,8 @@
               <div class="logo-wrap" style="margin-bottom:0">
                   <!-- <div class="logo-icon">🎁</div>
           <div class="logo-text" style="color:#fff">Super<span>Gifts</span></div> -->
-                  <div class="mb-30">
-                      <img src="images/logo.png" alt="SGIPL" style="width: 158px;" />
+                  <div class="mb-10">
+                      <img src="images/logo_white.png" alt="SGIPL" style="width: 158px;" />
                   </div>
               </div>
               <p>India's leading corporate gifting platform. Premium quality, custom branding, and seamless logistics — all in one place.</p>
