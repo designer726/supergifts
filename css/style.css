@@ -3520,15 +3520,24 @@ a.logo:hover{
     position: sticky;
     top: 0;
 }
-.logoimg{width: 250px;  -webkit-transition: all .5s;
-    -moz-transition: all .5s;
-    transition: all .5s;}
+.logo {
+    display: inline-flex;
+    align-items: center;
+}
+.logoimg {
+    width: auto;
+    max-height: 48px;
+    transition: all .5s;
+}
 .small-height{
     height: var(--menu-bar-height-scrolled) !important;  -webkit-transition: all .5s;
     -moz-transition: all .5s;
     transition: all .5s;
 }
-.small-height .logoimg{width: 212px;}
+.small-height .logoimg{
+    width: auto;
+    max-height: 40px;
+}
 .main-nav-sub{
     flex-grow: 1;
     display: flex;
@@ -5787,7 +5796,7 @@ img.services-image{
 
 .services-3-item{
     padding: 40px;
-    background: #231c74;
+    background: #060235;
     box-shadow: 3px 3px 9px gray;
    /* background: #fff;
     box-shadow: var(--box-shadow-block);*/
