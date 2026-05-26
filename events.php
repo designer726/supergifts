@@ -23,39 +23,24 @@
             
            <main id="main">
             
-            <!-- Header Section -->
-            <section class="page-section bg-gray-light-1 bg-light-alpha-90 parallax-5" style="background-image: url(images/full-width-images/section-bg-1.jpg)" id="home">
-                <div class="container position-relative pt-30 pt-sm-50">
-                    
-                    <!-- Section Content -->
-                    <div class="text-center">
-                        <div class="row">
-                            
-                            <!-- Page Title -->
-                            <div class="col-md-8 offset-md-2">
-                                    
-                                <h1 class="hs-title-1 mb-20">
-                                    <span class="wow charsAnimIn" data-splitting="chars">News & Events</span>
-                                </h1>
-                                
-                                <div class="row">
-                                    <div class="col-md-10 offset-md-1 col-lg-8 offset-lg-2">
-                                        <p class="section-descr mb-0 wow fadeIn" data-wow-delay="0.2s" data-wow-duration="1.2s">
-                                        Stay Updated with the Latest Happenings and Exciting Developments at SGIPL
-                                        </p>
-                                    </div>
-                                </div>
-                           
-                           </div>
-                           <!-- End Page Title -->
-                            
-                        </div>                            
+            <!-- Modern Hero Section -->
+            <section class="hero" id="news">
+                <div class="hero-content">
+                    <div class="hero-badge">✦ News & Events</div>
+                    <h1>Stay Updated with <em>Latest Happenings</em></h1>
+                    <p>Stay Updated with the Latest Happenings and Exciting Developments at SGIPL</p>
+                    <div class="hero-btns">
+                        <button class="btn-primary" onclick="window.location.href='blog.php'">Read Our Blog →</button>
+                        <button class="btn-outline" onclick="window.location.href='contact.php'">Press Inquiry</button>
                     </div>
-                    <!-- End Section Content -->
-                    
-                </div>           
+                </div>
+                <div class="hero-right">
+                    <div class="stat-card"><div class="num">50+</div><div class="lbl">Articles</div></div>
+                    <div class="stat-card"><div class="num">100+</div><div class="lbl">Updates</div></div>
+                    <div class="stat-card"><div class="num">10K+</div><div class="lbl">Readers</div></div>
+                </div>
             </section>
-            <!-- End Header Section -->
+            <!-- End Modern Hero Section -->
             
             
             <!-- Section -->

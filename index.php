@@ -56,28 +56,75 @@ if (!$brandDb->connect_error) {
 
         <main id="main">
 
-            <!-- Modern Hero Section -->
-            <section class="hero" id="home">
-                <div class="hero-content">
-                    <div class="hero-badge">✦ India's #1 Corporate Gifting Platform</div>
-                    <h1>Gifts That <em>Inspire</em><br>&Build Bonds</h1>
-                    <p>Premium gifting solutions for corporates and resellers — from branding to last-mile delivery. Everything under one roof.</p>
-                    <div class="hero-btns">
-                        <button class="btn-primary" onclick="window.location.href='products.php'">Browse Products →</button>
-                        <button class="btn-outline" onclick="window.location.href='contact.php'">Request Proposal</button>
-                    </div>
+            <!-- Dynamic Hero Carousel Section -->
+            <section class="hero-carousel-wrapper" id="home">
+                <div class="hero-carousel-container">
+                    <!-- Hero Slide 1 -->
+                    <section class="hero-slide active" data-slide="0">
+                        <div class="hero-content">
+                            <div class="hero-badge">✦ India's #1 Corporate Gifting Platform</div>
+                            <h1>Gifts That <em>Inspire</em><br>&Build Bonds</h1>
+                            <p>Premium gifting solutions for corporates and resellers — from branding to last-mile delivery. Everything under one roof.</p>
+                            <div class="hero-btns">
+                                <button class="btn-primary" onclick="window.location.href='products.php'">Browse Products →</button>
+                                <button class="btn-outline" onclick="window.location.href='contact.php'">Request Proposal</button>
+                            </div>
+                        </div>
+                        <div class="hero-right">
+                            <div class="stat-card"><div class="num">500+</div><div class="lbl">Brand Partners</div></div>
+                            <div class="stat-card"><div class="num">10K+</div><div class="lbl">Orders Delivered</div></div>
+                            <div class="stat-card"><div class="num">98%</div><div class="lbl">Satisfaction Rate</div></div>
+                        </div>
+                    </section>
+
+                    <!-- Hero Slide 2 -->
+                    <section class="hero-slide" data-slide="1" style="background: linear-gradient(135deg, rgba(13, 43, 85, 0.95), rgba(26, 64, 128, 0.95));">
+                        <div class="hero-content">
+                            <div class="hero-badge">✦ Customization Excellence</div>
+                            <h1>Your Brand, <em>Our</em><br>Expertise</h1>
+                            <p>Complete customization from concept to delivery. Branding, embossing, engraving — we handle it all in-house with precision.</p>
+                            <div class="hero-btns">
+                                <button class="btn-primary" onclick="window.location.href='services.php'">Our Services →</button>
+                                <button class="btn-outline" onclick="window.location.href='contact.php'">Get Quote</button>
+                            </div>
+                        </div>
+                        <div class="hero-right">
+                            <div class="stat-card"><div class="num">8</div><div class="lbl">Core Services</div></div>
+                            <div class="stat-card"><div class="num">100%</div><div class="lbl">Customizable</div></div>
+                            <div class="stat-card"><div class="num">24x7</div><div class="lbl">Support</div></div>
+                        </div>
+                    </section>
+
+                    <!-- Hero Slide 3 -->
+                    <section class="hero-slide" data-slide="2" style="background: linear-gradient(135deg, rgba(26, 64, 128, 0.95), rgba(13, 43, 85, 0.95));">
+                        <div class="hero-content">
+                            <div class="hero-badge">✦ Fast & Reliable Delivery</div>
+                            <h1>Pan-India Logistics<br><em>At Your Service</em></h1>
+                            <p>Nationwide delivery network with real-time tracking. Rush orders available. Trusted by 500+ brands for timely, damage-free deliveries.</p>
+                            <div class="hero-btns">
+                                <button class="btn-primary" onclick="window.location.href='products.php'">Shop Now →</button>
+                                <button class="btn-outline" onclick="window.location.href='contact.php'">Bulk Orders</button>
+                            </div>
+                        </div>
+                        <div class="hero-right">
+                            <div class="stat-card"><div class="num">15+</div><div class="lbl">Years Experience</div></div>
+                            <div class="stat-card"><div class="num">98%</div><div class="lbl">On-Time Delivery</div></div>
+                            <div class="stat-card"><div class="num">24x7</div><div class="lbl">Tracking</div></div>
+                        </div>
+                    </section>
                 </div>
-                <div class="hero-right">
-                    <div class="stat-card"><div class="num">500+</div><div class="lbl">Brand Partners</div></div>
-                    <div class="stat-card"><div class="num">10K+</div><div class="lbl">Orders Delivered</div></div>
-                    <div class="stat-card"><div class="num">98%</div><div class="lbl">Satisfaction Rate</div></div>
+
+                <!-- Navigation Arrows -->
+                <button class="hero-nav-btn prev" onclick="changeHeroSlide(-1)">❮</button>
+                <button class="hero-nav-btn next" onclick="changeHeroSlide(1)">❯</button>
+
+                <!-- Slider Dots -->
+                <div class="slider-dots" id="heroDots">
+                    <div class="dot active" onclick="goToHeroSlide(0)"></div>
+                    <div class="dot" onclick="goToHeroSlide(1)"></div>
+                    <div class="dot" onclick="goToHeroSlide(2)"></div>
                 </div>
             </section>
-            <div class="slider-dots">
-                <div class="dot active"></div>
-                <div class="dot"></div>
-                <div class="dot"></div>
-            </div>
 
 
             <!-- Brand Partners & Add-on Services Section -->
@@ -433,6 +480,291 @@ if (!$brandDb->connect_error) {
 
         <?php include('common/footer.php'); ?>
 
+        <!-- Dynamic Hero Carousel JavaScript -->
+        <script>
+            // Hero Carousel State
+            let heroState = {
+                current: 0,
+                totalSlides: 3,
+                autoplayInterval: null,
+                autoplayDelay: 5000
+            };
+
+            // Change Hero Slide
+            function changeHeroSlide(direction) {
+                heroState.current += direction;
+                if (heroState.current < 0) heroState.current = heroState.totalSlides - 1;
+                if (heroState.current >= heroState.totalSlides) heroState.current = 0;
+                
+                updateHeroSlide();
+                resetAutoplay();
+            }
+
+            // Go to specific hero slide
+            function goToHeroSlide(slideIndex) {
+                heroState.current = slideIndex;
+                updateHeroSlide();
+                resetAutoplay();
+            }
+
+            // Update hero slide display
+            function updateHeroSlide() {
+                // Update slide visibility
+                document.querySelectorAll('.hero-slide').forEach((slide, index) => {
+                    if (index === heroState.current) {
+                        slide.classList.add('active');
+                        slide.style.opacity = '1';
+                        slide.style.transform = 'translateX(0)';
+                    } else {
+                        slide.classList.remove('active');
+                        slide.style.opacity = '0';
+                        slide.style.transform = 'translateX(100px)';
+                    }
+                });
+
+                // Update dots
+                document.querySelectorAll('.slider-dots .dot').forEach((dot, index) => {
+                    if (index === heroState.current) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+            }
+
+            // Start autoplay
+            function startAutoplay() {
+                heroState.autoplayInterval = setInterval(() => {
+                    changeHeroSlide(1);
+                }, heroState.autoplayDelay);
+            }
+
+            // Reset autoplay timer
+            function resetAutoplay() {
+                clearInterval(heroState.autoplayInterval);
+                startAutoplay();
+            }
+
+            // Initialize carousel on page load
+            document.addEventListener('DOMContentLoaded', function() {
+                // Set initial styles
+                document.querySelectorAll('.hero-slide').forEach((slide, index) => {
+                    slide.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+                    if (index !== 0) {
+                        slide.style.opacity = '0';
+                        slide.style.transform = 'translateX(100px)';
+                    }
+                });
+
+                // Start autoplay
+                startAutoplay();
+
+                // Pause autoplay on hover
+                document.querySelector('.hero-carousel-container').addEventListener('mouseenter', () => {
+                    clearInterval(heroState.autoplayInterval);
+                });
+
+                // Resume autoplay on mouse leave
+                document.querySelector('.hero-carousel-container').addEventListener('mouseleave', () => {
+                    startAutoplay();
+                });
+            });
+
+            // Touch support for mobile
+            let touchStartX = 0;
+            let touchEndX = 0;
+
+            document.querySelector('.hero-carousel-container').addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, false);
+
+            document.querySelector('.hero-carousel-container').addEventListener('touchend', (e) => {
+                touchEndX = e.changedTouches[0].screenX;
+                if (touchStartX - touchEndX > 50) changeHeroSlide(1); // Swipe left
+                if (touchEndX - touchStartX > 50) changeHeroSlide(-1); // Swipe right
+            }, false);
+        </script>
+
+        <!-- Dynamic Hero Carousel Styles -->
+        <style>
+            .hero-carousel-wrapper {
+                position: relative;
+                width: 100%;
+                background: linear-gradient(135deg, rgba(13, 43, 85, 0.95), rgba(26, 64, 128, 0.95));
+                min-height: 600px;
+                overflow: hidden;
+            }
+
+            .hero-carousel-container {
+                position: relative;
+                width: 100%;
+                min-height: 600px;
+                display: flex;
+                align-items: center;
+            }
+
+            .hero-slide {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 80px 60px;
+                background: linear-gradient(135deg, rgba(13, 43, 85, 0.95), rgba(26, 64, 128, 0.95));
+                opacity: 0;
+                transform: translateX(100px);
+                transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+                z-index: 1;
+            }
+
+            .hero-slide.active {
+                opacity: 1;
+                transform: translateX(0);
+                z-index: 2;
+            }
+
+            .hero-nav-btn {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                z-index: 10;
+                background: rgba(255, 255, 255, 0.2);
+                color: white;
+                border: 2px solid rgba(255, 255, 255, 0.4);
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                cursor: pointer;
+                font-size: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.3s ease;
+                backdrop-filter: blur(10px);
+            }
+
+            .hero-nav-btn:hover {
+                background: rgba(255, 199, 0, 0.3);
+                border-color: #ffc700;
+                transform: translateY(-50%) scale(1.1);
+            }
+
+            .hero-nav-btn.prev {
+                left: 30px;
+            }
+
+            .hero-nav-btn.next {
+                right: 30px;
+            }
+
+            .slider-dots {
+                position: absolute;
+                bottom: 30px;
+                left: 50%;
+                transform: translateX(-50%);
+                display: flex;
+                gap: 12px;
+                z-index: 10;
+            }
+
+            .slider-dots .dot {
+                width: 14px;
+                height: 14px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.4);
+                cursor: pointer;
+                transition: all 0.4s ease;
+                border: 2px solid rgba(255, 255, 255, 0.6);
+            }
+
+            .slider-dots .dot.active {
+                background: #ffc700;
+                border-color: #ffc700;
+                width: 18px;
+                height: 18px;
+                box-shadow: 0 0 15px rgba(255, 199, 0, 0.5);
+            }
+
+            .slider-dots .dot:hover {
+                background: rgba(255, 255, 255, 0.6);
+                transform: scale(1.2);
+            }
+
+            @media (max-width: 1024px) {
+                .hero-slide {
+                    flex-direction: column;
+                    padding: 60px 40px;
+                    min-height: auto;
+                }
+
+                .hero-content {
+                    margin-bottom: 30px;
+                }
+
+                .hero-right {
+                    flex-direction: row !important;
+                    gap: 20px;
+                }
+
+                .hero-nav-btn {
+                    width: 45px;
+                    height: 45px;
+                    font-size: 20px;
+                }
+
+                .hero-nav-btn.prev {
+                    left: 15px;
+                }
+
+                .hero-nav-btn.next {
+                    right: 15px;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .hero-carousel-wrapper {
+                    min-height: 500px;
+                }
+
+                .hero-slide {
+                    padding: 40px 20px;
+                    min-height: 500px;
+                }
+
+                .hero-content h1 {
+                    font-size: 1.8rem !important;
+                }
+
+                .hero-content p {
+                    font-size: 0.9rem !important;
+                }
+
+                .hero-nav-btn {
+                    display: none;
+                }
+
+                .stat-card {
+                    padding: 15px !important;
+                    font-size: 0.9rem;
+                }
+            }
+
+            @keyframes slideIn {
+                from {
+                    opacity: 0;
+                    transform: translateX(100px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+
+            .hero-slide.active {
+                animation: slideIn 0.8s ease forwards;
+            }
+        </style>
 
 
 </body>

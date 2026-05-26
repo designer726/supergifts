@@ -22,36 +22,24 @@
            <?php include('common/nav.php'); ?>
             
            <main id="main">
-         <!-- Header Section -->
-         <section class="page-section pb-100 pb-sm-60 bg-gray-light-1 bg-light-alpha-90 bg-scroll" style="background-image: url(images/full-width-images/section-bg-1.jpg)">
-                    <div class="position-absolute top-0 bottom-0 start-0 end-0 bg-gradient-white"></div>
-                    <div class="container position-relative pt-50">
-                            
-                        <!-- Section Content -->
-                        <div class="text-center">
-                            <div class="row">
-                                
-                                <!-- Page Title -->
-                                <div class="col-md-8 offset-md-2">
-                                    
-                                    <h2 class="section-caption-border mb-30 mb-xs-20 wow fadeInUp" data-wow-duration="1.2s">
-                                        Careers  @ SGIPL
-                                    </h2>
-                                        
-                                    <h1 class="hs-title-1 mb-0">
-                                        <span class="wow charsAnimIn" data-splitting="chars">Individually, we are one drop. Together, we are an ocean.</span>
-                                    </h1>
-                               
-                               </div>
-                               <!-- End Page Title -->
-                                
-                            </div>                            
-                        </div>
-                        <!-- End Section Content -->
-                        
+            <!-- Modern Hero Section -->
+            <section class="hero" id="careers">
+                <div class="hero-content">
+                    <div class="hero-badge">✦ Careers @ SGIPL</div>
+                    <h1>Individually, we are <em>one drop.</em><br>Together, we are an ocean.</h1>
+                    <p>Join the team at SUPER GIFTS (INDIA) PRIVATE LIMITED, where we embody a culture of passion, innovation, and excellence.</p>
+                    <div class="hero-btns">
+                        <button class="btn-primary" onclick="window.location.href='mailto:info@supergifts.in?subject=Career%20Inquiry'">Apply Now →</button>
+                        <button class="btn-outline" onclick="window.location.href='contact.php'">Get More Info</button>
                     </div>
-                </section>
-                <!-- End Header Section -->
+                </div>
+                <div class="hero-right">
+                    <div class="stat-card"><div class="num">50+</div><div class="lbl">Team Members</div></div>
+                    <div class="stat-card"><div class="num">100%</div><div class="lbl">Growth Focus</div></div>
+                    <div class="stat-card"><div class="num">5</div><div class="lbl">Departments</div></div>
+                </div>
+            </section>
+            <!-- End Modern Hero Section -->
                 
              <!-- About Section -->
              <section class="page-section" id="about">                    
