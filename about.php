@@ -23,57 +23,24 @@
             
            <main id="main">
             
-            <!-- Header Section -->
-            <section class="page-section bg-gray-light-1 bg-light-alpha-90 parallax-5" style="background-image: url(images/full-width-images/section-bg-1.jpg)">
-                <div class="container position-relative pt-50">
-                        
-                    <!-- Section Content -->
-                    <div class="text-center">
-                        <div class="row">
-                            
-                            <!-- Page Title -->
-                            <div class="col-md-8 offset-md-2">
-                                
-                                <h1 class="hs-title-1 mb-30">
-                                    <span class="wow charsAnimIn" data-splitting="chars">Relentlessly at your service... Unceasingly
-</span>
-                                </h1>
-                                
-                                <div class="row wow fadeInUp" data-wow-delay="0.6s" data-wow-duration="1.2s">
-                                    <div class="col-lg-10 offset-lg-1">
-                                        <p class="section-descr mb-30">
-                                      SGIPL - PRECISION GIFTING
-
-                                        </p>
-                                
-                                    </div>
-                                </div>
-                           
-                           </div>
-                           </div>
-                           <!-- End Page Title -->
-                            
-                           <div class="row">
-                           <div class="col-lg-10 offset-md-1">
-
-                           <p>Welcome to Super Gifts (india) Private Limited(SGIPL), your trusted partner in delivering unparalleled gifting experiences since 2011. Founded by Mr. Qaiser Azad, a visionary with over 30 years of industry expertise, SGIPL is now spearheaded by his son, Mr. Rehan Azad. We have seamlessly integrated top industry experts into our team, ensuring a dynamic blend of experience and innovation. 
-</p>
-<p>
-With a legacy of excellence, we take pride in our extensive experience, catering to over 1000+ gifting companies and serving more than 100 clients & with offices across Mumbai, Hyderabad & Bengaluru</p>
-
-<p>
-At SGIPL, our commitment is to provide access to 100% genuine products, including offerings from some of the most sought-after Indian and International brands. We distinguish ourselves by ensuring the best price offerings on every order, guaranteeing substantial savings on both time and money for our valued clients.
-</p>
-                                    </div>
-
-
-                        </div>                            
+            <!-- Modern Hero Section -->
+            <section class="hero" id="about">
+                <div class="hero-content">
+                    <div class="hero-badge">✦ About SGIPL</div>
+                    <h1>Relentlessly at <em>your service</em><br>Unceasingly</h1>
+                    <p>Welcome to Super Gifts (india) Private Limited (SGIPL), your trusted partner in delivering unparalleled gifting experiences since 2011.</p>
+                    <div class="hero-btns">
+                        <button class="btn-primary" onclick="window.location.href='contact.php'">Get in Touch →</button>
+                        <button class="btn-outline" onclick="window.location.href='services.php'">Explore Services</button>
                     </div>
-                    <!-- End Section Content -->
-                    
+                </div>
+                <div class="hero-right">
+                    <div class="stat-card"><div class="num">30+</div><div class="lbl">Years of Experience</div></div>
+                    <div class="stat-card"><div class="num">1000+</div><div class="lbl">Companies Served</div></div>
+                    <div class="stat-card"><div class="num">3</div><div class="lbl">Pan-India Offices</div></div>
                 </div>
             </section>
-            <!-- End Header Section -->
+            <!-- End Modern Hero Section -->
             
             
             <!-- Marquee Section 

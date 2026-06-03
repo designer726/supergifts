@@ -41,7 +41,7 @@ if (!$brandDb->connect_error) {
 <?php include('common/head.php'); ?>
     </head>
     <body class="appear-animate">
-        
+         
         <!-- Page Loader -->        
         <div class="page-loader">
             <div class="loader">Loading...</div>
@@ -57,50 +57,226 @@ if (!$brandDb->connect_error) {
             
            <main id="main">
             
-            <!-- Header Section -->
-            <section class="page-section bg-gray-light-1 bg-light-alpha-90 parallax-5" style="background-image: url(images/full-width-images/section-bg-1.jpg)">
-                <div class="container position-relative pt-50">
-                        
-                    <!-- Section Content -->
-                    <div class="text-center">
-                        <div class="row">
-                            
-                            <!-- Page Title -->
-                            <div class="col-md-8 offset-md-2">
-                            <h2 class="section-caption-border mb-30 mb-xs-20 wow fadeInUp animated" data-wow-duration="1.2s" style="visibility: visible; animation-duration: 1.2s; animation-name: fadeInUp;">
-                                        Our Services
-                                    </h2>
-                                <h1 class="hs-title-1 mb-30">
-                                    <span class="wow charsAnimIn" data-splitting="chars">Transforming Imaginations into Personalized Gifting Realities! 
-</span>
-                                </h1>
-                                
-                           
-                           
-                           </div>
-                           </div>
-                           <!-- End Page Title -->
-                            
-                           <div class="row">
-                           <div class="col-lg-10 offset-md-1">
-
-                           <p>Welcome to Super Gifting India Private Ltd (SGIPL), where we redefine the gifting space through close collaboration, embodying the motto "You Imagine, We Create." Our core approach revolves around innovative solutions, ensuring a personalized touch to every gifting experience. With a commitment to excellence, our services are designed to meet diverse needs and elevate your gifting strategy.
-
-</p>
-                                    </div>
-
-
-                        </div>                            
+            <!-- Modern Hero Section -->
+            <section class="hero" id="hero-services">
+                <div class="hero-content">
+                    <div class="hero-badge">✦ Our Services</div>
+                    <h1>Transforming Imaginations into <em>Personalized Gifting</em> Realities</h1>
+                    <p>Welcome to Super Gifting India Private Ltd (SGIPL), where we redefine the gifting space through close collaboration, embodying the motto "You Imagine, We Create."</p>
+                    <div class="hero-btns">
+                        <button class="btn-primary" onclick="window.location.href='contact.php'">Request Proposal →</button>
+                        <button class="btn-outline" onclick="window.location.href='products.php'">Browse Products</button>
                     </div>
-                    <!-- End Section Content -->
-                    
+                </div>
+                <div class="hero-right">
+                    <div class="stat-card"><div class="num">8</div><div class="lbl">Core Services</div></div>
+                    <div class="stat-card"><div class="num">100%</div><div class="lbl">Customizable</div></div>
+                    <div class="stat-card"><div class="num">24x7</div><div class="lbl">Support</div></div>
                 </div>
             </section>
-            <!-- End Header Section -->
-            
+            <!-- End Modern Hero Section -->
+
+            <!-- Informatic Dynamic Sliders Section -->
+            <section class="informatic-sliders-section" style="padding: 80px 0; background: linear-gradient(135deg, #f5f7fa 0%, #e9f0f8 100%);">
+                <div class="container">
+                    <!-- Slider 1: Key Statistics & Performance Metrics -->
+                    <div class="informatic-slider-wrapper mb-80">
+                        <div class="slider-header" style="text-align: center; margin-bottom: 50px;">
+                            <h2 style="font-size: 2.5rem; color: #0d2b55; margin-bottom: 15px; font-weight: 700;">
+                                Why Choose <span style="color: #ffc107;">Super Gifting?</span>
+                            </h2>
+                            <p style="font-size: 1.1rem; color: #555; max-width: 600px; margin: 0 auto;">
+                                Exceptional metrics that prove our excellence in corporate gifting solutions
+                            </p>
+                        </div>
+
+                        <div class="metrics-slider-container" style="position: relative;">
+                            <!-- Slider Navigation -->
+                            <button class="slider-nav-btn prev" onclick="moveSlider('metrics', -1)" style="position: absolute; left: -50px; top: 50%; transform: translateY(-50%); z-index: 10; background: #0d2b55; color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 20px; transition: all 0.3s;">❮</button>
+                            <button class="slider-nav-btn next" onclick="moveSlider('metrics', 1)" style="position: absolute; right: -50px; top: 50%; transform: translateY(-50%); z-index: 10; background: #0d2b55; color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 20px; transition: all 0.3s;">❯</button>
+
+                            <!-- Slider Track -->
+                            <div class="metrics-track" style="display: flex; gap: 30px; overflow: hidden; padding: 20px 0;">
+                                <!-- Metric 1 -->
+                                <div class="metric-card" style="flex: 0 0 calc(33.333% - 20px); background: white; padding: 40px 30px; border-radius: 15px; text-align: center; box-shadow: 0 10px 30px rgba(13, 43, 85, 0.1); transition: all 0.4s ease; cursor: pointer;">
+                                    <div style="font-size: 3.5rem; font-weight: 700; color: #ffc107; margin-bottom: 15px;">500+</div>
+                                    <h4 style="color: #0d2b55; font-size: 1.3rem; margin: 15px 0;">Brand Partners</h4>
+                                    <p style="color: #666; font-size: 0.95rem;">Authorized and trusted by India's leading brands</p>
+                                </div>
+
+                                <!-- Metric 2 -->
+                                <div class="metric-card" style="flex: 0 0 calc(33.333% - 20px); background: white; padding: 40px 30px; border-radius: 15px; text-align: center; box-shadow: 0 10px 30px rgba(13, 43, 85, 0.1); transition: all 0.4s ease; cursor: pointer;">
+                                    <div style="font-size: 3.5rem; font-weight: 700; color: #28a745; margin-bottom: 15px;">10K+</div>
+                                    <h4 style="color: #0d2b55; font-size: 1.3rem; margin: 15px 0;">Orders Delivered</h4>
+                                    <p style="color: #666; font-size: 0.95rem;">Successful deliveries across India with 24x7 tracking</p>
+                                </div>
+
+                                <!-- Metric 3 -->
+                                <div class="metric-card" style="flex: 0 0 calc(33.333% - 20px); background: white; padding: 40px 30px; border-radius: 15px; text-align: center; box-shadow: 0 10px 30px rgba(13, 43, 85, 0.1); transition: all 0.4s ease; cursor: pointer;">
+                                    <div style="font-size: 3.5rem; font-weight: 700; color: #ff6b6b; margin-bottom: 15px;">98%</div>
+                                    <h4 style="color: #0d2b55; font-size: 1.3rem; margin: 15px 0;">Satisfaction Rate</h4>
+                                    <p style="color: #666; font-size: 0.95rem;">Industry-leading customer satisfaction and repeat business</p>
+                                </div>
+
+                                <!-- Metric 4 -->
+                                <div class="metric-card" style="flex: 0 0 calc(33.333% - 20px); background: white; padding: 40px 30px; border-radius: 15px; text-align: center; box-shadow: 0 10px 30px rgba(13, 43, 85, 0.1); transition: all 0.4s ease; cursor: pointer;">
+                                    <div style="font-size: 3.5rem; font-weight: 700; color: #007bff; margin-bottom: 15px;">8</div>
+                                    <h4 style="color: #0d2b55; font-size: 1.3rem; margin: 15px 0;">Core Services</h4>
+                                    <p style="color: #666; font-size: 0.95rem;">Comprehensive solutions from branding to delivery</p>
+                                </div>
+
+                                <!-- Metric 5 -->
+                                <div class="metric-card" style="flex: 0 0 calc(33.333% - 20px); background: white; padding: 40px 30px; border-radius: 15px; text-align: center; box-shadow: 0 10px 30px rgba(13, 43, 85, 0.1); transition: all 0.4s ease; cursor: pointer;">
+                                    <div style="font-size: 3.5rem; font-weight: 700; color: #17a2b8; margin-bottom: 15px;">15+</div>
+                                    <h4 style="color: #0d2b55; font-size: 1.3rem; margin: 15px 0;">Years Experience</h4>
+                                    <p style="color: #666; font-size: 0.95rem;">Decades of expertise in corporate gifting industry</p>
+                                </div>
+                            </div>
+
+                            <!-- Slider Indicators -->
+                            <div style="display: flex; gap: 8px; margin-top: 30px; justify-content: center;">
+                                <div class="indicator" style="width: 12px; height: 12px; border-radius: 50%; background: #0d2b55; cursor: pointer; transition: all 0.3s;" onclick="goToSlide('metrics', 0)"></div>
+                                <div class="indicator" style="width: 12px; height: 12px; border-radius: 50%; background: #ccc; cursor: pointer; transition: all 0.3s;" onclick="goToSlide('metrics', 1)"></div>
+                                <div class="indicator" style="width: 12px; height: 12px; border-radius: 50%; background: #ccc; cursor: pointer; transition: all 0.3s;" onclick="goToSlide('metrics', 2)"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slider 2: Process & Workflow -->
+                    <div class="informatic-slider-wrapper mb-80">
+                        <div class="slider-header" style="text-align: center; margin-bottom: 50px;">
+                            <h2 style="font-size: 2.5rem; color: #0d2b55; margin-bottom: 15px; font-weight: 700;">
+                                Our <span style="color: #ffc107;">Simple Process</span>
+                            </h2>
+                            <p style="font-size: 1.1rem; color: #555; max-width: 600px; margin: 0 auto;">
+                                From imagination to delivery - we make corporate gifting effortless
+                            </p>
+                        </div>
+
+                        <div class="process-slider-container" style="position: relative;">
+                            <!-- Slider Navigation -->
+                            <button class="slider-nav-btn prev" onclick="moveSlider('process', -1)" style="position: absolute; left: -50px; top: 50%; transform: translateY(-50%); z-index: 10; background: #ffc107; color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 20px; transition: all 0.3s;">❮</button>
+                            <button class="slider-nav-btn next" onclick="moveSlider('process', 1)" style="position: absolute; right: -50px; top: 50%; transform: translateY(-50%); z-index: 10; background: #ffc107; color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 20px; transition: all 0.3s;">❯</button>
+
+                            <!-- Slider Track -->
+                            <div class="process-track" style="display: flex; gap: 25px; overflow: hidden; padding: 20px 0;">
+                                <!-- Process 1 -->
+                                <div class="process-card" style="flex: 0 0 calc(50% - 12.5px); background: linear-gradient(135deg, #0d2b55 0%, #1a4080 100%); padding: 50px 35px; border-radius: 20px; color: white; text-align: center; transition: all 0.4s ease; cursor: pointer; position: relative; overflow: hidden;">
+                                    <div style="font-size: 4rem; font-weight: 700; margin-bottom: 20px; opacity: 0.2; position: absolute; top: -10px; right: -10px;">1</div>
+                                    <div style="font-size: 3rem; margin-bottom: 20px; z-index: 2; position: relative;">📋</div>
+                                    <h4 style="font-size: 1.5rem; margin: 20px 0; font-weight: 700;">Consultation</h4>
+                                    <p style="font-size: 0.95rem; line-height: 1.6; opacity: 0.9;">Share your requirements, budget, and preferences. Our expert team will guide you through every option.</p>
+                                </div>
+
+                                <!-- Process 2 -->
+                                <div class="process-card" style="flex: 0 0 calc(50% - 12.5px); background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%); padding: 50px 35px; border-radius: 20px; color: white; text-align: center; transition: all 0.4s ease; cursor: pointer; position: relative; overflow: hidden;">
+                                    <div style="font-size: 4rem; font-weight: 700; margin-bottom: 20px; opacity: 0.2; position: absolute; top: -10px; right: -10px;">2</div>
+                                    <div style="font-size: 3rem; margin-bottom: 20px; z-index: 2; position: relative;">🎨</div>
+                                    <h4 style="font-size: 1.5rem; margin: 20px 0; font-weight: 700;">Customization</h4>
+                                    <p style="font-size: 0.95rem; line-height: 1.6; opacity: 0.9;">Personalize products with your branding, logos, and messaging. We handle all customization in-house.</p>
+                                </div>
+
+                                <!-- Process 3 -->
+                                <div class="process-card" style="flex: 0 0 calc(50% - 12.5px); background: linear-gradient(135deg, #28a745 0%, #20c997 100%); padding: 50px 35px; border-radius: 20px; color: white; text-align: center; transition: all 0.4s ease; cursor: pointer; position: relative; overflow: hidden;">
+                                    <div style="font-size: 4rem; font-weight: 700; margin-bottom: 20px; opacity: 0.2; position: absolute; top: -10px; right: -10px;">3</div>
+                                    <div style="font-size: 3rem; margin-bottom: 20px; z-index: 2; position: relative;">📦</div>
+                                    <h4 style="font-size: 1.5rem; margin: 20px 0; font-weight: 700;">Packaging</h4>
+                                    <p style="font-size: 0.95rem; line-height: 1.6; opacity: 0.9;">Premium packaging and quality assurance ensure your gifts arrive in perfect condition.</p>
+                                </div>
+
+                                <!-- Process 4 -->
+                                <div class="process-card" style="flex: 0 0 calc(50% - 12.5px); background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); padding: 50px 35px; border-radius: 20px; color: white; text-align: center; transition: all 0.4s ease; cursor: pointer; position: relative; overflow: hidden;">
+                                    <div style="font-size: 4rem; font-weight: 700; margin-bottom: 20px; opacity: 0.2; position: absolute; top: -10px; right: -10px;">4</div>
+                                    <div style="font-size: 3rem; margin-bottom: 20px; z-index: 2; position: relative;">🚚</div>
+                                    <h4 style="font-size: 1.5rem; margin: 20px 0; font-weight: 700;">Fast Delivery</h4>
+                                    <p style="font-size: 0.95rem; line-height: 1.6; opacity: 0.9;">Pan-India logistics network with 24x7 tracking. Delivered on time, every time.</p>
+                                </div>
+                            </div>
+
+                            <!-- Slider Indicators -->
+                            <div style="display: flex; gap: 8px; margin-top: 30px; justify-content: center;">
+                                <div class="indicator" style="width: 12px; height: 12px; border-radius: 50%; background: #0d2b55; cursor: pointer; transition: all 0.3s;" onclick="goToSlide('process', 0)"></div>
+                                <div class="indicator" style="width: 12px; height: 12px; border-radius: 50%; background: #ccc; cursor: pointer; transition: all 0.3s;" onclick="goToSlide('process', 1)"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slider 3: Features & Benefits -->
+                    <div class="informatic-slider-wrapper">
+                        <div class="slider-header" style="text-align: center; margin-bottom: 50px;">
+                            <h2 style="font-size: 2.5rem; color: #0d2b55; margin-bottom: 15px; font-weight: 700;">
+                                Premium <span style="color: #ffc107;">Features</span>
+                            </h2>
+                            <p style="font-size: 1.1rem; color: #555; max-width: 600px; margin: 0 auto;">
+                                What makes us India's #1 corporate gifting platform
+                            </p>
+                        </div>
+
+                        <div class="features-slider-container" style="position: relative;">
+                            <!-- Slider Navigation -->
+                            <button class="slider-nav-btn prev" onclick="moveSlider('features', -1)" style="position: absolute; left: -50px; top: 50%; transform: translateY(-50%); z-index: 10; background: #28a745; color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 20px; transition: all 0.3s;">❮</button>
+                            <button class="slider-nav-btn next" onclick="moveSlider('features', 1)" style="position: absolute; right: -50px; top: 50%; transform: translateY(-50%); z-index: 10; background: #28a745; color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 20px; transition: all 0.3s;">❯</button>
+
+                            <!-- Slider Track -->
+                            <div class="features-track" style="display: flex; gap: 30px; overflow: hidden; padding: 20px 0;">
+                                <!-- Feature 1 -->
+                                <div class="feature-card" style="flex: 0 0 calc(33.333% - 20px); background: white; padding: 40px 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(13, 43, 85, 0.1); transition: all 0.4s ease; cursor: pointer; border-top: 4px solid #ffc107;">
+                                    <div style="font-size: 2.5rem; margin-bottom: 20px;">✅</div>
+                                    <h4 style="color: #0d2b55; font-size: 1.2rem; margin: 15px 0; font-weight: 700;">100% Authentic</h4>
+                                    <p style="color: #666; font-size: 0.95rem; line-height: 1.6;">Genuine products from authorized distributors. No counterfeits, guaranteed.</p>
+                                </div>
+
+                                <!-- Feature 2 -->
+                                <div class="feature-card" style="flex: 0 0 calc(33.333% - 20px); background: white; padding: 40px 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(13, 43, 85, 0.1); transition: all 0.4s ease; cursor: pointer; border-top: 4px solid #28a745;">
+                                    <div style="font-size: 2.5rem; margin-bottom: 20px;">⚡</div>
+                                    <h4 style="color: #0d2b55; font-size: 1.2rem; margin: 15px 0; font-weight: 700;">Quick Turnaround</h4>
+                                    <p style="color: #666; font-size: 0.95rem; line-height: 1.6;">Rush deliveries available. Get your orders within 24-48 hours.</p>
+                                </div>
+
+                                <!-- Feature 3 -->
+                                <div class="feature-card" style="flex: 0 0 calc(33.333% - 20px); background: white; padding: 40px 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(13, 43, 85, 0.1); transition: all 0.4s ease; cursor: pointer; border-top: 4px solid #007bff;">
+                                    <div style="font-size: 2.5rem; margin-bottom: 20px;">💰</div>
+                                    <h4 style="color: #0d2b55; font-size: 1.2rem; margin: 15px 0; font-weight: 700;">Best Pricing</h4>
+                                    <p style="color: #666; font-size: 0.95rem; line-height: 1.6;">Competitive rates with bulk discounts. Transparent pricing with no hidden charges.</p>
+                                </div>
+
+                                <!-- Feature 4 -->
+                                <div class="feature-card" style="flex: 0 0 calc(33.333% - 20px); background: white; padding: 40px 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(13, 43, 85, 0.1); transition: all 0.4s ease; cursor: pointer; border-top: 4px solid #ff6b6b;">
+                                    <div style="font-size: 2.5rem; margin-bottom: 20px;">🎯</div>
+                                    <h4 style="color: #0d2b55; font-size: 1.2rem; margin: 15px 0; font-weight: 700;">Full Customization</h4>
+                                    <p style="color: #666; font-size: 0.95rem; line-height: 1.6;">Print, engrave, or embroider your branding. Unlimited customization options.</p>
+                                </div>
+
+                                <!-- Feature 5 -->
+                                <div class="feature-card" style="flex: 0 0 calc(33.333% - 20px); background: white; padding: 40px 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(13, 43, 85, 0.1); transition: all 0.4s ease; cursor: pointer; border-top: 4px solid #17a2b8;">
+                                    <div style="font-size: 2.5rem; margin-bottom: 20px;">🏆</div>
+                                    <h4 style="color: #0d2b55; font-size: 1.2rem; margin: 15px 0; font-weight: 700;">Expert Support</h4>
+                                    <p style="color: #666; font-size: 0.95rem; line-height: 1.6;">24x7 customer support. Dedicated account managers for bulk orders.</p>
+                                </div>
+
+                                <!-- Feature 6 -->
+                                <div class="feature-card" style="flex: 0 0 calc(33.333% - 20px); background: white; padding: 40px 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(13, 43, 85, 0.1); transition: all 0.4s ease; cursor: pointer; border-top: 4px solid #6f42c1;">
+                                    <div style="font-size: 2.5rem; margin-bottom: 20px;">🌐</div>
+                                    <h4 style="color: #0d2b55; font-size: 1.2rem; margin: 15px 0; font-weight: 700;">Pan-India Reach</h4>
+                                    <p style="color: #666; font-size: 0.95rem; line-height: 1.6;">Deliver anywhere in India. With our logistics network covering all major cities.</p>
+                                </div>
+                            </div>
+
+                            <!-- Slider Indicators -->
+                            <div style="display: flex; gap: 8px; margin-top: 30px; justify-content: center;">
+                                <div class="indicator" style="width: 12px; height: 12px; border-radius: 50%; background: #0d2b55; cursor: pointer; transition: all 0.3s;" onclick="goToSlide('features', 0)"></div>
+                                <div class="indicator" style="width: 12px; height: 12px; border-radius: 50%; background: #ccc; cursor: pointer; transition: all 0.3s;" onclick="goToSlide('features', 1)"></div>
+                                <div class="indicator" style="width: 12px; height: 12px; border-radius: 50%; background: #ccc; cursor: pointer; transition: all 0.3s;" onclick="goToSlide('features', 2)"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- End Informatic Dynamic Sliders Section -->
+
              <!-- Services Section -->
-             <section class="page-section pt-0" id="services">                    
-                    <div class="container position-relative mt-n120 mt-sm-n60">
+             <section class="page-section pt-50" id="services">                    
+                    <div class="container position-relative">
                         
                         <div class="row mb-n30">
                             
@@ -217,7 +393,8 @@ if (!$brandDb->connect_error) {
                                         
                                         <h3 class="services-3-title">
                                         Employee Gifting Programs
-                                        </h3>
+                                        </h3
+                                        
                                         
                                         <div class="services-3-text">
                                         Foster a positive work culture with our employee gifting programs, recognizing and appreciating the valuable contributions of your team.
@@ -422,7 +599,7 @@ if (!$brandDb->connect_error) {
                                 
                                 <h2 class="section-caption mb-xs-10 wow fadeInUp">Our Values</h2>
                                 
-                                <h3 class="section-title mb-60 mb-sm-40"><span class="wow charsAnimIn" data-splitting="chars"> We prioritize quality, trust, and collaboration as essential pillars of our approach.</span></h3>
+                                <h3 class="section-title mb-60 mb-sm-40"><span class="wow charsAnimIn" data-splitting="chars">We prioritize quality, trust, and collaboration as essential pillars of our approach.</span></h3>
                                 
                              
                             
@@ -434,13 +611,277 @@ if (!$brandDb->connect_error) {
                 <!-- End Parallax Image Section -->
         
             
-<section>
-    <div class="row">
-                                    </div>
-                                    </section>
-                
        </main>
             
           <?php include('common/footer.php'); ?>
+        
+        <!-- Slider JavaScript -->
+        <script>
+            // Slider State Management
+            const sliderState = {
+                metrics: { current: 0, itemsPerView: 3, totalItems: 5 },
+                process: { current: 0, itemsPerView: 2, totalItems: 4 },
+                features: { current: 0, itemsPerView: 3, totalItems: 6 }
+            };
+
+            // Get the track element for a slider
+            function getTrack(sliderType) {
+                if (sliderType === 'metrics') return document.querySelector('.metrics-track');
+                if (sliderType === 'process') return document.querySelector('.process-track');
+                if (sliderType === 'features') return document.querySelector('.features-track');
+            }
+
+            // Move slider by a specified amount
+            function moveSlider(sliderType, direction) {
+                const state = sliderState[sliderType];
+                const track = getTrack(sliderType);
+                
+                // Calculate max slides
+                const maxSlides = Math.ceil(state.totalItems / state.itemsPerView) - 1;
+                
+                // Update current position
+                state.current += direction;
+                if (state.current < 0) state.current = 0;
+                if (state.current > maxSlides) state.current = maxSlides;
+                
+                // Calculate scroll amount (each item has gap of 30px)
+                const itemWidth = state.itemsPerView === 3 ? 'calc(33.333% - 20px)' : 
+                                 state.itemsPerView === 2 ? 'calc(50% - 12.5px)' : 'calc(25% - 7.5px)';
+                const scrollAmount = state.current * (window.innerWidth > 1200 ? 
+                    (1200 / state.itemsPerView) : 
+                    (track.offsetWidth / state.itemsPerView));
+                
+                track.style.transform = `translateX(-${scrollAmount * state.current / (state.itemsPerView === 3 ? 0.33 : state.itemsPerView === 2 ? 0.5 : 0.25)}px)`;
+                
+                // Update indicators
+                updateIndicators(sliderType);
+                
+                // Add hover effect to cards
+                addCardHoverEffects(track);
+            }
+
+            // Go to specific slide
+            function goToSlide(sliderType, slideIndex) {
+                const state = sliderState[sliderType];
+                const maxSlides = Math.ceil(state.totalItems / state.itemsPerView) - 1;
+                
+                state.current = Math.min(slideIndex, maxSlides);
+                const track = getTrack(sliderType);
+                
+                const scrollAmount = state.current * (window.innerWidth > 1200 ? 
+                    (1200 / state.itemsPerView) : 
+                    (track.offsetWidth / state.itemsPerView));
+                
+                track.style.transform = `translateX(-${scrollAmount * state.current / (state.itemsPerView === 3 ? 0.33 : state.itemsPerView === 2 ? 0.5 : 0.25)}px)`;
+                
+                updateIndicators(sliderType);
+                addCardHoverEffects(track);
+            }
+
+            // Update indicator dots
+            function updateIndicators(sliderType) {
+                const state = sliderState[sliderType];
+                const indicators = document.querySelectorAll(`[onclick*="'${sliderType}'"]`);
+                
+                indicators.forEach((indicator, index) => {
+                    if (indicator.classList.contains('indicator')) {
+                        indicator.style.background = index === state.current ? '#0d2b55' : '#ccc';
+                    }
+                });
+            }
+
+            // Add hover effects to cards
+            function addCardHoverEffects(track) {
+                const cards = track.querySelectorAll('[class*="-card"]');
+                cards.forEach(card => {
+                    card.addEventListener('mouseenter', function() {
+                        this.style.transform = 'translateY(-10px)';
+                        this.style.boxShadow = '0 20px 40px rgba(13, 43, 85, 0.2)';
+                    });
+                    card.addEventListener('mouseleave', function() {
+                        this.style.transform = 'translateY(0)';
+                        this.style.boxShadow = '0 10px 30px rgba(13, 43, 85, 0.1)';
+                    });
+                });
+            }
+
+            // Responsive adjustments
+            function adjustSlidersForResponsive() {
+                const width = window.innerWidth;
+                
+                if (width < 768) {
+                    sliderState.metrics.itemsPerView = 1;
+                    sliderState.process.itemsPerView = 1;
+                    sliderState.features.itemsPerView = 1;
+                } else if (width < 1024) {
+                    sliderState.metrics.itemsPerView = 2;
+                    sliderState.process.itemsPerView = 2;
+                    sliderState.features.itemsPerView = 2;
+                } else {
+                    sliderState.metrics.itemsPerView = 3;
+                    sliderState.process.itemsPerView = 2;
+                    sliderState.features.itemsPerView = 3;
+                }
+                
+                // Reset current position
+                sliderState.metrics.current = 0;
+                sliderState.process.current = 0;
+                sliderState.features.current = 0;
+            }
+
+            // Auto-slide functionality (optional)
+            function startAutoSlide(sliderType, interval = 5000) {
+                setInterval(() => {
+                    const state = sliderState[sliderType];
+                    const maxSlides = Math.ceil(state.totalItems / state.itemsPerView) - 1;
+                    
+                    state.current = (state.current + 1) > maxSlides ? 0 : state.current + 1;
+                    
+                    const track = getTrack(sliderType);
+                    const scrollAmount = state.current * (window.innerWidth > 1200 ? 
+                        (1200 / state.itemsPerView) : 
+                        (track.offsetWidth / state.itemsPerView));
+                    
+                    track.style.transform = `translateX(-${scrollAmount * state.current / (state.itemsPerView === 3 ? 0.33 : state.itemsPerView === 2 ? 0.5 : 0.25)}px)`;
+                    track.style.transition = 'transform 0.6s ease-in-out';
+                    
+                    updateIndicators(sliderType);
+                }, interval);
+            }
+
+            // Initialize sliders on page load
+            document.addEventListener('DOMContentLoaded', function() {
+                adjustSlidersForResponsive();
+                
+                // Add card hover effects on all sliders
+                document.querySelectorAll('.metrics-track, .process-track, .features-track').forEach(track => {
+                    addCardHoverEffects(track);
+                });
+
+                // Start auto-slide for each slider (uncomment to enable)
+                // startAutoSlide('metrics', 6000);
+                // startAutoSlide('process', 6000);
+                // startAutoSlide('features', 6000);
+                
+                // Handle window resize
+                window.addEventListener('resize', adjustSlidersForResponsive);
+            });
+
+            // Smooth scroll on track
+            document.querySelectorAll('.metrics-track, .process-track, .features-track').forEach(track => {
+                track.style.transition = 'transform 0.6s ease-in-out';
+            });
+        </script>
+        
+        <!-- Slider Styles -->
+        <style>
+            .informatic-sliders-section {
+                overflow: hidden;
+            }
+
+            .slider-header {
+                animation: fadeInDown 0.8s ease-out;
+            }
+
+            .metric-card, .process-card, .feature-card {
+                animation: fadeInUp 0.8s ease-out;
+                transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            }
+
+            .metric-card:hover, .process-card:hover, .feature-card:hover {
+                transform: translateY(-10px);
+            }
+
+            .slider-nav-btn:hover {
+                transform: translateY(-50%) scale(1.1);
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            }
+
+            .indicator {
+                animation: pulse 0.3s ease-out;
+            }
+
+            @keyframes fadeInDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @keyframes pulse {
+                0% {
+                    transform: scale(1);
+                }
+                50% {
+                    transform: scale(1.2);
+                }
+                100% {
+                    transform: scale(1);
+                }
+            }
+
+            @media (max-width: 1024px) {
+                .informatic-sliders-section {
+                    padding: 60px 0;
+                }
+
+                .slider-header h2 {
+                    font-size: 2rem;
+                }
+
+                .slider-nav-btn {
+                    left: 10px !important;
+                    right: auto !important;
+                    width: 40px !important;
+                    height: 40px !important;
+                }
+
+                .slider-nav-btn.next {
+                    left: auto !important;
+                    right: 10px !important;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .informatic-sliders-section {
+                    padding: 40px 0;
+                }
+
+                .slider-header h2 {
+                    font-size: 1.5rem;
+                }
+
+                .slider-nav-btn {
+                    display: none;
+                }
+
+                .metric-card, .process-card, .feature-card {
+                    padding: 30px 20px !important;
+                }
+
+                .metric-card h4, .process-card h4, .feature-card h4 {
+                    font-size: 1.1rem !important;
+                }
+
+                .metric-card p, .process-card p, .feature-card p {
+                    font-size: 0.9rem !important;
+                }
+            }
+        </style>
     </body>
 </html>
