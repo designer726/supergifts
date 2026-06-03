@@ -7,7 +7,7 @@ require 'common/head.php';
         <?php require 'common/nav.php'; ?>
         <main id="main">
             <!-- Service Hero Section -->
-            <section class="hero-section" style="background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%); padding: 80px 20px; text-align: center; color: white;">
+            <section class="hero-section" style="background: linear-gradient(135deg, #1B4B7C 0%, #254668 100%); padding: 80px 20px; text-align: center; color: white;">
                 <div class="container">
                     <h1 style="font-size: 48px; font-weight: 700; margin-bottom: 20px;">24x7 Support</h1>
                     <p style="font-size: 18px; opacity: 0.9; max-width: 600px; margin: 0 auto;">Round-the-clock customer support and assistance for all your gifting needs</p>
@@ -25,28 +25,28 @@ require 'common/head.php';
 
                         <h3 style="font-size: 24px; font-weight: 700; margin-top: 40px; margin-bottom: 20px; color: #333;">Our 24x7 Support Services Include:</h3>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; margin-bottom: 40px;">
-                            <div style="padding: 25px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #FF6B35;">
-                                <h4 style="color: #FF6B35; font-weight: 700; margin-bottom: 10px;">📞 Phone Support</h4>
+                            <div style="padding: 25px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #D4AF37;">
+                                <h4 style="color: #1B4B7C; font-weight: 700; margin-bottom: 10px;">📞 Phone Support</h4>
                                 <p style="color: #666; margin: 0;">Dedicated phone lines with trained support executives available anytime</p>
                             </div>
-                            <div style="padding: 25px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #FF6B35;">
-                                <h4 style="color: #FF6B35; font-weight: 700; margin-bottom: 10px;">💬 Live Chat Support</h4>
+                            <div style="padding: 25px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #D4AF37;">
+                                <h4 style="color: #1B4B7C; font-weight: 700; margin-bottom: 10px;">💬 Live Chat Support</h4>
                                 <p style="color: #666; margin: 0;">Instant chat support for quick queries and order assistance</p>
                             </div>
-                            <div style="padding: 25px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #FF6B35;">
-                                <h4 style="color: #FF6B35; font-weight: 700; margin-bottom: 10px;">📧 Email Support</h4>
+                            <div style="padding: 25px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #D4AF37;">
+                                <h4 style="color: #1B4B7C; font-weight: 700; margin-bottom: 10px;">📧 Email Support</h4>
                                 <p style="color: #666; margin: 0;">Comprehensive email support with detailed responses</p>
                             </div>
-                            <div style="padding: 25px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #FF6B35;">
-                                <h4 style="color: #FF6B35; font-weight: 700; margin-bottom: 10px;">🚀 Rush Order Assistance</h4>
+                            <div style="padding: 25px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #D4AF37;">
+                                <h4 style="color: #1B4B7C; font-weight: 700; margin-bottom: 10px;">🚀 Rush Order Assistance</h4>
                                 <p style="color: #666; margin: 0;">Dedicated team for urgent and last-minute orders</p>
                             </div>
-                            <div style="padding: 25px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #FF6B35;">
-                                <h4 style="color: #FF6B35; font-weight: 700; margin-bottom: 10px;">🎯 Order Tracking</h4>
+                            <div style="padding: 25px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #D4AF37;">
+                                <h4 style="color: #1B4B7C; font-weight: 700; margin-bottom: 10px;">🎯 Order Tracking</h4>
                                 <p style="color: #666; margin: 0;">Real-time tracking updates and delivery confirmation support</p>
                             </div>
-                            <div style="padding: 25px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #FF6B35;">
-                                <h4 style="color: #FF6B35; font-weight: 700; margin-bottom: 10px;">🆘 Crisis Management</h4>
+                            <div style="padding: 25px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #D4AF37;">
+                                <h4 style="color: #1B4B7C; font-weight: 700; margin-bottom: 10px;">🆘 Crisis Management</h4>
                                 <p style="color: #666; margin: 0;">Immediate assistance for any delivery issues or concerns</p>
                             </div>
                         </div>
@@ -106,10 +106,10 @@ require 'common/head.php';
                             </div>
                         </div>
 
-                        <div style="background: #fff5f0; padding: 30px; border-radius: 10px; margin-top: 40px; text-align: center;">
-                            <h3 style="color: #FF6B35; margin-top: 0;">We're Here for You - Always</h3>
+                        <div style="background: #f0f5fb; padding: 30px; border-radius: 10px; margin-top: 40px; text-align: center;">
+                            <h3 style="color: #1B4B7C; margin-top: 0;">We're Here for You - Always</h3>
                             <p style="color: #666; margin-bottom: 20px;">Contact us anytime for any assistance you need</p>
-                            <a href="contact.php" style="display: inline-block; background: #FF6B35; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: 600;">Contact Support</a>
+                            <a href="contact.php" style="display: inline-block; background: #D4AF37; color: #1B4B7C; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: 600;">Contact Support</a>
                         </div>
                     </div>
                 </div>
