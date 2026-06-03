@@ -7,7 +7,7 @@ require 'common/head.php';
         <?php require 'common/nav.php'; ?>
         <main id="main">
             <!-- Service Hero Section -->
-            <section class="hero-section" style="background: linear-gradient(135deg, #1B4332 0%, #2D6A4F 100%); padding: 80px 20px; text-align: center; color: white;">
+            <section class="hero-section" style="background: linear-gradient(135deg, #1B4B7C 0%, #254668 100%); padding: 80px 20px; text-align: center; color: white;">
                 <div class="container">
                     <h1 style="font-size: 48px; font-weight: 700; margin-bottom: 20px;">Branding & Customization</h1>
                     <p style="font-size: 18px; opacity: 0.9; max-width: 600px; margin: 0 auto;">Transform your corporate gifts into powerful brand ambassadors with our expert branding and customization solutions</p>
