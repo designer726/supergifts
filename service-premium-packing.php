@@ -7,7 +7,7 @@ require 'common/head.php';
         <?php require 'common/nav.php'; ?>
         <main id="main">
             <!-- Service Hero Section -->
-            <section class="hero-section" style="background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%); padding: 80px 20px; text-align: center; color: white;">
+            <section class="hero-section" style="background: linear-gradient(135deg, #1B4B7C 0%, #254668 100%); padding: 80px 20px; text-align: center; color: white;">
                 <div class="container">
                     <h1 style="font-size: 48px; font-weight: 700; margin-bottom: 20px;">Premium Packing</h1>
                     <p style="font-size: 18px; opacity: 0.9; max-width: 600px; margin: 0 auto;">Elevate your gifting experience with luxurious, customized packaging that leaves a lasting impression</p>
@@ -25,28 +25,28 @@ require 'common/head.php';
 
                         <h3 style="font-size: 24px; font-weight: 700; margin-top: 40px; margin-bottom: 20px; color: #333;">Our Packing Services Include:</h3>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; margin-bottom: 40px;">
-                            <div style="padding: 25px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #FF6B35;">
-                                <h4 style="color: #FF6B35; font-weight: 700; margin-bottom: 10px;">📦 Custom Gift Boxes</h4>
+                            <div style="padding: 25px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #D4AF37;">
+                                <h4 style="color: #1B4B7C; font-weight: 700; margin-bottom: 10px;">📦 Custom Gift Boxes</h4>
                                 <p style="color: #666; margin: 0;">Eco-friendly and luxury boxes in various sizes with custom printing and inserts</p>
                             </div>
-                            <div style="padding: 25px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #FF6B35;">
-                                <h4 style="color: #FF6B35; font-weight: 700; margin-bottom: 10px;">🎀 Luxe Wrapping</h4>
+                            <div style="padding: 25px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #D4AF37;">
+                                <h4 style="color: #1B4B7C; font-weight: 700; margin-bottom: 10px;">🎀 Luxe Wrapping</h4>
                                 <p style="color: #666; margin: 0;">Premium tissue papers, ribbons, bows, and luxury wrapping materials for elegant presentation</p>
                             </div>
-                            <div style="padding: 25px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #FF6B35;">
-                                <h4 style="color: #FF6B35; font-weight: 700; margin-bottom: 10px;">✨ Branded Inserts</h4>
+                            <div style="padding: 25px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #D4AF37;">
+                                <h4 style="color: #1B4B7C; font-weight: 700; margin-bottom: 10px;">✨ Branded Inserts</h4>
                                 <p style="color: #666; margin: 0;">Custom thank-you cards, branding inserts, and personalized message cards</p>
                             </div>
-                            <div style="padding: 25px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #FF6B35;">
-                                <h4 style="color: #FF6B35; font-weight: 700; margin-bottom: 10px;">🎁 Unboxing Experience</h4>
+                            <div style="padding: 25px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #D4AF37;">
+                                <h4 style="color: #1B4B7C; font-weight: 700; margin-bottom: 10px;">🎁 Unboxing Experience</h4>
                                 <p style="color: #666; margin: 0;">Layered packing with protective materials for memorable unboxing moments</p>
                             </div>
-                            <div style="padding: 25px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #FF6B35;">
-                                <h4 style="color: #FF6B35; font-weight: 700; margin-bottom: 10px;">♻️ Eco-Friendly Options</h4>
+                            <div style="padding: 25px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #D4AF37;">
+                                <h4 style="color: #1B4B7C; font-weight: 700; margin-bottom: 10px;">♻️ Eco-Friendly Options</h4>
                                 <p style="color: #666; margin: 0;">Sustainable, biodegradable packaging solutions without compromising elegance</p>
                             </div>
-                            <div style="padding: 25px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #FF6B35;">
-                                <h4 style="color: #FF6B35; font-weight: 700; margin-bottom: 10px;">🎨 Design Customization</h4>
+                            <div style="padding: 25px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #D4AF37;">
+                                <h4 style="color: #1B4B7C; font-weight: 700; margin-bottom: 10px;">🎨 Design Customization</h4>
                                 <p style="color: #666; margin: 0;">Complete creative freedom - choose colors, themes, and materials that match your brand</p>
                             </div>
                         </div>
@@ -72,9 +72,9 @@ require 'common/head.php';
                         </ul>
 
                         <div style="background: #fff5f0; padding: 30px; border-radius: 10px; margin-top: 40px; text-align: center;">
-                            <h3 style="color: #FF6B35; margin-top: 0;">Elevate Your Gift Packaging Today</h3>
+                            <h3 style="color: #1B4B7C; margin-top: 0;">Elevate Your Gift Packaging Today</h3>
                             <p style="color: #666; margin-bottom: 20px;">Let us create packaging that tells your brand story and delights your recipients</p>
-                            <a href="contact.php" style="display: inline-block; background: #FF6B35; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: 600;">Get in Touch</a>
+                            <a href="contact.php" style="display: inline-block; background: #D4AF37; color: #1B4B7C; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: 600;">Get in Touch</a>
                         </div>
                     </div>
                 </div>
