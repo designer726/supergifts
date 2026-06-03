@@ -56,28 +56,157 @@ if (!$brandDb->connect_error) {
 
         <main id="main">
 
-            <!-- Modern Hero Section -->
-            <section class="hero" id="home">
-                <div class="hero-content">
-                    <div class="hero-badge">✦ India's #1 Corporate Gifting Platform</div>
-                    <h1>Gifts That <em>Inspire</em><br>&Build Bonds</h1>
-                    <p>Premium gifting solutions for corporates and resellers — from branding to last-mile delivery. Everything under one roof.</p>
-                    <div class="hero-btns">
-                        <button class="btn-primary" onclick="window.location.href='products.php'">Browse Products →</button>
-                        <button class="btn-outline" onclick="window.location.href='contact.php'">Request Proposal</button>
-                    </div>
+            <!-- Dynamic Hero Carousel Section -->
+            <section class="hero-carousel-wrapper" id="home">
+                <div class="hero-carousel-container">
+                    <!-- Hero Slide 1 -->
+                    <section class="hero-slide active" data-slide="0" style="background:none;padding:0;">
+                        <svg width="100%" viewBox="0 0 1200 480" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;">
+                            <rect width="1200" height="480" fill="#FF6B35"/>
+                            <circle cx="1050" cy="240" r="340" fill="#FF8C42" opacity="0.5"/>
+                            <circle cx="1100" cy="200" r="220" fill="#FFAA00" opacity="0.35"/>
+                            <ellipse cx="600" cy="520" rx="700" ry="180" fill="#E8450A" opacity="0.4"/>
+                            <circle cx="80" cy="80" r="120" fill="#FFF4E0" opacity="0.12"/>
+                            <circle cx="80" cy="80" r="70" fill="#FFF4E0" opacity="0.1"/>
+                            <circle cx="420" cy="60" r="18" fill="#FFF4E0" opacity="0.2"/>
+                            <circle cx="580" cy="400" r="30" fill="#FFF4E0" opacity="0.1"/>
+                            <circle cx="200" cy="380" r="12" fill="#FFF4E0" opacity="0.15"/>
+                            <circle cx="700" cy="30" r="10" fill="#FFF4E0" opacity="0.18"/>
+                            <polygon points="860,0 1200,0 1200,130 860,130" fill="#E8450A" opacity="0.3"/>
+                            <polygon points="0,380 340,480 0,480" fill="#E8450A" opacity="0.25"/>
+                            <rect x="820" y="100" width="240" height="200" rx="12" fill="#FFF4E0" opacity="0.18"/>
+                            <rect x="810" y="88" width="260" height="32" rx="8" fill="#FFF4E0" opacity="0.22"/>
+                            <line x1="940" y1="88" x2="940" y2="300" stroke="#FF6B35" stroke-width="5" opacity="0.35"/>
+                            <line x1="810" y1="190" x2="1070" y2="190" stroke="#FF6B35" stroke-width="5" opacity="0.35"/>
+                            <ellipse cx="910" cy="86" rx="28" ry="16" fill="#FFAA00" opacity="0.5"/>
+                            <ellipse cx="970" cy="86" rx="28" ry="16" fill="#FFAA00" opacity="0.5"/>
+                            <circle cx="940" cy="86" r="10" fill="#FF6B35" opacity="0.5"/>
+                            <rect x="820" y="340" width="110" height="52" rx="10" fill="#1A1A1A" opacity="0.25"/>
+                            <text x="875" y="360" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-weight="700" fill="#FFF4E0">500+</text>
+                            <text x="875" y="381" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#FFF4E0" opacity="0.8">Brand Partners</text>
+                            <rect x="950" y="340" width="110" height="52" rx="10" fill="#1A1A1A" opacity="0.25"/>
+                            <text x="1005" y="360" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-weight="700" fill="#FFF4E0">10K+</text>
+                            <text x="1005" y="381" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#FFF4E0" opacity="0.8">Orders Delivered</text>
+                            <rect x="1080" y="340" width="100" height="52" rx="10" fill="#1A1A1A" opacity="0.25"/>
+                            <text x="1130" y="360" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-weight="700" fill="#FFF4E0">98%</text>
+                            <text x="1130" y="381" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#FFF4E0" opacity="0.8">Satisfaction</text>
+                            <rect x="56" y="68" width="234" height="26" rx="13" fill="#1A1A1A" opacity="0.25"/>
+                            <text x="173" y="85" text-anchor="middle" font-family="Arial, sans-serif" font-size="10.5" font-weight="700" fill="#FFF4E0" letter-spacing="1.2">&#x2726;  INDIA'S #1 B2B GIFTING</text>
+                            <text x="56" y="168" font-family="Georgia, serif" font-size="66" font-weight="700" fill="#FFF4E0">Gifts That</text>
+                            <text x="56" y="248" font-family="Georgia, serif" font-size="66" font-weight="700" fill="#1A1A1A" font-style="italic">Inspire</text>
+                            <text x="56" y="318" font-family="Georgia, serif" font-size="54" font-weight="700" fill="#FFF4E0">&amp; Build Bonds</text>
+                            <text x="56" y="360" font-family="Arial, sans-serif" font-size="15" fill="#FFF4E0" opacity="0.85">Premium B2B gifting solutions — branding to last-mile delivery.</text>
+                            <circle cx="1130" cy="100" r="52" fill="#1A1A1A" opacity="0.2"/>
+                            <circle cx="1130" cy="100" r="52" fill="none" stroke="#FFF4E0" stroke-width="1.2" opacity="0.4"/>
+                            <text x="1130" y="90" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-weight="700" fill="#FFF4E0">20+</text>
+                            <text x="1130" y="107" text-anchor="middle" font-family="Arial, sans-serif" font-size="9.5" fill="#FFF4E0" opacity="0.8">YRS EXP</text>
+                            <text x="56" y="462" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#FFF4E0" opacity="0.7" letter-spacing="2">SUPERGIFTS.IN</text>
+                        </svg>
+                    </section>
+
+                    <!-- Hero Slide 2 -->
+                    <section class="hero-slide" data-slide="1" style="background:none;padding:0;">
+                        <svg width="100%" viewBox="0 0 1200 480" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;">
+                            <rect width="1200" height="480" fill="#1B4332"/>
+                            <polygon points="620,0 1200,0 1200,480 700,480" fill="#2D6A4F"/>
+                            <ellipse cx="1080" cy="100" rx="260" ry="180" fill="#40916C" opacity="0.4"/>
+                            <ellipse cx="1120" cy="80" rx="160" ry="100" fill="#52B788" opacity="0.25"/>
+                            <ellipse cx="120" cy="430" rx="200" ry="120" fill="#40916C" opacity="0.25"/>
+                            <circle cx="640" cy="240" r="200" fill="#B7E4C7" opacity="0.06"/>
+                            <circle cx="640" cy="240" r="150" fill="#B7E4C7" opacity="0.05"/>
+                            <polygon points="300,0 360,52 300,104 240,52" fill="#52B788" opacity="0.18"/>
+                            <polygon points="360,52 420,0 480,52 420,104" fill="#52B788" opacity="0.12"/>
+                            <polygon points="500,10 560,62 500,114 440,62" fill="#B7E4C7" opacity="0.08"/>
+                            <circle cx="980" cy="260" r="110" fill="none" stroke="#95D5B2" stroke-width="2" opacity="0.25"/>
+                            <circle cx="980" cy="260" r="88" fill="none" stroke="#95D5B2" stroke-width="1" opacity="0.18"/>
+                            <text x="980" y="250" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#B7E4C7" opacity="0.6" letter-spacing="2">CO-BRANDING</text>
+                            <text x="980" y="270" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#B7E4C7" opacity="0.4">ENGRAVING</text>
+                            <text x="980" y="290" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#B7E4C7" opacity="0.3">EMBOSSING</text>
+                            <circle cx="750" cy="420" r="6" fill="#95D5B2" opacity="0.3"/>
+                            <circle cx="800" cy="400" r="4" fill="#B7E4C7" opacity="0.25"/>
+                            <circle cx="850" cy="430" r="8" fill="#52B788" opacity="0.2"/>
+                            <circle cx="1100" cy="380" r="10" fill="#D8F3DC" opacity="0.18"/>
+                            <circle cx="1150" cy="330" r="5" fill="#B7E4C7" opacity="0.22"/>
+                            <rect x="56" y="68" width="242" height="26" rx="13" fill="#D8F3DC" opacity="0.15"/>
+                            <text x="177" y="85" text-anchor="middle" font-family="Arial, sans-serif" font-size="10.5" font-weight="700" fill="#B7E4C7" letter-spacing="1.2">&#x2726;  CUSTOMIZATION EXCELLENCE</text>
+                            <text x="56" y="170" font-family="Georgia, serif" font-size="64" font-weight="700" fill="#D8F3DC">Your Brand,</text>
+                            <text x="56" y="244" font-family="Georgia, serif" font-size="64" font-weight="700" fill="#D8F3DC">Our</text>
+                            <text x="56" y="318" font-family="Georgia, serif" font-size="64" font-weight="700" fill="#95D5B2" font-style="italic">Expertise</text>
+                            <text x="56" y="358" font-family="Arial, sans-serif" font-size="15" fill="#B7E4C7" opacity="0.85">In-house branding, embossing &amp; engraving — concept to delivery.</text>
+                            <rect x="56" y="390" width="106" height="54" rx="10" fill="#D8F3DC" opacity="0.1"/>
+                            <text x="109" y="413" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-weight="700" fill="#D8F3DC">100%</text>
+                            <text x="109" y="433" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#B7E4C7" opacity="0.8">Customizable</text>
+                            <rect x="176" y="390" width="90" height="54" rx="10" fill="#D8F3DC" opacity="0.1"/>
+                            <text x="221" y="413" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-weight="700" fill="#D8F3DC">8</text>
+                            <text x="221" y="433" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#B7E4C7" opacity="0.8">Core Services</text>
+                            <rect x="280" y="390" width="90" height="54" rx="10" fill="#D8F3DC" opacity="0.1"/>
+                            <text x="325" y="413" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-weight="700" fill="#D8F3DC">24x7</text>
+                            <text x="325" y="433" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#B7E4C7" opacity="0.8">Support</text>
+                            <text x="56" y="466" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#B7E4C7" opacity="0.6" letter-spacing="2">SUPERGIFTS.IN</text>
+                        </svg>
+                    </section>
+
+                    <!-- Hero Slide 3 -->
+                    <section class="hero-slide" data-slide="2" style="background:none;padding:0;">
+                        <svg width="100%" viewBox="0 0 1200 480" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;">
+                            <rect width="1200" height="480" fill="#2D0057"/>
+                            <polygon points="550,0 1200,0 1200,480 650,480" fill="#4A0080" opacity="0.8"/>
+                            <circle cx="1050" cy="140" r="200" fill="#FFE600" opacity="0.12"/>
+                            <circle cx="1050" cy="140" r="130" fill="#FFE600" opacity="0.1"/>
+                            <circle cx="1050" cy="140" r="70" fill="#FFE600" opacity="0.12"/>
+                            <ellipse cx="600" cy="560" rx="700" ry="200" fill="#6B00B6" opacity="0.35"/>
+                            <circle cx="0" cy="0" r="180" fill="none" stroke="#FFE600" stroke-width="1" opacity="0.15"/>
+                            <circle cx="0" cy="0" r="130" fill="none" stroke="#FFE600" stroke-width="0.8" opacity="0.1"/>
+                            <path d="M 700 360 Q 790 310 860 260 Q 940 200 1010 150 Q 1070 110 1110 70" stroke="#FFE600" stroke-width="2" fill="none" opacity="0.4" stroke-dasharray="8,5"/>
+                            <path d="M 680 380 Q 760 320 840 270 Q 920 210 990 160 Q 1060 120 1100 90" stroke="#E040FB" stroke-width="1.2" fill="none" opacity="0.25" stroke-dasharray="5,7"/>
+                            <circle cx="710" cy="360" r="8" fill="#FFE600" opacity="0.9"/>
+                            <circle cx="710" cy="360" r="18" fill="#FFE600" opacity="0.15"/>
+                            <text x="730" y="358" font-family="Arial, sans-serif" font-size="11" fill="#FFE600" opacity="0.8">Mumbai</text>
+                            <circle cx="870" cy="255" r="8" fill="#FFE600" opacity="0.9"/>
+                            <circle cx="870" cy="255" r="18" fill="#FFE600" opacity="0.15"/>
+                            <text x="892" y="253" font-family="Arial, sans-serif" font-size="11" fill="#FFE600" opacity="0.8">Hyderabad</text>
+                            <circle cx="1000" cy="160" r="8" fill="#FFE600" opacity="0.9"/>
+                            <circle cx="1000" cy="160" r="18" fill="#FFE600" opacity="0.15"/>
+                            <text x="1020" y="158" font-family="Arial, sans-serif" font-size="11" fill="#FFE600" opacity="0.8">Bangalore</text>
+                            <circle cx="1100" cy="80" r="8" fill="#FFE600" opacity="0.9"/>
+                            <circle cx="1100" cy="80" r="18" fill="#FFE600" opacity="0.15"/>
+                            <text x="1118" y="78" font-family="Arial, sans-serif" font-size="11" fill="#FFE600" opacity="0.8">Delhi</text>
+                            <circle cx="640" cy="50" r="5" fill="#E040FB" opacity="0.35"/>
+                            <circle cx="580" cy="90" r="3" fill="#FFE600" opacity="0.3"/>
+                            <circle cx="400" cy="400" r="6" fill="#E040FB" opacity="0.2"/>
+                            <rect x="0" y="0" width="6" height="480" fill="#E040FB" opacity="0.5"/>
+                            <rect x="0" y="0" width="3" height="480" fill="#FFE600" opacity="0.4"/>
+                            <rect x="60" y="68" width="248" height="26" rx="13" fill="#FFE600" opacity="0.12"/>
+                            <text x="184" y="85" text-anchor="middle" font-family="Arial, sans-serif" font-size="10.5" font-weight="700" fill="#FFE600" letter-spacing="1.2">&#x2726;  FAST &amp; RELIABLE DELIVERY</text>
+                            <text x="60" y="170" font-family="Georgia, serif" font-size="58" font-weight="700" fill="#F3E0FF">Pan-India Logistics</text>
+                            <text x="60" y="240" font-family="Georgia, serif" font-size="58" font-weight="700" fill="#FFE600" font-style="italic">At Your Service</text>
+                            <text x="60" y="280" font-family="Arial, sans-serif" font-size="15" fill="#D4AAFF" opacity="0.9">Nationwide delivery · Real-time tracking · Rush orders.</text>
+                            <text x="60" y="302" font-family="Arial, sans-serif" font-size="15" fill="#D4AAFF" opacity="0.75">Trusted by 500+ brands across India.</text>
+                            <rect x="60" y="330" width="106" height="54" rx="10" fill="#FFE600" opacity="0.1"/>
+                            <text x="113" y="353" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-weight="700" fill="#FFE600">20+</text>
+                            <text x="113" y="374" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#D4AAFF" opacity="0.85">Yrs Experience</text>
+                            <rect x="180" y="330" width="106" height="54" rx="10" fill="#FFE600" opacity="0.1"/>
+                            <text x="233" y="353" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-weight="700" fill="#FFE600">98%</text>
+                            <text x="233" y="374" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#D4AAFF" opacity="0.85">On-Time Delivery</text>
+                            <rect x="300" y="330" width="122" height="54" rx="10" fill="#FFE600" opacity="0.1"/>
+                            <text x="361" y="353" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-weight="700" fill="#FFE600">25K SFT</text>
+                            <text x="361" y="374" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#D4AAFF" opacity="0.85">Warehouse</text>
+                            <text x="60" y="464" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#D4AAFF" opacity="0.6" letter-spacing="2">SUPERGIFTS.IN</text>
+                        </svg>
+                    </section>
                 </div>
-                <div class="hero-right">
-                    <div class="stat-card"><div class="num">500+</div><div class="lbl">Brand Partners</div></div>
-                    <div class="stat-card"><div class="num">10K+</div><div class="lbl">Orders Delivered</div></div>
-                    <div class="stat-card"><div class="num">98%</div><div class="lbl">Satisfaction Rate</div></div>
+
+                <!-- Navigation Arrows -->
+                <button class="hero-nav-btn prev" onclick="changeHeroSlide(-1)">❮</button>
+                <button class="hero-nav-btn next" onclick="changeHeroSlide(1)">❯</button>
+
+                <!-- Slider Dots -->
+                <div class="slider-dots" id="heroDots">
+                    <div class="dot active" onclick="goToHeroSlide(0)"></div>
+                    <div class="dot" onclick="goToHeroSlide(1)"></div>
+                    <div class="dot" onclick="goToHeroSlide(2)"></div>
                 </div>
             </section>
-            <div class="slider-dots">
-                <div class="dot active"></div>
-                <div class="dot"></div>
-                <div class="dot"></div>
-            </div>
 
 
             <!-- Brand Partners & Add-on Services Section -->
@@ -118,14 +247,14 @@ if (!$brandDb->connect_error) {
                 <div class="col-panel">
                     <div class="section-title">Add-on Services <span class="pill">8 Services</span></div>
                     <div class="service-list">
-                        <div class="service-row"><span class="service-num">1</span> Branding & Customization</div>
-                        <div class="service-row"><span class="service-num">2</span> Logistic Services</div>
-                        <div class="service-row"><span class="service-num">3</span> Premium Packing</div>
-                        <div class="service-row"><span class="service-num">4</span> After Sale Services</div>
-                        <div class="service-row"><span class="service-num">5</span> 100% Original Products</div>
-                        <div class="service-row"><span class="service-num">6</span> Ready to go Inventory</div>
-                        <div class="service-row"><span class="service-num">7</span> Pan-India Reach</div>
-                        <div class="service-row"><span class="service-num">8</span> 24x7 Support</div>
+                        <a href="service-branding-customization.php" class="service-row" style="text-decoration: none; color: inherit; display: block; cursor: pointer; transition: all 0.3s ease;"><span class="service-num">1</span> Branding & Customization</a>
+                        <a href="service-logistic.php" class="service-row" style="text-decoration: none; color: inherit; display: block; cursor: pointer; transition: all 0.3s ease;"><span class="service-num">2</span> Logistic Services</a>
+                        <a href="service-premium-packing.php" class="service-row" style="text-decoration: none; color: inherit; display: block; cursor: pointer; transition: all 0.3s ease;"><span class="service-num">3</span> Premium Packing</a>
+                        <a href="service-after-sale.php" class="service-row" style="text-decoration: none; color: inherit; display: block; cursor: pointer; transition: all 0.3s ease;"><span class="service-num">4</span> After Sale Services</a>
+                        <a href="service-original-products.php" class="service-row" style="text-decoration: none; color: inherit; display: block; cursor: pointer; transition: all 0.3s ease;"><span class="service-num">5</span> 100% Original Products</a>
+                        <a href="service-inventory.php" class="service-row" style="text-decoration: none; color: inherit; display: block; cursor: pointer; transition: all 0.3s ease;"><span class="service-num">6</span> Ready to go Inventory</a>
+                        <a href="service-pan-india.php" class="service-row" style="text-decoration: none; color: inherit; display: block; cursor: pointer; transition: all 0.3s ease;"><span class="service-num">7</span> Pan-India Reach</a>
+                        <a href="service-support.php" class="service-row" style="text-decoration: none; color: inherit; display: block; cursor: pointer; transition: all 0.3s ease;"><span class="service-num">8</span> 24x7 Support</a>
                     </div>
                 </div>
             </div>
@@ -433,6 +562,275 @@ if (!$brandDb->connect_error) {
 
         <?php include('common/footer.php'); ?>
 
+        <!-- Dynamic Hero Carousel JavaScript -->
+        <script>
+            // Hero Carousel State
+            let heroState = {
+                current: 0,
+                totalSlides: 3,
+                autoplayInterval: null,
+                autoplayDelay: 5000
+            };
+
+            // Change Hero Slide
+            function changeHeroSlide(direction) {
+                heroState.current += direction;
+                if (heroState.current < 0) heroState.current = heroState.totalSlides - 1;
+                if (heroState.current >= heroState.totalSlides) heroState.current = 0;
+                
+                updateHeroSlide();
+                resetAutoplay();
+            }
+
+            // Go to specific hero slide
+            function goToHeroSlide(slideIndex) {
+                heroState.current = slideIndex;
+                updateHeroSlide();
+                resetAutoplay();
+            }
+
+            // Update hero slide display
+            function updateHeroSlide() {
+                // Update slide visibility
+                document.querySelectorAll('.hero-slide').forEach((slide, index) => {
+                    if (index === heroState.current) {
+                        slide.classList.add('active');
+                        slide.style.opacity = '1';
+                        slide.style.transform = 'translateX(0)';
+                    } else {
+                        slide.classList.remove('active');
+                        slide.style.opacity = '0';
+                        slide.style.transform = 'translateX(100px)';
+                    }
+                });
+
+                // Update dots
+                document.querySelectorAll('.slider-dots .dot').forEach((dot, index) => {
+                    if (index === heroState.current) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+            }
+
+            // Start autoplay
+            function startAutoplay() {
+                heroState.autoplayInterval = setInterval(() => {
+                    changeHeroSlide(1);
+                }, heroState.autoplayDelay);
+            }
+
+            // Reset autoplay timer
+            function resetAutoplay() {
+                clearInterval(heroState.autoplayInterval);
+                startAutoplay();
+            }
+
+            // Initialize carousel on page load
+            document.addEventListener('DOMContentLoaded', function() {
+                // Set initial styles
+                document.querySelectorAll('.hero-slide').forEach((slide, index) => {
+                    slide.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+                    if (index !== 0) {
+                        slide.style.opacity = '0';
+                        slide.style.transform = 'translateX(100px)';
+                    }
+                });
+
+                // Start autoplay
+                startAutoplay();
+
+                // Pause autoplay on hover
+                document.querySelector('.hero-carousel-container').addEventListener('mouseenter', () => {
+                    clearInterval(heroState.autoplayInterval);
+                });
+
+                // Resume autoplay on mouse leave
+                document.querySelector('.hero-carousel-container').addEventListener('mouseleave', () => {
+                    startAutoplay();
+                });
+            });
+
+            // Touch support for mobile
+            let touchStartX = 0;
+            let touchEndX = 0;
+
+            document.querySelector('.hero-carousel-container').addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, false);
+
+            document.querySelector('.hero-carousel-container').addEventListener('touchend', (e) => {
+                touchEndX = e.changedTouches[0].screenX;
+                if (touchStartX - touchEndX > 50) changeHeroSlide(1); // Swipe left
+                if (touchEndX - touchStartX > 50) changeHeroSlide(-1); // Swipe right
+            }, false);
+        </script>
+
+        <!-- Dynamic Hero Carousel Styles -->
+        <style>
+            .hero-carousel-wrapper {
+                position: relative;
+                width: 100%;
+                background: #1B1B1B;
+                min-height: 600px;
+                overflow: hidden;
+            }
+
+            .hero-carousel-container {
+                position: relative;
+                width: 100%;
+                min-height: 600px;
+                display: flex;
+                align-items: center;
+            }
+
+            .hero-slide {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: stretch;
+                justify-content: stretch;
+                padding: 0;
+                background: none;
+                opacity: 0;
+                transform: translateX(100px);
+                transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+                z-index: 1;
+                overflow: hidden;
+            }
+            .hero-slide svg {
+                width: 100%;
+                height: 100%;
+                min-height: 480px;
+            }
+
+            .hero-slide.active {
+                opacity: 1;
+                transform: translateX(0);
+                z-index: 2;
+            }
+
+            .hero-nav-btn {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                z-index: 10;
+                background: rgba(255, 255, 255, 0.2);
+                color: white;
+                border: 2px solid rgba(255, 255, 255, 0.4);
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                cursor: pointer;
+                font-size: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.3s ease;
+                backdrop-filter: blur(10px);
+            }
+
+            .hero-nav-btn:hover {
+                background: rgba(255, 199, 0, 0.3);
+                border-color: #ffc700;
+                transform: translateY(-50%) scale(1.1);
+            }
+
+            .hero-nav-btn.prev {
+                left: 30px;
+            }
+
+            .hero-nav-btn.next {
+                right: 30px;
+            }
+
+            .slider-dots {
+                position: absolute;
+                bottom: 30px;
+                left: 50%;
+                transform: translateX(-50%);
+                display: flex;
+                gap: 12px;
+                z-index: 10;
+            }
+
+            .slider-dots .dot {
+                width: 14px;
+                height: 14px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.4);
+                cursor: pointer;
+                transition: all 0.4s ease;
+                border: 2px solid rgba(255, 255, 255, 0.6);
+            }
+
+            .slider-dots .dot.active {
+                background: #ffc700;
+                border-color: #ffc700;
+                width: 18px;
+                height: 18px;
+                box-shadow: 0 0 15px rgba(255, 199, 0, 0.5);
+            }
+
+            .slider-dots .dot:hover {
+                background: rgba(255, 255, 255, 0.6);
+                transform: scale(1.2);
+            }
+
+            @media (max-width: 1024px) {
+                .hero-slide {
+                    min-height: auto;
+                }
+
+                .hero-nav-btn {
+                    width: 45px;
+                    height: 45px;
+                    font-size: 20px;
+                }
+
+                .hero-nav-btn.prev {
+                    left: 15px;
+                }
+
+                .hero-nav-btn.next {
+                    right: 15px;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .hero-carousel-wrapper {
+                    min-height: 260px;
+                }
+
+                .hero-slide {
+                    min-height: 260px;
+                }
+                .hero-slide svg {
+                    min-height: 260px;
+                }
+
+                .hero-nav-btn {
+                    display: none;
+                }
+            }
+
+            @keyframes slideIn {
+                from {
+                    opacity: 0;
+                    transform: translateX(100px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+
+            .hero-slide.active {
+                animation: slideIn 0.8s ease forwards;
+            }
+        </style>
 
 
 </body>

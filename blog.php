@@ -27,28 +27,24 @@ $result = $conn->query("SELECT * FROM blogs WHERE status = 'published' ORDER BY 
 
         <main id="main">
 
-            <!-- Header Section -->
-            <section class="page-section bg-gray-light-1 bg-light-alpha-90 parallax-5" style="background-image: url(images/full-width-images/section-bg-1.jpg)" id="home">
-                <div class="container position-relative pt-30 pt-sm-50">
-                    <div class="text-center">
-                        <div class="row">
-                            <div class="col-md-8 offset-md-2">
-                                <h1 class="hs-title-1 mb-20">
-                                    <span class="wow charsAnimIn" data-splitting="chars">Blog</span>
-                                </h1>
-                                <div class="row">
-                                    <div class="col-md-10 offset-md-1 col-lg-8 offset-lg-2">
-                                        <p class="section-descr mb-0 wow fadeIn" data-wow-delay="0.2s" data-wow-duration="1.2s">
-                                            Latest Insights, Tips, and Updates from SGIPL
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            <!-- Modern Hero Section -->
+            <section class="hero" id="blog">
+                <div class="hero-content">
+                    <div class="hero-badge">✦ Our Blog</div>
+                    <h1>Latest Insights, Tips, and <em>Updates</em></h1>
+                    <p>Latest Insights, Tips, and Updates from SGIPL</p>
+                    <div class="hero-btns">
+                        <button class="btn-primary" onclick="window.location.href='contact.php'">Subscribe →</button>
+                        <button class="btn-outline" onclick="window.location.href='events.php'">View News</button>
                     </div>
                 </div>
+                <div class="hero-right">
+                    <div class="stat-card"><div class="num">100+</div><div class="lbl">Articles</div></div>
+                    <div class="stat-card"><div class="num">50K+</div><div class="lbl">Monthly Reads</div></div>
+                    <div class="stat-card"><div class="num">10</div><div class="lbl">Categories</div></div>
+                </div>
             </section>
-            <!-- End Header Section -->
+            <!-- End Modern Hero Section -->
 
 
             <!-- Blog Section -->
