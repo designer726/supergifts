@@ -208,27 +208,29 @@ $productCount = $products->num_rows;
                         <div class="row g-4">
                             <?php while ($product = $products->fetch_assoc()): ?>
                                 <div class="col-lg-3 col-md-4 col-sm-6">
-                                    <div class="product-card">
-                                        <div class="product-img-wrap">
-                                            <?php if ($product['image']): ?>
-                                                <img src="<?= htmlspecialchars($product['image']) ?>" alt="<?= htmlspecialchars($product['name']) ?>">
-                                            <?php else: ?>
-                                                <div style="text-align:center;color:#ccc;">
-                                                    <svg width="48" height="48" fill="currentColor" viewBox="0 0 16 16">
-                                                        <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" />
-                                                        <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z" />
-                                                    </svg>
-                                                    <div style="font-size:11px;margin-top:4px;">No Image</div>
-                                                </div>
-                                            <?php endif; ?>
+                                    <a href="product-detail.php?id=<?= $product['id'] ?>" style="text-decoration:none;color:inherit;display:block;">
+                                        <div class="product-card">
+                                            <div class="product-img-wrap">
+                                                <?php if ($product['image']): ?>
+                                                    <img src="<?= htmlspecialchars($product['image']) ?>" alt="<?= htmlspecialchars($product['name']) ?>">
+                                                <?php else: ?>
+                                                    <div style="text-align:center;color:#ccc;">
+                                                        <svg width="48" height="48" fill="currentColor" viewBox="0 0 16 16">
+                                                            <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" />
+                                                            <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z" />
+                                                        </svg>
+                                                        <div style="font-size:11px;margin-top:4px;">No Image</div>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </div>
+                                            <div class="product-info">
+                                                <div class="product-name"><?= htmlspecialchars($product['name']) ?></div>
+                                                <?php if ($product['mrp'] > 0): ?>
+                                                    <div class="product-mrp">MRP: ₹<?= number_format($product['mrp'], 2) ?></div>
+                                                <?php endif; ?>
+                                            </div>
                                         </div>
-                                        <div class="product-info">
-                                            <div class="product-name"><?= htmlspecialchars($product['name']) ?></div>
-                                            <?php if ($product['mrp'] > 0): ?>
-                                                <div class="product-mrp">MRP: ₹<?= number_format($product['mrp'], 2) ?></div>
-                                            <?php endif; ?>
-                                        </div>
-                                    </div>
+                                    </a>
                                 </div>
                             <?php endwhile; ?>
                         </div>

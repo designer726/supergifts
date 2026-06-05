@@ -4,7 +4,8 @@ $pagename = basename($_SERVER['PHP_SELF']);
 $brandPartners = [];
 $alsoDealWith = [];
 
-function findBrandLogoPath($imageno) {
+function findBrandLogoPath($imageno)
+{
     $root = rtrim($_SERVER['DOCUMENT_ROOT'], '/\\') . '/supergifts/';
     foreach (['.jpg', '.jpeg', '.png', '.webp'] as $ext) {
         $file = $root . 'images/brandlogo/image' . intval($imageno) . $ext;
@@ -62,42 +63,42 @@ if (!$brandDb->connect_error) {
                     <!-- Hero Slide 1 -->
                     <section class="hero-slide active" data-slide="0" style="background:none;padding:0;">
                         <svg width="100%" viewBox="0 0 1200 480" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;">
-                            <rect width="1200" height="480" fill="#1B4B7C"/>
-                            <circle cx="1050" cy="240" r="340" fill="#254668" opacity="0.5"/>
-                            <circle cx="1100" cy="200" r="220" fill="#2D6A9F" opacity="0.35"/>
-                            <ellipse cx="600" cy="520" rx="700" ry="180" fill="#0F2A3E" opacity="0.4"/>
-                            <circle cx="80" cy="80" r="120" fill="#FFFFFF" opacity="0.08"/>
-                            <circle cx="80" cy="80" r="70" fill="#FFFFFF" opacity="0.06"/>
-                            <circle cx="420" cy="60" r="18" fill="#FFFFFF" opacity="0.15"/>
-                            <circle cx="580" cy="400" r="30" fill="#FFFFFF" opacity="0.08"/>
-                            <circle cx="200" cy="380" r="12" fill="#FFFFFF" opacity="0.12"/>
-                            <circle cx="700" cy="30" r="10" fill="#FFFFFF" opacity="0.14"/>
-                            <polygon points="860,0 1200,0 1200,130 860,130" fill="#D4AF37" opacity="0.15"/>
-                            <polygon points="0,380 340,480 0,480" fill="#D4AF37" opacity="0.12"/>
-                            <rect x="820" y="100" width="240" height="200" rx="12" fill="#FFFFFF" opacity="0.12"/>
-                            <rect x="810" y="88" width="260" height="32" rx="8" fill="#FFFFFF" opacity="0.15"/>
-                            <line x1="940" y1="88" x2="940" y2="300" stroke="#D4AF37" stroke-width="5" opacity="0.25"/>
-                            <line x1="810" y1="190" x2="1070" y2="190" stroke="#D4AF37" stroke-width="5" opacity="0.25"/>
-                            <ellipse cx="910" cy="86" rx="28" ry="16" fill="#D4AF37" opacity="0.3"/>
-                            <ellipse cx="970" cy="86" rx="28" ry="16" fill="#D4AF37" opacity="0.3"/>
-                            <circle cx="940" cy="86" r="10" fill="#D4AF37" opacity="0.35"/>
-                            <rect x="820" y="340" width="110" height="52" rx="10" fill="#D4AF37" opacity="0.15"/>
+                            <rect width="1200" height="480" fill="#1B4B7C" />
+                            <circle cx="1050" cy="240" r="340" fill="#254668" opacity="0.5" />
+                            <circle cx="1100" cy="200" r="220" fill="#2D6A9F" opacity="0.35" />
+                            <ellipse cx="600" cy="520" rx="700" ry="180" fill="#0F2A3E" opacity="0.4" />
+                            <circle cx="80" cy="80" r="120" fill="#FFFFFF" opacity="0.08" />
+                            <circle cx="80" cy="80" r="70" fill="#FFFFFF" opacity="0.06" />
+                            <circle cx="420" cy="60" r="18" fill="#FFFFFF" opacity="0.15" />
+                            <circle cx="580" cy="400" r="30" fill="#FFFFFF" opacity="0.08" />
+                            <circle cx="200" cy="380" r="12" fill="#FFFFFF" opacity="0.12" />
+                            <circle cx="700" cy="30" r="10" fill="#FFFFFF" opacity="0.14" />
+                            <polygon points="860,0 1200,0 1200,130 860,130" fill="#D4AF37" opacity="0.15" />
+                            <polygon points="0,380 340,480 0,480" fill="#D4AF37" opacity="0.12" />
+                            <rect x="820" y="100" width="240" height="200" rx="12" fill="#FFFFFF" opacity="0.12" />
+                            <rect x="810" y="88" width="260" height="32" rx="8" fill="#FFFFFF" opacity="0.15" />
+                            <line x1="940" y1="88" x2="940" y2="300" stroke="#D4AF37" stroke-width="5" opacity="0.25" />
+                            <line x1="810" y1="190" x2="1070" y2="190" stroke="#D4AF37" stroke-width="5" opacity="0.25" />
+                            <ellipse cx="910" cy="86" rx="28" ry="16" fill="#D4AF37" opacity="0.3" />
+                            <ellipse cx="970" cy="86" rx="28" ry="16" fill="#D4AF37" opacity="0.3" />
+                            <circle cx="940" cy="86" r="10" fill="#D4AF37" opacity="0.35" />
+                            <rect x="820" y="340" width="110" height="52" rx="10" fill="#D4AF37" opacity="0.15" />
                             <text x="875" y="360" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-weight="700" fill="#D4AF37">500+</text>
                             <text x="875" y="381" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#FFFFFF" opacity="0.9">Brand Partners</text>
-                            <rect x="950" y="340" width="110" height="52" rx="10" fill="#D4AF37" opacity="0.15"/>
+                            <rect x="950" y="340" width="110" height="52" rx="10" fill="#D4AF37" opacity="0.15" />
                             <text x="1005" y="360" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-weight="700" fill="#D4AF37">10K+</text>
                             <text x="1005" y="381" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#FFFFFF" opacity="0.9">Orders Delivered</text>
-                            <rect x="1080" y="340" width="100" height="52" rx="10" fill="#D4AF37" opacity="0.15"/>
+                            <rect x="1080" y="340" width="100" height="52" rx="10" fill="#D4AF37" opacity="0.15" />
                             <text x="1130" y="360" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-weight="700" fill="#D4AF37">98%</text>
                             <text x="1130" y="381" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#FFFFFF" opacity="0.9">Satisfaction</text>
-                            <rect x="56" y="68" width="234" height="26" rx="13" fill="#1A1A1A" opacity="0.25"/>
-                            <text x="173" y="85" text-anchor="middle" font-family="Arial, sans-serif" font-size="10.5" font-weight="700" fill="#D4AF37" letter-spacing="1.2">&#x2726;  INDIA'S #1 B2B GIFTING</text>
+                            <rect x="56" y="68" width="234" height="26" rx="13" fill="#1A1A1A" opacity="0.25" />
+                            <text x="173" y="85" text-anchor="middle" font-family="Arial, sans-serif" font-size="10.5" font-weight="700" fill="#D4AF37" letter-spacing="1.2">&#x2726; INDIA'S #1 B2B GIFTING</text>
                             <text x="56" y="168" font-family="Georgia, serif" font-size="66" font-weight="700" fill="#FFFFFF">Gifts That</text>
                             <text x="56" y="248" font-family="Georgia, serif" font-size="66" font-weight="700" fill="#D4AF37" font-style="italic">Inspire</text>
                             <text x="56" y="318" font-family="Georgia, serif" font-size="54" font-weight="700" fill="#FFFFFF">&amp; Build Bonds</text>
                             <text x="56" y="360" font-family="Arial, sans-serif" font-size="15" fill="#FFFFFF" opacity="0.85">Premium B2B gifting solutions — branding to last-mile delivery.</text>
-                            <circle cx="1130" cy="100" r="52" fill="#1A1A1A" opacity="0.15"/>
-                            <circle cx="1130" cy="100" r="52" fill="none" stroke="#FFFFFF" stroke-width="1.2" opacity="0.3"/>
+                            <circle cx="1130" cy="100" r="52" fill="#1A1A1A" opacity="0.15" />
+                            <circle cx="1130" cy="100" r="52" fill="none" stroke="#FFFFFF" stroke-width="1.2" opacity="0.3" />
                             <text x="1130" y="90" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-weight="700" fill="#FFFFFF">20+</text>
                             <text x="1130" y="107" text-anchor="middle" font-family="Arial, sans-serif" font-size="9.5" fill="#FFFFFF" opacity="0.7">YRS EXP</text>
                             <text x="56" y="462" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#FFFFFF" opacity="0.6" letter-spacing="2">SUPERGIFTS.IN</text>
@@ -107,39 +108,39 @@ if (!$brandDb->connect_error) {
                     <!-- Hero Slide 2 -->
                     <section class="hero-slide" data-slide="1" style="background:none;padding:0;">
                         <svg width="100%" viewBox="0 0 1200 480" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;">
-                            <rect width="1200" height="480" fill="#1B4B7C"/>
-                            <polygon points="620,0 1200,0 1200,480 700,480" fill="#254668"/>
-                            <ellipse cx="1080" cy="100" rx="260" ry="180" fill="#2D6A9F" opacity="0.4"/>
-                            <ellipse cx="1120" cy="80" rx="160" ry="100" fill="#3D7FAF" opacity="0.25"/>
-                            <ellipse cx="120" cy="430" rx="200" ry="120" fill="#D4AF37" opacity="0.08"/>
-                            <circle cx="640" cy="240" r="200" fill="#D4AF37" opacity="0.03"/>
-                            <circle cx="640" cy="240" r="150" fill="#D4AF37" opacity="0.02"/>
-                            <polygon points="300,0 360,52 300,104 240,52" fill="#D4AF37" opacity="0.08"/>
-                            <polygon points="360,52 420,0 480,52 420,104" fill="#D4AF37" opacity="0.06"/>
-                            <polygon points="500,10 560,62 500,114 440,62" fill="#D4AF37" opacity="0.04"/>
-                            <circle cx="980" cy="260" r="110" fill="none" stroke="#D4AF37" stroke-width="2" opacity="0.15"/>
-                            <circle cx="980" cy="260" r="88" fill="none" stroke="#D4AF37" stroke-width="1" opacity="0.08"/>
+                            <rect width="1200" height="480" fill="#1B4B7C" />
+                            <polygon points="620,0 1200,0 1200,480 700,480" fill="#254668" />
+                            <ellipse cx="1080" cy="100" rx="260" ry="180" fill="#2D6A9F" opacity="0.4" />
+                            <ellipse cx="1120" cy="80" rx="160" ry="100" fill="#3D7FAF" opacity="0.25" />
+                            <ellipse cx="120" cy="430" rx="200" ry="120" fill="#D4AF37" opacity="0.08" />
+                            <circle cx="640" cy="240" r="200" fill="#D4AF37" opacity="0.03" />
+                            <circle cx="640" cy="240" r="150" fill="#D4AF37" opacity="0.02" />
+                            <polygon points="300,0 360,52 300,104 240,52" fill="#D4AF37" opacity="0.08" />
+                            <polygon points="360,52 420,0 480,52 420,104" fill="#D4AF37" opacity="0.06" />
+                            <polygon points="500,10 560,62 500,114 440,62" fill="#D4AF37" opacity="0.04" />
+                            <circle cx="980" cy="260" r="110" fill="none" stroke="#D4AF37" stroke-width="2" opacity="0.15" />
+                            <circle cx="980" cy="260" r="88" fill="none" stroke="#D4AF37" stroke-width="1" opacity="0.08" />
                             <text x="980" y="250" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#D4AF37" opacity="0.4" letter-spacing="2">CO-BRANDING</text>
                             <text x="980" y="270" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#D4AF37" opacity="0.25">ENGRAVING</text>
                             <text x="980" y="290" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#D4AF37" opacity="0.15">EMBOSSING</text>
-                            <circle cx="750" cy="420" r="6" fill="#D4AF37" opacity="0.2"/>
-                            <circle cx="800" cy="400" r="4" fill="#D4AF37" opacity="0.15"/>
-                            <circle cx="850" cy="430" r="8" fill="#D4AF37" opacity="0.1"/>
-                            <circle cx="1100" cy="380" r="10" fill="#D4AF37" opacity="0.1"/>
-                            <circle cx="1150" cy="330" r="5" fill="#D4AF37" opacity="0.15"/>
-                            <rect x="56" y="68" width="242" height="26" rx="13" fill="#FFFFFF" opacity="0.12"/>
-                            <text x="177" y="85" text-anchor="middle" font-family="Arial, sans-serif" font-size="10.5" font-weight="700" fill="#D4AF37" letter-spacing="1.2">&#x2726;  CUSTOMIZATION EXCELLENCE</text>
+                            <circle cx="750" cy="420" r="6" fill="#D4AF37" opacity="0.2" />
+                            <circle cx="800" cy="400" r="4" fill="#D4AF37" opacity="0.15" />
+                            <circle cx="850" cy="430" r="8" fill="#D4AF37" opacity="0.1" />
+                            <circle cx="1100" cy="380" r="10" fill="#D4AF37" opacity="0.1" />
+                            <circle cx="1150" cy="330" r="5" fill="#D4AF37" opacity="0.15" />
+                            <rect x="56" y="68" width="242" height="26" rx="13" fill="#FFFFFF" opacity="0.12" />
+                            <text x="177" y="85" text-anchor="middle" font-family="Arial, sans-serif" font-size="10.5" font-weight="700" fill="#D4AF37" letter-spacing="1.2">&#x2726; CUSTOMIZATION EXCELLENCE</text>
                             <text x="56" y="170" font-family="Georgia, serif" font-size="64" font-weight="700" fill="#FFFFFF">Your Brand,</text>
                             <text x="56" y="244" font-family="Georgia, serif" font-size="64" font-weight="700" fill="#FFFFFF">Our</text>
                             <text x="56" y="318" font-family="Georgia, serif" font-size="64" font-weight="700" fill="#D4AF37" font-style="italic">Expertise</text>
                             <text x="56" y="358" font-family="Arial, sans-serif" font-size="15" fill="#FFFFFF" opacity="0.85">In-house branding, embossing &amp; engraving — concept to delivery.</text>
-                            <rect x="56" y="390" width="106" height="54" rx="10" fill="#D4AF37" opacity="0.12"/>
+                            <rect x="56" y="390" width="106" height="54" rx="10" fill="#D4AF37" opacity="0.12" />
                             <text x="109" y="413" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-weight="700" fill="#D4AF37">100%</text>
                             <text x="109" y="433" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#FFFFFF" opacity="0.85">Customizable</text>
-                            <rect x="176" y="390" width="90" height="54" rx="10" fill="#D4AF37" opacity="0.12"/>
+                            <rect x="176" y="390" width="90" height="54" rx="10" fill="#D4AF37" opacity="0.12" />
                             <text x="221" y="413" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-weight="700" fill="#D4AF37">8</text>
                             <text x="221" y="433" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#FFFFFF" opacity="0.85">Core Services</text>
-                            <rect x="280" y="390" width="90" height="54" rx="10" fill="#D4AF37" opacity="0.12"/>
+                            <rect x="280" y="390" width="90" height="54" rx="10" fill="#D4AF37" opacity="0.12" />
                             <text x="325" y="413" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-weight="700" fill="#D4AF37">24x7</text>
                             <text x="325" y="433" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#FFFFFF" opacity="0.85">Support</text>
                             <text x="56" y="466" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#FFFFFF" opacity="0.7" letter-spacing="2">SUPERGIFTS.IN</text>
@@ -149,46 +150,46 @@ if (!$brandDb->connect_error) {
                     <!-- Hero Slide 3 -->
                     <section class="hero-slide" data-slide="2" style="background:none;padding:0;">
                         <svg width="100%" viewBox="0 0 1200 480" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;">
-                            <rect width="1200" height="480" fill="#1B4B7C"/>
-                            <polygon points="550,0 1200,0 1200,480 650,480" fill="#254668" opacity="0.8"/>
-                            <circle cx="1050" cy="140" r="200" fill="#D4AF37" opacity="0.12"/>
-                            <circle cx="1050" cy="140" r="130" fill="#D4AF37" opacity="0.1"/>
-                            <circle cx="1050" cy="140" r="70" fill="#D4AF37" opacity="0.12"/>
-                            <ellipse cx="600" cy="560" rx="700" ry="200" fill="#0F2A3E" opacity="0.35"/>
-                            <circle cx="0" cy="0" r="180" fill="none" stroke="#D4AF37" stroke-width="1" opacity="0.1"/>
-                            <circle cx="0" cy="0" r="130" fill="none" stroke="#D4AF37" stroke-width="0.8" opacity="0.06"/>
-                            <path d="M 700 360 Q 790 310 860 260 Q 940 200 1010 150 Q 1070 110 1110 70" stroke="#D4AF37" stroke-width="2" fill="none" opacity="0.3" stroke-dasharray="8,5"/>
-                            <path d="M 680 380 Q 760 320 840 270 Q 920 210 990 160 Q 1060 120 1100 90" stroke="#254668" stroke-width="1.2" fill="none" opacity="0.15" stroke-dasharray="5,7"/>
-                            <circle cx="710" cy="360" r="8" fill="#D4AF37" opacity="0.8"/>
-                            <circle cx="710" cy="360" r="18" fill="#D4AF37" opacity="0.12"/>
+                            <rect width="1200" height="480" fill="#1B4B7C" />
+                            <polygon points="550,0 1200,0 1200,480 650,480" fill="#254668" opacity="0.8" />
+                            <circle cx="1050" cy="140" r="200" fill="#D4AF37" opacity="0.12" />
+                            <circle cx="1050" cy="140" r="130" fill="#D4AF37" opacity="0.1" />
+                            <circle cx="1050" cy="140" r="70" fill="#D4AF37" opacity="0.12" />
+                            <ellipse cx="600" cy="560" rx="700" ry="200" fill="#0F2A3E" opacity="0.35" />
+                            <circle cx="0" cy="0" r="180" fill="none" stroke="#D4AF37" stroke-width="1" opacity="0.1" />
+                            <circle cx="0" cy="0" r="130" fill="none" stroke="#D4AF37" stroke-width="0.8" opacity="0.06" />
+                            <path d="M 700 360 Q 790 310 860 260 Q 940 200 1010 150 Q 1070 110 1110 70" stroke="#D4AF37" stroke-width="2" fill="none" opacity="0.3" stroke-dasharray="8,5" />
+                            <path d="M 680 380 Q 760 320 840 270 Q 920 210 990 160 Q 1060 120 1100 90" stroke="#254668" stroke-width="1.2" fill="none" opacity="0.15" stroke-dasharray="5,7" />
+                            <circle cx="710" cy="360" r="8" fill="#D4AF37" opacity="0.8" />
+                            <circle cx="710" cy="360" r="18" fill="#D4AF37" opacity="0.12" />
                             <text x="730" y="358" font-family="Arial, sans-serif" font-size="11" fill="#D4AF37" opacity="0.7">Mumbai</text>
-                            <circle cx="870" cy="255" r="8" fill="#D4AF37" opacity="0.8"/>
-                            <circle cx="870" cy="255" r="18" fill="#D4AF37" opacity="0.12"/>
+                            <circle cx="870" cy="255" r="8" fill="#D4AF37" opacity="0.8" />
+                            <circle cx="870" cy="255" r="18" fill="#D4AF37" opacity="0.12" />
                             <text x="892" y="253" font-family="Arial, sans-serif" font-size="11" fill="#D4AF37" opacity="0.7">Hyderabad</text>
-                            <circle cx="1000" cy="160" r="8" fill="#D4AF37" opacity="0.8"/>
-                            <circle cx="1000" cy="160" r="18" fill="#D4AF37" opacity="0.12"/>
+                            <circle cx="1000" cy="160" r="8" fill="#D4AF37" opacity="0.8" />
+                            <circle cx="1000" cy="160" r="18" fill="#D4AF37" opacity="0.12" />
                             <text x="1020" y="158" font-family="Arial, sans-serif" font-size="11" fill="#D4AF37" opacity="0.7">Bangalore</text>
-                            <circle cx="1100" cy="80" r="8" fill="#D4AF37" opacity="0.8"/>
-                            <circle cx="1100" cy="80" r="18" fill="#D4AF37" opacity="0.12"/>
+                            <circle cx="1100" cy="80" r="8" fill="#D4AF37" opacity="0.8" />
+                            <circle cx="1100" cy="80" r="18" fill="#D4AF37" opacity="0.12" />
                             <text x="1118" y="78" font-family="Arial, sans-serif" font-size="11" fill="#D4AF37" opacity="0.7">Delhi</text>
-                            <circle cx="640" cy="50" r="5" fill="#254668" opacity="0.25"/>
-                            <circle cx="580" cy="90" r="3" fill="#D4AF37" opacity="0.2"/>
-                            <circle cx="400" cy="400" r="6" fill="#254668" opacity="0.15"/>
-                            <rect x="0" y="0" width="6" height="480" fill="#254668" opacity="0.4"/>
-                            <rect x="0" y="0" width="3" height="480" fill="#D4AF37" opacity="0.3"/>
-                            <rect x="60" y="68" width="248" height="26" rx="13" fill="#FFFFFF" opacity="0.12"/>
-                            <text x="184" y="85" text-anchor="middle" font-family="Arial, sans-serif" font-size="10.5" font-weight="700" fill="#D4AF37" letter-spacing="1.2">&#x2726;  FAST &amp; RELIABLE DELIVERY</text>
+                            <circle cx="640" cy="50" r="5" fill="#254668" opacity="0.25" />
+                            <circle cx="580" cy="90" r="3" fill="#D4AF37" opacity="0.2" />
+                            <circle cx="400" cy="400" r="6" fill="#254668" opacity="0.15" />
+                            <rect x="0" y="0" width="6" height="480" fill="#254668" opacity="0.4" />
+                            <rect x="0" y="0" width="3" height="480" fill="#D4AF37" opacity="0.3" />
+                            <rect x="60" y="68" width="248" height="26" rx="13" fill="#FFFFFF" opacity="0.12" />
+                            <text x="184" y="85" text-anchor="middle" font-family="Arial, sans-serif" font-size="10.5" font-weight="700" fill="#D4AF37" letter-spacing="1.2">&#x2726; FAST &amp; RELIABLE DELIVERY</text>
                             <text x="60" y="170" font-family="Georgia, serif" font-size="58" font-weight="700" fill="#FFFFFF">Pan-India Logistics</text>
                             <text x="60" y="240" font-family="Georgia, serif" font-size="58" font-weight="700" fill="#D4AF37" font-style="italic">At Your Service</text>
                             <text x="60" y="280" font-family="Arial, sans-serif" font-size="15" fill="#FFFFFF" opacity="0.9">Nationwide delivery · Real-time tracking · Rush orders.</text>
                             <text x="60" y="302" font-family="Arial, sans-serif" font-size="15" fill="#FFFFFF" opacity="0.85">Trusted by 500+ brands across India.</text>
-                            <rect x="60" y="330" width="106" height="54" rx="10" fill="#D4AF37" opacity="0.12"/>
+                            <rect x="60" y="330" width="106" height="54" rx="10" fill="#D4AF37" opacity="0.12" />
                             <text x="113" y="353" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-weight="700" fill="#D4AF37">20+</text>
                             <text x="113" y="374" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#FFFFFF" opacity="0.85">Yrs Experience</text>
-                            <rect x="180" y="330" width="106" height="54" rx="10" fill="#D4AF37" opacity="0.12"/>
+                            <rect x="180" y="330" width="106" height="54" rx="10" fill="#D4AF37" opacity="0.12" />
                             <text x="233" y="353" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-weight="700" fill="#D4AF37">98%</text>
                             <text x="233" y="374" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#FFFFFF" opacity="0.85">On-Time Delivery</text>
-                            <rect x="300" y="330" width="122" height="54" rx="10" fill="#D4AF37" opacity="0.12"/>
+                            <rect x="300" y="330" width="122" height="54" rx="10" fill="#D4AF37" opacity="0.12" />
                             <text x="361" y="353" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-weight="700" fill="#D4AF37">25K SFT</text>
                             <text x="361" y="374" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#FFFFFF" opacity="0.85">Warehouse</text>
                             <text x="60" y="464" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#FFFFFF" opacity="0.7" letter-spacing="2">SUPERGIFTS.IN</text>
@@ -265,15 +266,54 @@ if (!$brandDb->connect_error) {
                     <div class="section-title">New Brand Products <span class="pill">Premium Collection</span></div>
                     <a href="products.php" class="see-all">Browse All →</a>
                 </div>
-                
+
                 <div class="carousel-container">
                     <button class="carousel-btn prev" onclick="scrollCarousel(-1)">❮</button>
-                    
+
                     <div class="carousel-track" id="productCarousel">
                         <!-- Product 1 -->
-                        <div class="carousel-slide product-card">
+                        <!-- <div class="carousel-slide product-card">
                             <div class="product-image" style="background: linear-gradient(135deg, #0D2B55, #1A4080);">
                                 <span class="product-icon">🎁</span>
+                            </div>
+                            <div class="product-body">
+                                <div class="product-tag">Premium</div>
+                                <h4 class="product-name">Leather Portfolio</h4>
+                                <p class="product-desc">Premium leather portfolio with custom branding</p>
+                                <div class="product-price">₹2,499</div>
+                            </div>
+                        </div> -->
+
+                        <!-- Product 2 -->
+                        <!-- <div class="carousel-slide product-card">
+                            <div class="product-image" style="background: linear-gradient(135deg, #1A4080, #0D2B55);">
+                                <span class="product-icon">💼</span>
+                            </div>
+                            <div class="product-body">
+                                <div class="product-tag">Corporate</div>
+                                <h4 class="product-name">Executive Pen Set</h4>
+                                <p class="product-desc">Luxury pen set with engraving options</p>
+                                <div class="product-price">₹1,299</div>
+                            </div>
+                        </div> -->
+
+                        <!-- Product 3 -->
+                        <!-- <div class="carousel-slide product-card">
+                            <div class="product-image" style="background: linear-gradient(135deg, #D4AF37, #B8962E);">
+                                <span class="product-icon">🏆</span>
+                            </div>
+                            <div class="product-body">
+                                <div class="product-tag">Best Seller</div>
+                                <h4 class="product-name">Crystal Trophy</h4>
+                                <p class="product-desc">Elegant crystal trophy for awards</p>
+                                <div class="product-price">₹3,999</div>
+                            </div>
+                        </div> -->
+
+                        <!-- Product 1 -->
+                        <div class="carousel-slide product-card">
+                            <div class="product-image">
+                                <img src="images/products/prod-1-1777107248-69ec8130029af.png" alt="Leather Portfolio">
                             </div>
                             <div class="product-body">
                                 <div class="product-tag">Premium</div>
@@ -285,8 +325,8 @@ if (!$brandDb->connect_error) {
 
                         <!-- Product 2 -->
                         <div class="carousel-slide product-card">
-                            <div class="product-image" style="background: linear-gradient(135deg, #1A4080, #0D2B55);">
-                                <span class="product-icon">💼</span>
+                            <div class="product-image">
+                                <img src="images/products/prod-1-1777107248-69ec8130029af.png" alt="Executive Pen Set">
                             </div>
                             <div class="product-body">
                                 <div class="product-tag">Corporate</div>
@@ -298,8 +338,8 @@ if (!$brandDb->connect_error) {
 
                         <!-- Product 3 -->
                         <div class="carousel-slide product-card">
-                            <div class="product-image" style="background: linear-gradient(135deg, #D4AF37, #B8962E);">
-                                <span class="product-icon">🏆</span>
+                            <div class="product-image">
+                                <img src="images/products/prod-1-1777107248-69ec8130029af.png" alt="Crystal Trophy">
                             </div>
                             <div class="product-body">
                                 <div class="product-tag">Best Seller</div>
@@ -348,7 +388,7 @@ if (!$brandDb->connect_error) {
                             </div>
                         </div>
                     </div>
-                    
+
                     <button class="carousel-btn next" onclick="scrollCarousel(1)">❯</button>
                 </div>
 
@@ -422,7 +462,10 @@ if (!$brandDb->connect_error) {
                         <div class="review-text">"Super Gifts delivered 5,000 custom gift boxes flawlessly. Every pack was perfectly branded and arrived on time. Exceptional service!"</div>
                         <div class="reviewer">
                             <div class="avatar" style="background:linear-gradient(135deg,#FF5E1A,#FFB800)">R</div>
-                            <div><div class="reviewer-name">Rahul Mehta</div><div class="reviewer-role">Procurement Head, TCS</div></div>
+                            <div>
+                                <div class="reviewer-name">Rahul Mehta</div>
+                                <div class="reviewer-role">Procurement Head, TCS</div>
+                            </div>
                         </div>
                     </div>
                     <div class="review-card">
@@ -430,7 +473,10 @@ if (!$brandDb->connect_error) {
                         <div class="review-text">"We've been ordering quarterly for 2 years. Product quality is consistently excellent and the after-sales support is second to none."</div>
                         <div class="reviewer">
                             <div class="avatar" style="background:linear-gradient(135deg,#00C4A0,#0F1D3A)">P</div>
-                            <div><div class="reviewer-name">Priya Sharma</div><div class="reviewer-role">HR Manager, Infosys</div></div>
+                            <div>
+                                <div class="reviewer-name">Priya Sharma</div>
+                                <div class="reviewer-role">HR Manager, Infosys</div>
+                            </div>
                         </div>
                     </div>
                     <div class="review-card">
@@ -438,7 +484,10 @@ if (!$brandDb->connect_error) {
                         <div class="review-text">"The bulk order facility and inventory management saved us weeks of effort. Highly recommend for large enterprise gifting needs."</div>
                         <div class="reviewer">
                             <div class="avatar" style="background:linear-gradient(135deg,#FFB800,#FF5E1A)">A</div>
-                            <div><div class="reviewer-name">Arjun Nair</div><div class="reviewer-role">Operations Lead, HDFC</div></div>
+                            <div>
+                                <div class="reviewer-name">Arjun Nair</div>
+                                <div class="reviewer-role">Operations Lead, HDFC</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -475,11 +524,11 @@ if (!$brandDb->connect_error) {
                         <h2 class="section-title">Get In Touch <span class="pill">Quick Contact</span></h2>
                         <p class="contact-sub">Ready for corporate gifting? Connect instantly. Multiple offices nationwide.</p>
                     </div>
-                    
+
                     <div class="contact-content">
                         <div class="contact-info">
                             <h4>Contact Information</h4>
-                            
+
                             <div class="info-item">
                                 <div class="info-icon">📍</div>
                                 <div>
@@ -487,7 +536,7 @@ if (!$brandDb->connect_error) {
                                     <div class="info-value">Hyderabad, India</div>
                                 </div>
                             </div>
-                            
+
                             <div class="info-item">
                                 <div class="info-icon">📱</div>
                                 <div>
@@ -495,7 +544,7 @@ if (!$brandDb->connect_error) {
                                     <div class="info-value"><a href="tel:+918097000970" style="color: var(--brand-orange); text-decoration: none; font-weight: 600;">+91 8097 000 970</a></div>
                                 </div>
                             </div>
-                            
+
                             <div class="info-item">
                                 <div class="info-icon">✉️</div>
                                 <div>
@@ -503,7 +552,7 @@ if (!$brandDb->connect_error) {
                                     <div class="info-value"><a href="mailto:info@supergifts.in" style="color: var(--brand-orange); text-decoration: none; font-weight: 600;">info@supergifts.in</a></div>
                                 </div>
                             </div>
-                            
+
                             <div class="info-item">
                                 <div class="info-icon">🕐</div>
                                 <div>
@@ -529,27 +578,27 @@ if (!$brandDb->connect_error) {
                                     <label for="name">Your Name</label>
                                     <input type="text" id="name" name="name" placeholder="John Doe" required>
                                 </div>
-                                
+
                                 <div class="form-group">
                                     <label for="email">Your Email</label>
                                     <input type="email" id="email" name="email" placeholder="john@example.com" required>
                                 </div>
-                                
+
                                 <div class="form-group">
                                     <label for="company">Company Name</label>
                                     <input type="text" id="company" name="company" placeholder="Your Company">
                                 </div>
-                                
+
                                 <div class="form-group">
                                     <label for="phone">Phone Number</label>
                                     <input type="tel" id="phone" name="phone" placeholder="+91 XXXXX XXXXX">
                                 </div>
-                                
+
                                 <div class="form-group">
                                     <label for="message">Your Message</label>
                                     <textarea id="message" name="message" placeholder="Tell us about your gifting needs..." rows="5" required></textarea>
                                 </div>
-                                
+
                                 <button type="submit" class="btn-primary">Send Message →</button>
                             </form>
                         </div>
@@ -577,7 +626,7 @@ if (!$brandDb->connect_error) {
                 heroState.current += direction;
                 if (heroState.current < 0) heroState.current = heroState.totalSlides - 1;
                 if (heroState.current >= heroState.totalSlides) heroState.current = 0;
-                
+
                 updateHeroSlide();
                 resetAutoplay();
             }
@@ -700,6 +749,7 @@ if (!$brandDb->connect_error) {
                 z-index: 1;
                 overflow: hidden;
             }
+
             .hero-slide svg {
                 width: 100%;
                 height: 100%;
@@ -807,6 +857,7 @@ if (!$brandDb->connect_error) {
                 .hero-slide {
                     min-height: 260px;
                 }
+
                 .hero-slide svg {
                     min-height: 260px;
                 }
@@ -821,6 +872,7 @@ if (!$brandDb->connect_error) {
                     opacity: 0;
                     transform: translateX(100px);
                 }
+
                 to {
                     opacity: 1;
                     transform: translateX(0);
