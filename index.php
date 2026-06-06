@@ -326,7 +326,7 @@ if (!$brandDb->connect_error) {
                         <!-- Product 2 -->
                         <div class="carousel-slide product-card">
                             <div class="product-image">
-                                <img src="images/products/prod-1-1777107248-69ec8130029af.png" alt="Executive Pen Set">
+                                <img src="images/products/prod-1-1777107381-69ec81b53ca1b.png" alt="Executive Pen Set">
                             </div>
                             <div class="product-body">
                                 <div class="product-tag">Corporate</div>
@@ -339,7 +339,7 @@ if (!$brandDb->connect_error) {
                         <!-- Product 3 -->
                         <div class="carousel-slide product-card">
                             <div class="product-image">
-                                <img src="images/products/prod-1-1777107248-69ec8130029af.png" alt="Crystal Trophy">
+                                <img src="images/products/prod-1-1777288384-69ef44c0692a4.jpg" alt="Crystal Trophy">
                             </div>
                             <div class="product-body">
                                 <div class="product-tag">Best Seller</div>
@@ -351,8 +351,11 @@ if (!$brandDb->connect_error) {
 
                         <!-- Product 4 -->
                         <div class="carousel-slide product-card">
-                            <div class="product-image" style="background: linear-gradient(135deg, #071624, #0D2B55);">
+                            <!-- <div class="product-image" style="background: linear-gradient(135deg, #071624, #0D2B55);">
                                 <span class="product-icon">☕</span>
+                            </div> -->
+                            <div class="product-image">
+                                <img src="images/products/prod-1-1777288477-69ef451d0fda7.jpg" alt="Crystal Trophy">
                             </div>
                             <div class="product-body">
                                 <div class="product-tag">Popular</div>
@@ -364,8 +367,11 @@ if (!$brandDb->connect_error) {
 
                         <!-- Product 5 -->
                         <div class="carousel-slide product-card">
-                            <div class="product-image" style="background: linear-gradient(135deg, #B8962E, #D4AF37);">
+                            <!-- <div class="product-image" style="background: linear-gradient(135deg, #B8962E, #D4AF37);">
                                 <span class="product-icon">🎯</span>
+                            </div> -->
+                            <div class="product-image">
+                                <img src="images/products/prod-1-1777288544-69ef45604984e.jpg" alt="Crystal Trophy">
                             </div>
                             <div class="product-body">
                                 <div class="product-tag">Trending</div>
@@ -377,8 +383,11 @@ if (!$brandDb->connect_error) {
 
                         <!-- Product 6 -->
                         <div class="carousel-slide product-card">
-                            <div class="product-image" style="background: linear-gradient(135deg, #0D2B55, #071624);">
+                            <!-- <div class="product-image" style="background: linear-gradient(135deg, #0D2B55, #071624);">
                                 <span class="product-icon">📱</span>
+                            </div> -->
+                            <div class="product-image">
+                                <img src="images/products/prod-1-1777288544-69ef45604984e.jpg" alt="Crystal Trophy">
                             </div>
                             <div class="product-body">
                                 <div class="product-tag">Tech Gift</div>
