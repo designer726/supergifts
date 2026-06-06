@@ -382,25 +382,25 @@ if (!$brandDb->connect_error) {
                         <!-- Product 1 -->
                         <div class="carousel-slide product-card">
                             <div class="product-image">
-                                <img src="images/products/prod-1-1777107248-69ec8130029af.png" alt="Leather Portfolio">
+                                <img src="images/products/prod-1-1780729143-6a23c53748655.png" alt="Leather Portfolio">
                             </div>
                             <div class="product-body">
                                 <div class="product-tag">Premium</div>
-                                <h4 class="product-name">Leather Portfolio</h4>
-                                <p class="product-desc">Premium leather portfolio with custom branding</p>
-                                <div class="product-price">₹2,499</div>
+                                <h4 class="product-name">EM10N</h4>
+                                <p class="product-desc">Earbuds</p>
+                                <div class="product-price">₹2,49</div>
                             </div>
                         </div>
 
                         <!-- Product 2 -->
                         <div class="carousel-slide product-card">
                             <div class="product-image">
-                                <img src="images/products/prod-1-1777107381-69ec81b53ca1b.png" alt="Executive Pen Set">
+                                <img src="images/products/prod-1-1780728957-6a23c47d17722.png" alt="Executive Pen Set">
                             </div>
                             <div class="product-body">
-                                <div class="product-tag">Corporate</div>
-                                <h4 class="product-name">Executive Pen Set</h4>
-                                <p class="product-desc">Luxury pen set with engraving options</p>
+                                <div class="product-tag">Premium</div>
+                                <h4 class="product-name">BH31 AudioX </h4>
+                                <p class="product-desc">Over Ear Headphones</p>
                                 <div class="product-price">₹1,299</div>
                             </div>
                         </div>
@@ -412,9 +412,9 @@ if (!$brandDb->connect_error) {
                             </div>
                             <div class="product-body">
                                 <div class="product-tag">Best Seller</div>
-                                <h4 class="product-name">Crystal Trophy</h4>
-                                <p class="product-desc">Elegant crystal trophy for awards</p>
-                                <div class="product-price">₹3,999</div>
+                                <h4 class="product-name">SBA15</h4>
+                                <p class="product-desc">Standalone Soundbar</p>
+                                <div class="product-price">₹2,999</div>
                             </div>
                         </div>
 
@@ -424,12 +424,12 @@ if (!$brandDb->connect_error) {
                                 <span class="product-icon">☕</span>
                             </div> -->
                             <div class="product-image">
-                                <img src="images/products/prod-1-1777288477-69ef451d0fda7.jpg" alt="Crystal Trophy">
+                                <img src="images/products/prod-1-1780729281-6a23c5c1342c6.png" alt="Crystal Trophy">
                             </div>
                             <div class="product-body">
                                 <div class="product-tag">Popular</div>
-                                <h4 class="product-name">Custom Mug & Cup</h4>
-                                <p class="product-desc">Ceramic mug with company logo printing</p>
+                                <h4 class="product-name">BT03 Live</h4>
+                                <p class="product-desc">Bluetooth Speaker</p>
                                 <div class="product-price">₹349</div>
                             </div>
                         </div>
@@ -440,13 +440,13 @@ if (!$brandDb->connect_error) {
                                 <span class="product-icon">🎯</span>
                             </div> -->
                             <div class="product-image">
-                                <img src="images/products/prod-1-1777288544-69ef45604984e.jpg" alt="Crystal Trophy">
+                                <img src="images/products/prod-1-1780729442-6a23c662b5ac3.png" alt="Crystal Trophy">
                             </div>
                             <div class="product-body">
                                 <div class="product-tag">Trending</div>
-                                <h4 class="product-name">Desk Organizer</h4>
-                                <p class="product-desc">Wooden desk organizer with branding</p>
-                                <div class="product-price">₹1,799</div>
+                                <h4 class="product-name">SBA10 Kolors</h4>
+                                <p class="product-desc">Standalone Soundbar</p>
+                                <div class="product-price">₹3,499</div>
                             </div>
                         </div>
 
@@ -455,12 +455,14 @@ if (!$brandDb->connect_error) {
                             <!-- <div class="product-image" style="background: linear-gradient(135deg, #0D2B55, #071624);">
                                 <span class="product-icon">📱</span>
                             </div> -->
-                            
+                            <div class="product-image">
+                                <img src="images/products/prod-1-1777288606-69ef459e41f94.jpg" alt="Crystal Trophy">
+                            </div>
                             <div class="product-body">
                                 <div class="product-tag">Tech Gift</div>
-                                <h4 class="product-name">Phone Stand</h4>
-                                <p class="product-desc">Premium metal phone stand holder</p>
-                                <div class="product-price">₹799</div>
+                                <h4 class="product-name">Atomik Grab</h4>
+                                <p class="product-desc">Boombox</p>
+                                <div class="product-price">₹4,999</div>
                             </div>
                         </div>
                     </div>
