@@ -386,9 +386,7 @@ if (!$brandDb->connect_error) {
                             <!-- <div class="product-image" style="background: linear-gradient(135deg, #0D2B55, #071624);">
                                 <span class="product-icon">📱</span>
                             </div> -->
-                            <div class="product-image">
-                                <img src="images/products/prod-1-1777288544-69ef45604984e.jpg" alt="Crystal Trophy">
-                            </div>
+                            
                             <div class="product-body">
                                 <div class="product-tag">Tech Gift</div>
                                 <h4 class="product-name">Phone Stand</h4>
