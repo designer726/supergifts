@@ -409,7 +409,10 @@ if (!$brandDb->connect_error) {
                     <div class="nav-arrow" onclick="document.querySelectorAll('.blog-cards')[0].scrollLeft -= 300">‹</div>
                     <div class="blog-cards">
                         <div class="blog-card">
-                            <div class="blog-img">🎁</div>
+                             <div class="product-image">
+                                <img src="images/blog/images1.jfif" alt="Crystal Trophy">
+                            </div>
+                            <!-- <div class="blog-img">🎁</div> -->
                             <div class="blog-body">
                                 <div class="blog-tag">Gifting Trends</div>
                                 <div class="blog-heading">Top 10 Corporate Gift Ideas for 2025</div>
@@ -417,7 +420,10 @@ if (!$brandDb->connect_error) {
                             </div>
                         </div>
                         <div class="blog-card">
-                            <div class="blog-img">📦</div>
+                             <div class="product-image">
+                                <img src="images/blog/Order-Cycle-Time-and-Its-Relevance-1280x720.jpg" alt="Crystal Trophy">
+                            </div>
+                            <!-- <div class="blog-img">📦</div> -->
                             <div class="blog-body">
                                 <div class="blog-tag">Logistics</div>
                                 <div class="blog-heading">How We Deliver 10,000+ Orders On Time</div>
@@ -425,7 +431,10 @@ if (!$brandDb->connect_error) {
                             </div>
                         </div>
                         <div class="blog-card">
-                            <div class="blog-img">⭐</div>
+                            <!-- <div class="blog-img">⭐</div> -->
+                             <div class="product-image">
+                                <img src="images/blog/images.jfif" alt="Crystal Trophy">
+                            </div>
                             <div class="blog-body">
                                 <div class="blog-tag">Success Story</div>
                                 <div class="blog-heading">How Tata Motors Gifted 3000 Employees</div>
