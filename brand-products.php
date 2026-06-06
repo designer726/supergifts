@@ -29,6 +29,15 @@ if (!$brand) {
     exit();
 }
 
+// Construct the brand logo path from imageno field
+// imageno contains just a number, so the full filename is image{imageno}.jpg
+if (!empty($brand['imageno'])) {
+    $brand['imageno'] = 'images/brandlogo/image' . intval($brand['imageno']) . '.jpg';
+} else {
+    // Fallback to first available logo if imageno is empty
+    $brand['imageno'] = 'images/brandlogo/image1.jpg';
+}
+
 // Load products for this brand
 $products = $conn->query("SELECT * FROM products WHERE brand_id = {$brand['id']} AND status = 1 ORDER BY sequence ASC, id ASC");
 $productCount = $products->num_rows;
@@ -154,13 +163,11 @@ $productCount = $products->num_rows;
                     <div class="text-center">
 
                         <!-- Brand Logo -->
-                        <?php if ($brand['imageno']): ?>
-                            <div class="mb-20">
-                                <div class="brand-logo-hero d-inline-flex">
-                                    <img src="<?= htmlspecialchars($brand['imageno']) ?>" alt="<?= htmlspecialchars($brand['brandname']) ?>">
-                                </div>
+                        <div class="mb-20">
+                            <div class="brand-logo-hero d-inline-flex">
+                                <img src="<?= $brand['imageno'] ?>" alt="<?= htmlspecialchars($brand['brandname']) ?>" style="max-height: 100px; max-width: 250px; object-fit: contain;">
                             </div>
-                        <?php endif; ?>
+                        </div>
 
                         <!-- Brand Name -->
                         <h1 class="hs-title-1 mb-10">
