@@ -17,6 +17,9 @@ function findBrandLogoPath($imageno)
 }
 
 $brandDb = new mysqli("localhost", "superehc_aiir", "Aiir@8097000970", "superehc_sgipl");
+$carouselProducts = [];
+$blogPosts = [];
+
 if (!$brandDb->connect_error) {
     $sql = "SELECT id, brandname, imageno, flag FROM brandlogo ORDER BY flag DESC, seqence ASC, brandname ASC";
     if ($result = $brandDb->query($sql)) {
@@ -31,6 +34,25 @@ if (!$brandDb->connect_error) {
         }
         $result->free();
     }
+    
+    // Load carousel products (limit to 6 products)
+    $productSql = "SELECT id, name, image, mrp FROM products WHERE status = 1 ORDER BY sequence ASC, id DESC LIMIT 6";
+    if ($productResult = $brandDb->query($productSql)) {
+        while ($row = $productResult->fetch_assoc()) {
+            $carouselProducts[] = $row;
+        }
+        $productResult->free();
+    }
+    
+    // Load blog posts (limit to 3 published posts)
+    $blogSql = "SELECT id, title, slug, excerpt, image, category, created_at FROM blogs WHERE status = 'published' ORDER BY created_at DESC LIMIT 3";
+    if ($blogResult = $brandDb->query($blogSql)) {
+        while ($row = $blogResult->fetch_assoc()) {
+            $blogPosts[] = $row;
+        }
+        $blogResult->free();
+    }
+    
     $brandDb->close();
 }
 ?>
@@ -261,6 +283,53 @@ if (!$brandDb->connect_error) {
             </div>
 
             <!-- New Brand Products Carousel Section -->
+            <!-- <section class="products-carousel-section">
+                <div class="carousel-header">
+                    <div class="section-title">New Brand Products <span class="pill">Premium Collection</span></div>
+                    <a href="products.php" class="see-all">Browse All →</a>
+                </div>
+
+                <div class="carousel-container">
+                    <button class="carousel-btn prev" onclick="scrollCarousel(-1)">❮</button>
+
+                    <div class="carousel-track" id="productCarousel">
+                        <?php foreach ($carouselProducts as $product): ?>
+                            <a href="product-detail.php?id=<?= intval($product['id']) ?>" style="text-decoration: none; color: inherit;">
+                                <div class="carousel-slide product-card">
+                                    <div class="product-image">
+                                        <?php if (!empty($product['image'])): ?>
+                                            <img src="<?= htmlspecialchars($product['image']) ?>" alt="<?= htmlspecialchars($product['name']) ?>">
+                                        <?php else: ?>
+                                            <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#ccc;">
+                                                <svg width="48" height="48" fill="currentColor" viewBox="0 0 16 16">
+                                                    <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" />
+                                                    <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z" />
+                                                </svg>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="product-body">
+                                        <h4 class="product-name"><?= htmlspecialchars($product['name']) ?></h4>
+                                        <?php if ($product['mrp'] > 0): ?>
+                                            <div class="product-price">₹<?= number_format($product['mrp'], 2) ?></div>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+                    </div>
+
+                    <button class="carousel-btn next" onclick="scrollCarousel(1)">❯</button>
+                </div>
+
+                <div class="carousel-dots" id="carouselDots">
+                    <?php for ($i = 0; $i < count($carouselProducts); $i++): ?>
+                        <span class="dot <?= $i === 0 ? 'active' : '' ?>" onclick="goToSlide(<?= $i ?>)"></span>
+                    <?php endfor; ?>
+                </div>
+            </section> -->
+            <!-- New Brand Products Carousel Section -->
             <section class="products-carousel-section">
                 <div class="carousel-header">
                     <div class="section-title">New Brand Products <span class="pill">Premium Collection</span></div>
@@ -417,39 +486,29 @@ if (!$brandDb->connect_error) {
                 <div class="cards-row">
                     <div class="nav-arrow" onclick="document.querySelectorAll('.blog-cards')[0].scrollLeft -= 300">‹</div>
                     <div class="blog-cards">
-                        <div class="blog-card">
-                             <div class="product-image">
-                                <img src="images/blog/images1.jfif" alt="Crystal Trophy">
-                            </div>
-                            <!-- <div class="blog-img">🎁</div> -->
-                            <div class="blog-body">
-                                <div class="blog-tag">Gifting Trends</div>
-                                <div class="blog-heading">Top 10 Corporate Gift Ideas for 2025</div>
-                                <div class="blog-excerpt">Discover what's trending in corporate gifting this season — from eco-friendly bundles to tech accessories that impress.</div>
-                            </div>
-                        </div>
-                        <div class="blog-card">
-                             <div class="product-image">
-                                <img src="images/blog/Order-Cycle-Time-and-Its-Relevance-1280x720.jpg" alt="Crystal Trophy">
-                            </div>
-                            <!-- <div class="blog-img">📦</div> -->
-                            <div class="blog-body">
-                                <div class="blog-tag">Logistics</div>
-                                <div class="blog-heading">How We Deliver 10,000+ Orders On Time</div>
-                                <div class="blog-excerpt">A behind-the-scenes look at our warehouse operations and last-mile delivery partnerships across India.</div>
-                            </div>
-                        </div>
-                        <div class="blog-card">
-                            <!-- <div class="blog-img">⭐</div> -->
-                             <div class="product-image">
-                                <img src="images/blog/images.jfif" alt="Crystal Trophy">
-                            </div>
-                            <div class="blog-body">
-                                <div class="blog-tag">Success Story</div>
-                                <div class="blog-heading">How Tata Motors Gifted 3000 Employees</div>
-                                <div class="blog-excerpt">A case study on how we helped Tata Motors execute a seamless gifting campaign across 15 cities in under 7 days.</div>
-                            </div>
-                        </div>
+                        <?php foreach ($blogPosts as $blog): ?>
+                            <a href="blog_details.php?slug=<?= htmlspecialchars($blog['slug']) ?>" style="text-decoration: none; color: inherit;">
+                                <div class="blog-card">
+                                    <div class="product-image">
+                                        <?php if (!empty($blog['image'])): ?>
+                                            <img src="<?= htmlspecialchars($blog['image']) ?>" alt="<?= htmlspecialchars($blog['title']) ?>">
+                                        <?php else: ?>
+                                            <div style="display:flex;align-items:center;justify-content:center;height:100%;background:#f0f0f0;color:#ccc;">
+                                                <svg width="48" height="48" fill="currentColor" viewBox="0 0 16 16">
+                                                    <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" />
+                                                    <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z" />
+                                                </svg>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="blog-body">
+                                        <div class="blog-tag"><?= htmlspecialchars($blog['category']) ?></div>
+                                        <div class="blog-heading"><?= htmlspecialchars($blog['title']) ?></div>
+                                        <div class="blog-excerpt"><?= htmlspecialchars($blog['excerpt']) ?></div>
+                                    </div>
+                                </div>
+                            </a>
+                        <?php endforeach; ?>
                     </div>
                     <div class="nav-arrow" onclick="document.querySelectorAll('.blog-cards')[0].scrollLeft += 300">›</div>
                 </div>
