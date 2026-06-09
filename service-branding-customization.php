@@ -1,5 +1,6 @@
 <?php
 require 'common/head.php';
+$pagename = basename($_SERVER['SCRIPT_NAME']);
 ?>
 
 <body class="appear-animate">
@@ -72,6 +73,6 @@ require 'common/head.php';
         </main>
         <?php require 'common/footer.php'; ?>
     </div>
-    <?php require 'common/aiir_form.php'; ?>
+    <!-- <?php require 'common/aiir_form.php'; ?> -->
 </body>
 </html>
