@@ -1,5 +1,6 @@
 <?php
 require 'common/head.php';
+$pagename = basename($_SERVER['SCRIPT_NAME']);
 ?>
 
 <body class="appear-animate">
