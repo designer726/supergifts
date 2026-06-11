@@ -57,6 +57,7 @@ $inProducts = strpos($currentPath, '/products/') !== false;
 // Base URL — works on both localhost and live
 $isLocal = ($_SERVER['SERVER_NAME'] === 'localhost');
 $base = $isLocal ? '/supergifts/sgipl-manage/' : '/sgipl-manage/';
+$inBanners = strpos($currentPath, '/banners/') !== false;
 ?>
 <div class="sidebar">
     <div class="sidebar-logo">
@@ -67,6 +68,11 @@ $base = $isLocal ? '/supergifts/sgipl-manage/' : '/sgipl-manage/';
         <div class="nav-section">Main</div>
         <a href="<?= $base ?>dashboard.php" class="nav-link <?= $isDash?'active':'' ?>">
             <i class="bi bi-speedometer2"></i> Dashboard
+        </a>
+
+        <div class="nav-section">Homepage</div>
+        <a href="<?= $base ?>banners/index.php" class="nav-link <?= $inBanners?'active':'' ?>">
+            <i class="bi bi-images"></i> Banner Slides
         </a>
 
         <div class="nav-section">Blog</div>
