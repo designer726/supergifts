@@ -10,11 +10,28 @@
                   </div>
               </div>
               <p>India's leading corporate gifting platform. Premium quality, custom branding, and seamless logistics — all in one place.</p>
-              <div class="socials">
+              <!-- <div class="socials">
                   <a href="https://www.linkedin.com/in/supergifts/" rel="noopener nofollow" target="_blank" class="soc-btn">🔗</a>
                   <a href="https://www.facebook.com/people/Super-Gifts-India-Private-Limited/100090976219801/" rel="noopener nofollow" target="_blank" class="soc-btn">📘</a>
                   <a href="https://www.instagram.com/supergifts_official/" rel="noopener nofollow" target="_blank" class="soc-btn">📸</a>
                   <a href="#" rel="noopener nofollow" target="_blank" class="soc-btn">🐦</a>
+              </div> -->
+              <div class="socials">
+                  <a href="https://www.linkedin.com/in/supergifts/" rel="noopener nofollow" target="_blank" class="soc-btn">
+                  <img src="images/linkedin.png" alt="LinkedIn">
+                  </a>
+
+                  <a href="https://www.facebook.com/people/Super-Gifts-India-Private-Limited/100090976219801/" rel="noopener nofollow" target="_blank" class="soc-btn">
+                  <img src="images/facebook.png" alt="Facebook">
+                  </a>
+
+                  <a href="https://www.instagram.com/supergifts_official/" rel="noopener nofollow" target="_blank" class="soc-btn">
+                  <img src="images/instagram.png" alt="Instagram">
+                  </a>
+
+                  <a href="#" rel="noopener nofollow" target="_blank" class="soc-btn">
+                  <img src="images/twitter.png" alt="Twitter">
+                  </a>
               </div>
           </div>
           <div class="footer-col">

@@ -57,7 +57,8 @@ if (!$db->connect_error) {
     if ($r) while ($row = $r->fetch_assoc()) $dbBanners[$row['slot']] = $row;
 
     /* Authorised brand partners */
-    $r = $db->query("SELECT id, brandname, imageno FROM brandlogo WHERE flag=1 ORDER BY seqence ASC, brandname ASC");
+    // $r = $db->query("SELECT id, brandname, imageno FROM brandlogo WHERE flag=1 ORDER BY seqence ASC, brandname ASC");
+    $r = $db->query("SELECT id, brandname, imageno FROM brandlogo ORDER BY seqence ASC, brandname ASC");
     if ($r) while ($row = $r->fetch_assoc())
         $brandPartners[] = array_merge($row, ['logoUrl' => findBrandLogoPath($row['imageno'])]);
 
@@ -516,7 +517,7 @@ if (!$db->connect_error) {
                     <?php foreach ($applianceBrands as $brand): ?>
                     <a href="brand-products.php?brand=<?= intval($brand['id']) ?>" class="hp-appliance-box" title="<?= htmlspecialchars($brand['brandname']) ?>">
                         <img src="<?= htmlspecialchars($brand['logoUrl']) ?>" alt="<?= htmlspecialchars($brand['brandname']) ?>">
-                        <div class="hp-appliance-name"><?= htmlspecialchars($brand['brandname']) ?></div>
+                        <!-- <div class="hp-appliance-name"><?= htmlspecialchars($brand['brandname']) ?></div> -->
                     </a>
                     <?php endforeach; ?>
                 </div>
