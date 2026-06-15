@@ -74,10 +74,11 @@ $productCount = $products->num_rows;
         }
 
         .product-img-wrap img {
-            max-height: 180px;
-            max-width: 100%;
+            /* max-height: 180px; */
+            max-height: 100%;
+            max-width: 100%; 
             object-fit: contain;
-            padding: 10px;
+            /* padding: 10px; */
         }
 
         .product-info {
