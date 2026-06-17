@@ -32,7 +32,7 @@
 <nav class="mobile-nav" id="mobileNav">
     <div class="mobile-nav-header">
         <img src="images/logo.png" alt="SGIPL" style="height:36px;">
-        <button onclick="closeMobileNav()" aria-label="Close" style="background:none;border:none;font-size:22px;cursor:pointer;color:#555;">✕</button>
+        <button onclick="closeMobileNav()" aria-label="Close" style="background:none;border:none;font-size:22px;cursor:pointer;color: #000;button>
     </div>
     <a href="index" <?php if (isset($pagename) && $pagename == "index.php") echo "class='active'"; ?>>Home</a>
     <a href="about" <?php if (isset($pagename) && $pagename == "about.php") echo "class='active'"; ?>>About us</a>
@@ -99,7 +99,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 16px 20px;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid #000
 }
 
 .mobile-nav a {
