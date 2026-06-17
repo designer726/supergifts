@@ -142,37 +142,19 @@ if (!$db->connect_error) {
             <div class="hp-banner-wrap" id="hpBannerWrap">
                 <!-- Slides -->
                 <div class="hp-banner-slides" id="hpBannerSlides">
-                <?php foreach ($slides as $idx => $sl): $active = ($idx === 0); ?>
-                <div class="hp-banner-slide <?= $active ? 'active' : '' ?>" data-slide="<?= $idx ?>">
+                <?php foreach ($slides as $idx => $sl): $active = ($idx === 0); $isVideo = !empty($sl['file_path']) && $sl['file_type'] === 'video'; ?>
+                <div class="hp-banner-slide <?= $active ? 'active' : '' ?>" data-slide="<?= $idx ?>" data-type="<?= $isVideo ? 'video' : 'image' ?>">
                     <!-- Background: uploaded image / video / gradient fallback -->
                     <?php if (!empty($sl['file_path'])): ?>
-                        <?php if ($sl['file_type'] === 'video'): ?>
-                        <video class="hp-banner-bg-video" autoplay muted loop playsinline>
+                        <?php if ($isVideo): ?>
+                        <video class="hp-banner-bg-video" muted playsinline preload="auto">
                             <source src="<?= htmlspecialchars($sl['file_path']) ?>">
                         </video>
                         <?php else: ?>
                         <div class="hp-banner-bg-img" style="background-image:url('<?= htmlspecialchars($sl['file_path']) ?>')"></div>
                         <?php endif; ?>
-                        <div class="hp-banner-overlay"></div>
                     <?php else: ?>
                         <div class="hp-banner-bg-gradient"></div>
-                    <?php endif; ?>
-
-                    <!-- Content overlay -->
-                    <div class="hp-banner-content">
-                        <div class="hp-hero-badge">&#x2726; <?= htmlspecialchars($sl['badge']) ?></div>
-                        <h1><?= $sl['title'] ?></h1>
-                        <p><?= $sl['subtitle'] ?></p>
-                        <a href="<?= $sl['btn_link'] ?>" class="hp-hero-btn"><?= $sl['btn_text'] ?> →</a>
-                    </div>
-
-                    <!-- Stats (only on first slide) -->
-                    <?php if ($idx === 0): ?>
-                    <div class="hp-hero-stats">
-                        <div class="hp-hero-stat"><strong>500+</strong><span>Brand Partners</span></div>
-                        <div class="hp-hero-stat"><strong>10K+</strong><span>Orders Delivered</span></div>
-                        <div class="hp-hero-stat"><strong>48 hrs</strong><span>Express Delivery</span></div>
-                    </div>
                     <?php endif; ?>
                 </div>
                 <?php endforeach; ?>
@@ -538,36 +520,58 @@ if (!$db->connect_error) {
         <!-- footer.php closes .page div and loads jQuery + all.js -->
 
     <script>
-    /* ── Hero Banner Carousel ── */
+    /* ── Hero Banner Carousel ──
+       Images stay for 3s. Videos play fully (once) then advance. */
     (function() {
-        var total   = <?= $totalSlides ?>;
-        var current = 0;
-        var timer;
+        var total       = <?= $totalSlides ?>;
+        var current     = 0;
+        var slides      = document.querySelectorAll('.hp-banner-slide');
+        var dots        = document.querySelectorAll('#hpBannerDots .hp-hero-dot');
+        var advanceTimer = null;
+        var IMAGE_DURATION = 3000;
+        var VIDEO_FALLBACK = 20000; // safety net if a video fails to load/play
+
+        function stopVideo(slide) {
+            var v = slide.querySelector('.hp-banner-bg-video');
+            if (v) { v.onended = null; v.pause(); v.currentTime = 0; }
+        }
+
+        function playVideo(slide) {
+            var v = slide.querySelector('.hp-banner-bg-video');
+            if (!v) return;
+            v.onended = function() { hpBannerNav(1); };
+            v.currentTime = 0;
+            v.play().catch(function() { /* autoplay blocked — fallback timer still advances */ });
+        }
 
         function show(idx) {
-            var slides = document.querySelectorAll('.hp-banner-slide');
-            var dots   = document.querySelectorAll('#hpBannerDots .hp-hero-dot');
-            slides.forEach(function(s, i) { s.classList.toggle('active', i === idx); });
-            dots.forEach(function(d, i)   { d.classList.toggle('active', i === idx); });
+            clearTimeout(advanceTimer);
+            slides.forEach(function(s, i) {
+                var isActive = i === idx;
+                s.classList.toggle('active', isActive);
+                if (!isActive) stopVideo(s);
+            });
+            dots.forEach(function(d, i) { d.classList.toggle('active', i === idx); });
             current = idx;
+
+            var activeSlide = slides[idx];
+            if (activeSlide && activeSlide.dataset.type === 'video') {
+                playVideo(activeSlide);
+                advanceTimer = setTimeout(function() { hpBannerNav(1); }, VIDEO_FALLBACK);
+            } else {
+                advanceTimer = setTimeout(function() { hpBannerNav(1); }, IMAGE_DURATION);
+            }
         }
 
         window.hpBannerNav = function(dir) {
             show((current + dir + total) % total);
-            restart();
         };
 
         window.hpBannerGo = function(idx) {
             show(idx);
-            restart();
         };
 
-        function restart() {
-            clearInterval(timer);
-            timer = setInterval(function() { hpBannerNav(1); }, 5500);
-        }
-
-        restart();
+        show(0);
 
         /* Swipe support */
         var touchX = 0;
