@@ -8,6 +8,7 @@ $pageTitle = 'Client Reviews';
 // Search/filter
 $search = trim($_GET['search'] ?? '');
 $filter = $_GET['status'] ?? '';
+$visibility = $_GET['visibility'] ?? '';
 
 $where = [];
 $params = [];
@@ -23,6 +24,11 @@ if ($filter && in_array($filter, ['approved', 'pending', 'rejected'])) {
     $where[] = "status = ?";
     $params[] = $filter;
     $types .= 's';
+}
+if ($visibility && in_array($visibility, ['visible', 'hidden'])) {
+    $where[] = "is_hidden = ?";
+    $params[] = $visibility === 'hidden' ? 1 : 0;
+    $types .= 'i';
 }
 
 $sql = "SELECT * FROM reviews" . ($where ? " WHERE " . implode(" AND ", $where) : "") . " ORDER BY created_at DESC";
@@ -44,8 +50,13 @@ require_once '../includes/layout_top.php';
             <option value="pending" <?= $filter==='pending'?'selected':'' ?>>Pending</option>
             <option value="rejected" <?= $filter==='rejected'?'selected':'' ?>>Rejected</option>
         </select>
+        <select name="visibility" class="form-select form-select-sm" style="width:140px;">
+            <option value="">All Visibility</option>
+            <option value="visible" <?= $visibility==='visible'?'selected':'' ?>>Visible</option>
+            <option value="hidden" <?= $visibility==='hidden'?'selected':'' ?>>Hidden</option>
+        </select>
         <button class="btn btn-sm btn-secondary" type="submit"><i class="bi bi-search"></i></button>
-        <?php if ($search || $filter): ?>
+        <?php if ($search || $filter || $visibility): ?>
             <a href="index.php" class="btn btn-sm btn-outline-secondary">Clear</a>
         <?php endif; ?>
     </form>
@@ -110,6 +121,7 @@ require_once '../includes/layout_top.php';
                 <th>Rating</th>
                 <th>Review</th>
                 <th>Status</th>
+                <th>Visibility</th>
                 <th>Date</th>
                 <th style="width:110px;">Actions</th>
             </tr>
@@ -149,6 +161,13 @@ require_once '../includes/layout_top.php';
                     $class = $statusClass[$row['status']] ?? 'badge-secondary';
                     ?>
                     <span class="badge <?= $class ?>"><?= $statusText ?></span>
+                </td>
+                <td>
+                    <?php if (!empty($row['is_hidden'])): ?>
+                        <span class="badge bg-secondary">Hidden</span>
+                    <?php else: ?>
+                        <span class="badge bg-success-subtle text-success-emphasis">Visible</span>
+                    <?php endif; ?>
                 </td>
                 <td class="text-muted small"><?= date('d M Y', strtotime($row['created_at'])) ?></td>
                 <td>

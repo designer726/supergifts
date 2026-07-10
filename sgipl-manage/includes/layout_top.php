@@ -54,6 +54,7 @@ $inBlogs    = strpos($currentPath, '/blogs/') !== false;
 $inBrands   = strpos($currentPath, '/brands/') !== false;
 $inProducts = strpos($currentPath, '/products/') !== false;
 $inVouchers = strpos($currentPath, '/vouchers/') !== false;
+$inReviews  = strpos($currentPath, '/reviews/') !== false;
 
 // Base URL — works on both localhost and live
 $isLocal = ($_SERVER['SERVER_NAME'] === 'localhost');
@@ -77,6 +78,9 @@ $inBanners = strpos($currentPath, '/banners/') !== false;
         </a>
         <a href="<?= $base ?>vouchers/index.php" class="nav-link <?= $inVouchers?'active':'' ?>">
             <i class="bi bi-gift"></i> Gift Vouchers
+        </a>
+        <a href="<?= $base ?>reviews/index.php" class="nav-link <?= $inReviews?'active':'' ?>">
+            <i class="bi bi-chat-square-quote"></i> Reviews
         </a>
 
         <div class="nav-section">Blog</div>

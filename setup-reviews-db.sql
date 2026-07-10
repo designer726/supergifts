@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS reviews (
     rating INT NOT NULL CHECK (rating >= 1 AND rating <= 5),
     review_text LONGTEXT NOT NULL,
     status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
+    is_hidden TINYINT(1) NOT NULL DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_status (status),
