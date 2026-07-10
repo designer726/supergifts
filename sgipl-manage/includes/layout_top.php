@@ -53,6 +53,7 @@ $isDash     = strpos($currentPath, 'dashboard.php') !== false;
 $inBlogs    = strpos($currentPath, '/blogs/') !== false;
 $inBrands   = strpos($currentPath, '/brands/') !== false;
 $inProducts = strpos($currentPath, '/products/') !== false;
+$inVouchers = strpos($currentPath, '/vouchers/') !== false;
 
 // Base URL — works on both localhost and live
 $isLocal = ($_SERVER['SERVER_NAME'] === 'localhost');
@@ -73,6 +74,9 @@ $inBanners = strpos($currentPath, '/banners/') !== false;
         <div class="nav-section">Homepage</div>
         <a href="<?= $base ?>banners/index.php" class="nav-link <?= $inBanners?'active':'' ?>">
             <i class="bi bi-images"></i> Banner Slides
+        </a>
+        <a href="<?= $base ?>vouchers/index.php" class="nav-link <?= $inVouchers?'active':'' ?>">
+            <i class="bi bi-gift"></i> Gift Vouchers
         </a>
 
         <div class="nav-section">Blog</div>
