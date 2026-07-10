@@ -10,4 +10,9 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 $conn->set_charset("utf8mb4");
+
+$reviewColumns = $conn->query("SHOW COLUMNS FROM reviews LIKE 'is_hidden'");
+if ($reviewColumns && $reviewColumns->num_rows === 0) {
+    $conn->query("ALTER TABLE reviews ADD COLUMN is_hidden TINYINT(1) NOT NULL DEFAULT 0 AFTER status");
+}
 ?>

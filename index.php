@@ -82,7 +82,7 @@ if (!$db->connect_error) {
 
     /* Testimonials */
     $r = $db->query("SELECT client_name, company_name, rating, review_text
-                     FROM reviews WHERE status='approved' ORDER BY created_at DESC LIMIT 3");
+                     FROM reviews WHERE status='approved' AND is_hidden = 0 ORDER BY created_at DESC LIMIT 3");
     if ($r) while ($row = $r->fetch_assoc()) $testimonials[] = $row;
 
     /* Budget products by price range */
