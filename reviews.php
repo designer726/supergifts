@@ -162,7 +162,7 @@ require_once 'sgipl-manage/includes/db.php';
 
                                     <div class="mb-20">
                                         <label class="form-label">Your Rating *</label>
-                                        <div class="rating-input" style="font-size: 24px; color: #ccc; cursor: pointer;">
+                                        <div class="rating-input" style="font-size: 24px; color: #000000; cursor: pointer;">
                                             <input type="hidden" id="rating" name="rating" value="5" required>
                                             <?php for($i=1; $i<=5; $i++): ?>
                                                 <i class="fa fa-star star-icon" data-rating="<?= $i ?>" style="cursor: pointer; margin-right: 10px;"></i>

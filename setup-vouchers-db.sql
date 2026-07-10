@@ -1,0 +1,12 @@
+-- Create Gift Vouchers Table for SGIPL Website
+
+CREATE TABLE IF NOT EXISTS vouchers (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(150) NOT NULL,
+    image VARCHAR(255) NOT NULL DEFAULT '',
+    seqence INT DEFAULT 0,
+    status TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

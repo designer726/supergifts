@@ -26,6 +26,7 @@ $testimonials    = [];
 $budgetLow = $budgetMid = $budgetHigh = $budgetPremium = [];
 $applianceBrands = [];
 $dbBanners       = [];   // banners from DB (up to 4)
+$dbVouchers      = [];
 
 /* Static fallback banners shown when no file is uploaded */
 $staticBanners = [
@@ -58,7 +59,7 @@ if (!$db->connect_error) {
 
     /* Authorised brand partners */
     // $r = $db->query("SELECT id, brandname, imageno FROM brandlogo WHERE flag=1 ORDER BY seqence ASC, brandname ASC");
-    $r = $db->query("SELECT id, brandname, imageno FROM brandlogo ORDER BY seqence ASC, brandname ASC");
+    $r = $db->query("SELECT id, brandname, imageno FROM brandlogo WHERE flag=1 ORDER BY seqence ASC, brandname ASC");
     if ($r) while ($row = $r->fetch_assoc())
         $brandPartners[] = array_merge($row, ['logoUrl' => findBrandLogoPath($row['imageno'])]);
 
@@ -95,9 +96,13 @@ if (!$db->connect_error) {
     if ($r) while ($row=$r->fetch_assoc()) $budgetPremium[]=$row;
 
     /* Brands for appliances section */
-    $r = $db->query("SELECT id, brandname, imageno FROM brandlogo ORDER BY seqence ASC, id ASC LIMIT 8");
+    $r = $db->query("SELECT id, brandname, imageno FROM brandlogo WHERE flag=0 ORDER BY seqence ASC, id ASC LIMIT 8");
     if ($r) while ($row = $r->fetch_assoc())
         $applianceBrands[] = array_merge($row, ['logoUrl' => findBrandLogoPath($row['imageno'])]);
+
+    /* Gift vouchers */
+    $r = $db->query("SELECT id, title, image FROM vouchers WHERE status=1 ORDER BY seqence ASC, id ASC LIMIT 8");
+    if ($r) while ($row = $r->fetch_assoc()) $dbVouchers[] = $row;
 
     $db->close();
 }
@@ -257,7 +262,7 @@ if (!$db->connect_error) {
                                     <div class="hp-blog-body">
                                         <div class="hp-blog-cat"><?= htmlspecialchars($blog['category']) ?></div>
                                         <div class="hp-blog-title"><?= htmlspecialchars($blog['title']) ?></div>
-                                        <div class="hp-blog-excerpt"><?= htmlspecialchars($blog['excerpt']) ?></div>
+                                        <!-- <div class="hp-blog-excerpt"><?= htmlspecialchars($blog['excerpt']) ?></div> -->
                                     </div>
                                 </a>
                                 <?php endforeach; ?>
@@ -469,25 +474,33 @@ if (!$db->connect_error) {
             <section class="hp-vouchers-sec">
                 <div class="hp-sec-title">Available Gift Vouchers</div>
                 <div class="hp-vouchers-grid">
-                    <?php
-                    $vouchers = [
-                        ['icon' => '🛍️', 'label' => 'Shopping Voucher'],
-                        ['icon' => '🍽️', 'label' => 'Dining Voucher'],
-                        ['icon' => '✈️', 'label' => 'Travel Voucher'],
-                        ['icon' => '💆', 'label' => 'Wellness Voucher'],
-                        ['icon' => '🎬', 'label' => 'Entertainment'],
-                        ['icon' => '📱', 'label' => 'Tech Voucher'],
-                        ['icon' => '⚽', 'label' => 'Sports Voucher'],
-                        ['icon' => '🎓', 'label' => 'Education Voucher'],
-                    ];
-                    foreach ($vouchers as $v): ?>
-                    <div class="hp-voucher-card">
-                        <div class="hp-voucher-placeholder">
-                            <span class="icon"><?= $v['icon'] ?></span>
-                            <span><?= $v['label'] ?></span>
+                    <?php if (!empty($dbVouchers)): ?>
+                        <?php foreach ($dbVouchers as $v): ?>
+                        <div class="hp-voucher-card">
+                            <img src="<?= htmlspecialchars($v['image']) ?>" alt="<?= htmlspecialchars($v['title']) ?>" loading="lazy">
                         </div>
-                    </div>
-                    <?php endforeach; ?>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <?php
+                        $staticVouchers = [
+                            ['icon' => '🛍️', 'label' => 'Shopping Voucher'],
+                            ['icon' => '🍽️', 'label' => 'Dining Voucher'],
+                            ['icon' => '✈️', 'label' => 'Travel Voucher'],
+                            ['icon' => '💆', 'label' => 'Wellness Voucher'],
+                            ['icon' => '🎬', 'label' => 'Entertainment'],
+                            ['icon' => '📱', 'label' => 'Tech Voucher'],
+                            ['icon' => '⚽', 'label' => 'Sports Voucher'],
+                            ['icon' => '🎓', 'label' => 'Education Voucher'],
+                        ];
+                        foreach ($staticVouchers as $v): ?>
+                        <div class="hp-voucher-card">
+                            <div class="hp-voucher-placeholder">
+                                <span class="icon"><?= $v['icon'] ?></span>
+                                <span><?= $v['label'] ?></span>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
             </section>
 
