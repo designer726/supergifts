@@ -6,10 +6,10 @@
                   <!-- <div class="logo-icon">🎁</div>
           <div class="logo-text" style="color:#fff">Super<span>Gifts</span></div> -->
                   <div class="mb-10">
-                      <img src="images/logo_white.png" alt="SGIPL" style="width: 158px;" />
+                      <img src="images/logo.png" alt="SGIPL" style="width: 158px; margin-bottom: 20px" />
                   </div>
               </div>
-              <p>India's leading corporate gifting platform. Premium quality, custom branding, and seamless logistics — all in one place.</p>
+              <!-- <p>India's leading corporate gifting platform. Premium quality, custom branding, and seamless logistics — all in one place.</p> -->
               <!-- <div class="socials">
                   <a href="https://www.linkedin.com/in/supergifts/" rel="noopener nofollow" target="_blank" class="soc-btn">🔗</a>
                   <a href="https://www.facebook.com/people/Super-Gifts-India-Private-Limited/100090976219801/" rel="noopener nofollow" target="_blank" class="soc-btn">📘</a>
