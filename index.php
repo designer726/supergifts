@@ -64,15 +64,16 @@ if (!$db->connect_error) {
         $brandPartners[] = array_merge($row, ['logoUrl' => findBrandLogoPath($row['imageno'])]);
 
     /* Premium products for carousel */
-    $r = $db->query("SELECT p.id, p.name, p.image, p.mrp, b.brandname AS category
+    $r = $db->query("SELECT p.id, p.name, p.image, p.mrp, b.brandname AS category, b.imageno
                      FROM products p JOIN brandlogo b ON p.brand_id=b.id
-                     WHERE p.status=1 ORDER BY p.sequence ASC, p.id DESC LIMIT 8");
-    if ($r) while ($row = $r->fetch_assoc()) $premiumProducts[] = $row;
+                     WHERE p.status=1 AND p.is_premium=1 ORDER BY p.sequence ASC, p.id DESC LIMIT 8");
+    if ($r) while ($row = $r->fetch_assoc())
+        $premiumProducts[] = array_merge($row, ['brandLogoUrl' => findBrandLogoPath($row['imageno'])]);
 
     /* Product selection */
     $r = $db->query("SELECT p.id, p.name, p.image, p.mrp, b.brandname AS category
                      FROM products p JOIN brandlogo b ON p.brand_id=b.id
-                     WHERE p.status=1 ORDER BY p.id DESC LIMIT 4");
+                     WHERE p.status=1 AND p.quantity>=50 ORDER BY p.id DESC LIMIT 4");
     if ($r) while ($row = $r->fetch_assoc()) $selProducts[] = $row;
 
     /* Blog posts */
@@ -188,6 +189,8 @@ if (!$db->connect_error) {
                     </a>
                     <?php endforeach; ?>
                 </div>
+                <p style="color:#000000;font: size 50px;px; text-align: right; margin
+                : 20px">& many more...</p>
                 <?php else: ?>
                 <p style="color:#999;font-size:14px;">Brand partners coming soon.</p>
                 <?php endif; ?>
@@ -215,9 +218,11 @@ if (!$db->connect_error) {
                                     <?php endif; ?>
                                 </div>
                                 <div class="hp-prod-card-body">
-                                    <div class="hp-prod-cat"><?= htmlspecialchars($p['category']) ?></div>
+                                    <div class="hp-prod-brand-logo">
+                                        <img src="<?= htmlspecialchars($p['brandLogoUrl']) ?>" alt="<?= htmlspecialchars($p['category']) ?>" loading="lazy" onerror="this.parentElement.style.display='none'">
+                                    </div>
                                     <div class="hp-prod-name"><?= htmlspecialchars($p['name']) ?></div>
-                                    <div class="hp-prod-sub"><?= htmlspecialchars($p['category']) ?></div>
+                                    <!-- <div class="hp-prod-name"><?= number_format($p['mrp']) ?></div> -->
                                     <?php if ($p['mrp'] > 0): ?>
                                     <div class="hp-prod-price">₹<?= number_format($p['mrp'], 0) ?>/-</div>
                                     <?php else: ?>
@@ -275,52 +280,28 @@ if (!$db->connect_error) {
                 </div>
             </section>
 
-            <!-- ═══════════ WHAT CLIENTS SAY ═══════════ -->
-            <section class="hp-reviews-sec">
-                <div class="hp-sec-title">What Clients Say</div>
-                <div class="hp-reviews-grid">
-                <?php if (!empty($testimonials)):
-                    foreach ($testimonials as $rev): ?>
-                    <div class="hp-review-card">
-                        <div class="hp-review-stars"><?= starRating($rev['rating']) ?></div>
-                        <div class="hp-review-text">"<?= htmlspecialchars($rev['review_text']) ?>"</div>
-                        <div class="hp-reviewer">
-                            <div class="hp-reviewer-avatar"><?= strtoupper(mb_substr($rev['client_name'],0,1)) ?></div>
-                            <div>
-                                <div class="hp-reviewer-name"><?= htmlspecialchars($rev['client_name']) ?></div>
-                                <div class="hp-reviewer-role"><?= htmlspecialchars($rev['company_name']) ?></div>
-                            </div>
-                        </div>
-                    </div>
-                    <?php endforeach;
-                else: ?>
-                    <div class="hp-review-card">
-                        <div class="hp-review-stars">★★★★★</div>
-                        <div class="hp-review-text">"Super Gifts delivered 5,000 custom gift boxes flawlessly. Every pack was perfectly branded and arrived on time. Exceptional service!"</div>
-                        <div class="hp-reviewer">
-                            <div class="hp-reviewer-avatar">R</div>
-                            <div><div class="hp-reviewer-name">Rahul Mehta</div><div class="hp-reviewer-role">Procurement Head, TCS</div></div>
-                        </div>
-                    </div>
-                    <div class="hp-review-card">
-                        <div class="hp-review-stars">★★★★★</div>
-                        <div class="hp-review-text">"We've been ordering quarterly for 2 years. Product quality is consistently excellent and the after-sales support is second to none."</div>
-                        <div class="hp-reviewer">
-                            <div class="hp-reviewer-avatar" style="background:#2d8a4e;">P</div>
-                            <div><div class="hp-reviewer-name">Priya Sharma</div><div class="hp-reviewer-role">HR Manager, Infosys</div></div>
-                        </div>
-                    </div>
-                    <div class="hp-review-card">
-                        <div class="hp-review-stars">★★★★☆</div>
-                        <div class="hp-review-text">"The bulk order facility and inventory management saved us weeks of effort. Highly recommend for large enterprise gifting needs."</div>
-                        <div class="hp-reviewer">
-                            <div class="hp-reviewer-avatar" style="background:#D4AF37;color:#0D2B55;">A</div>
-                            <div><div class="hp-reviewer-name">Arjun Nair</div><div class="hp-reviewer-role">Operations Lead, HDFC</div></div>
-                        </div>
-                    </div>
-                <?php endif; ?>
+            <!-- ═══════════ LARGE HOME & COMMERCIAL APPLIANCES ═══════════ -->
+            <section class="hp-appliances-sec">
+                <div class="hp-sec-title">Large Home &amp; Commercial Appliances</div>
+                <?php if (!empty($applianceBrands)): ?>
+                <div class="hp-appliances-grid">
+                    <?php foreach ($applianceBrands as $brand): ?>
+                    <a href="brand-products.php?brand=<?= intval($brand['id']) ?>" class="hp-appliance-box" title="<?= htmlspecialchars($brand['brandname']) ?>">
+                        <img src="<?= htmlspecialchars($brand['logoUrl']) ?>" alt="<?= htmlspecialchars($brand['brandname']) ?>">
+                        <!-- <div class="hp-appliance-name"><?= htmlspecialchars($brand['brandname']) ?></div> -->
+                    </a>
+                    <?php endforeach; ?>
                 </div>
+                <?php else: ?>
+                <div style="color:#999;font-size:14px;padding:20px 0;">Brands coming soon.</div>
+                <?php endif; ?>
             </section>
+
+            <!-- ═══════════ PAN INDIA INDIVIDUAL DELIVERY ═══════════ -->
+            <div class="hp-pan-india">
+                <h3>PAN India Individual Delivery Available</h3>
+                <p>Delivering to 500+ cities across India — fast, reliable, and trackable</p>
+            </div>
 
             <!-- ═══════════ BULK PROMOTIONAL SWAG ═══════════ -->
             <section class="hp-bulk-sec">
@@ -354,7 +335,7 @@ if (!$db->connect_error) {
             <section class="hp-sel-sec">
                 <div class="hp-sel-header">
                     <h3>Product Selection</h3>
-                    <a href="brand-products.php" class="hp-see-all">View All →</a>
+                    <a href="all-products.php" class="hp-see-all">View All →</a>
                 </div>
                 <?php if (!empty($selProducts)): ?>
                 <div class="hp-sel-track-wrapper">
@@ -451,22 +432,27 @@ if (!$db->connect_error) {
 
             <!-- ═══════════ LOOKING FOR LONGTERM GIFTING PARTNERS ═══════════ -->
             <section class="hp-partners-sec">
-                <div class="hp-partners-title">Looking for <span>Long-term Gifting Partners!</span></div>
+                <div class="hp-partners-title">Looking for <span>Long-term Collaboration</span></div>
                 <div class="hp-partners-boxes">
-                    <div class="hp-partner-box">
-                        <div class="hp-partner-icon">🎒</div>
-                        New Hiring / On-Boarding Kits
+                    <div class="hp-partner-box hp-box-1">
+                        <div class="hp-partner-content">
+                            New Hiring / On-Boarding Kits
+                        </div>
                     </div>
-                    <div class="hp-partner-box">
-                        <div class="hp-partner-icon">🎂</div>
-                        Birthday &amp; Wedding Anniversary Gifts
+
+                    <div class="hp-partner-box hp-box-2">
+                        <div class="hp-partner-content">
+                            Birthday &amp; Wedding Anniversary Gifts
+                        </div>
                     </div>
-                    <div class="hp-partner-box">
-                        <div class="hp-partner-icon">🏢</div>
-                        Branded Logo Store for Corporate Clients
+
+                    <div class="hp-partner-box hp-box-3">
+                        <div class="hp-partner-content">
+                            Branded Logo Store for Corporate Clients
+                        </div>
                     </div>
                 </div>
-                <a href="contact" class="hp-tieup-btn">TIE UP NOW</a>
+                <!-- <a href="contact" class="hp-tieup-btn">TIE UP NOW</a> -->
                 <p class="hp-tieup-tagline">We store the selected product and ship globally on demand!</p>
             </section>
 
@@ -504,28 +490,54 @@ if (!$db->connect_error) {
                 </div>
             </section>
 
-            <!-- ═══════════ LARGE HOME & COMMERCIAL APPLIANCES ═══════════ -->
-            <section class="hp-appliances-sec">
-                <div class="hp-sec-title">Large Home &amp; Commercial Appliances</div>
-                <?php if (!empty($applianceBrands)): ?>
-                <div class="hp-appliances-grid">
-                    <?php foreach ($applianceBrands as $brand): ?>
-                    <a href="brand-products.php?brand=<?= intval($brand['id']) ?>" class="hp-appliance-box" title="<?= htmlspecialchars($brand['brandname']) ?>">
-                        <img src="<?= htmlspecialchars($brand['logoUrl']) ?>" alt="<?= htmlspecialchars($brand['brandname']) ?>">
-                        <!-- <div class="hp-appliance-name"><?= htmlspecialchars($brand['brandname']) ?></div> -->
-                    </a>
-                    <?php endforeach; ?>
-                </div>
-                <?php else: ?>
-                <div style="color:#999;font-size:14px;padding:20px 0;">Brands coming soon.</div>
+            <!-- ═══════════ WHAT CLIENTS SAY ═══════════ -->
+            <section class="hp-reviews-sec">
+                <div class="hp-sec-title">What Clients Say</div>
+                <div class="hp-reviews-grid">
+                <?php if (!empty($testimonials)):
+                    foreach ($testimonials as $rev): ?>
+                    <div class="hp-review-card">
+                        <div class="hp-review-stars"><?= starRating($rev['rating']) ?></div>
+                        <div class="hp-review-text">"<?= htmlspecialchars($rev['review_text']) ?>"</div>
+                        <div class="hp-reviewer">
+                            <div class="hp-reviewer-avatar"><?= strtoupper(mb_substr($rev['client_name'],0,1)) ?></div>
+                            <div>
+                                <div class="hp-reviewer-name"><?= htmlspecialchars($rev['client_name']) ?></div>
+                                <div class="hp-reviewer-role"><?= htmlspecialchars($rev['company_name']) ?></div>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endforeach;
+                else: ?>
+                    <div class="hp-review-card">
+                        <div class="hp-review-stars">★★★★★</div>
+                        <div class="hp-review-text">"Super Gifts delivered 5,000 custom gift boxes flawlessly. Every pack was perfectly branded and arrived on time. Exceptional service!"</div>
+                        <div class="hp-reviewer">
+                            <div class="hp-reviewer-avatar">R</div>
+                            <div><div class="hp-reviewer-name">Rahul Mehta</div><div class="hp-reviewer-role">Procurement Head, TCS</div></div>
+                        </div>
+                    </div>
+                    <div class="hp-review-card">
+                        <div class="hp-review-stars">★★★★★</div>
+                        <div class="hp-review-text">"We've been ordering quarterly for 2 years. Product quality is consistently excellent and the after-sales support is second to none."</div>
+                        <div class="hp-reviewer">
+                            <div class="hp-reviewer-avatar" style="background:#2d8a4e;">P</div>
+                            <div><div class="hp-reviewer-name">Priya Sharma</div><div class="hp-reviewer-role">HR Manager, Infosys</div></div>
+                        </div>
+                    </div>
+                    <div class="hp-review-card">
+                        <div class="hp-review-stars">★★★★☆</div>
+                        <div class="hp-review-text">"The bulk order facility and inventory management saved us weeks of effort. Highly recommend for large enterprise gifting needs."</div>
+                        <div class="hp-reviewer">
+                            <div class="hp-reviewer-avatar" style="background:#D4AF37;color:#0D2B55;">A</div>
+                            <div><div class="hp-reviewer-name">Arjun Nair</div><div class="hp-reviewer-role">Operations Lead, HDFC</div></div>
+                        </div>
+                    </div>
                 <?php endif; ?>
+                </div>
             </section>
 
-            <!-- ═══════════ PAN INDIA INDIVIDUAL DELIVERY ═══════════ -->
-            <div class="hp-pan-india">
-                <h3>PAN India Individual Delivery Available</h3>
-                <p>Delivering to 500+ cities across India — fast, reliable, and trackable</p>
-            </div>
+            
 
         </main>
 

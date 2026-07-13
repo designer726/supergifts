@@ -171,9 +171,9 @@ $productCount = $products->num_rows;
                         </div>
 
                         <!-- Brand Name -->
-                        <h1 class="hs-title-1 mb-10">
+                        <!-- <h1 class="hs-title-1 mb-10">
                             <span class="wow charsAnimIn" data-splitting="chars"><?= htmlspecialchars($brand['brandname']) ?></span>
-                        </h1>
+                        </h1> -->
 
                         <!-- Brand Type Badge -->
                         <div class="mb-20">

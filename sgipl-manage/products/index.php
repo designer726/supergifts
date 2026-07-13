@@ -84,13 +84,16 @@ require_once '../includes/layout_top.php';
                 <th>Product Name</th>
                 <?php if (!$brand_id): ?><th>Brand</th><?php endif; ?>
                 <th>MRP</th>
+                <th>Offer Price</th>
+                <th>Qty</th>
+                <th>Premium</th>
                 <th>Status</th>
                 <th style="width:100px;">Actions</th>
             </tr>
         </thead>
         <tbody>
             <?php if ($products->num_rows === 0): ?>
-                <tr><td colspan="7" class="text-center text-muted py-4">
+                <tr><td colspan="10" class="text-center text-muted py-4">
                     No products found.
                     <?php if ($brand): ?>
                         <a href="add.php?brand_id=<?= $brand_id ?>">Add first product →</a>
@@ -121,6 +124,15 @@ require_once '../includes/layout_top.php';
                 <?php endif; ?>
                 <td class="fw-semibold" style="color:#059669;">
                     <?= $row['mrp'] > 0 ? '₹'.number_format($row['mrp'],2) : '<span class="text-muted">—</span>' ?>
+                </td>
+                <td class="fw-semibold" style="color:#059669;">
+                    <?= $row['offer_price'] > 0 ? '₹'.number_format($row['offer_price'],2) : '<span class="text-muted">—</span>' ?>
+                </td>
+                <td class="text-muted small"><?= intval($row['quantity']) ?></td>
+                <td>
+                    <?= $row['is_premium']==1
+                        ? '<span class="badge-published">Yes</span>'
+                        : '<span class="badge-draft">No</span>' ?>
                 </td>
                 <td>
                     <?= $row['status']==1

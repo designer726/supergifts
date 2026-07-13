@@ -15,4 +15,17 @@ $reviewColumns = $conn->query("SHOW COLUMNS FROM reviews LIKE 'is_hidden'");
 if ($reviewColumns && $reviewColumns->num_rows === 0) {
     $conn->query("ALTER TABLE reviews ADD COLUMN is_hidden TINYINT(1) NOT NULL DEFAULT 0 AFTER status");
 }
+
+$offerPriceCol = $conn->query("SHOW COLUMNS FROM products LIKE 'offer_price'");
+if ($offerPriceCol && $offerPriceCol->num_rows === 0) {
+    $conn->query("ALTER TABLE products ADD COLUMN offer_price DECIMAL(10,2) DEFAULT 0.00 AFTER mrp");
+}
+$quantityCol = $conn->query("SHOW COLUMNS FROM products LIKE 'quantity'");
+if ($quantityCol && $quantityCol->num_rows === 0) {
+    $conn->query("ALTER TABLE products ADD COLUMN quantity INT(11) DEFAULT 0 AFTER offer_price");
+}
+$premiumCol = $conn->query("SHOW COLUMNS FROM products LIKE 'is_premium'");
+if ($premiumCol && $premiumCol->num_rows === 0) {
+    $conn->query("ALTER TABLE products ADD COLUMN is_premium TINYINT(1) DEFAULT 0 AFTER quantity");
+}
 ?>

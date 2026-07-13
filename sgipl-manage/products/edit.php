@@ -23,12 +23,15 @@ if (!is_dir($imgUploadDir)) mkdir($imgUploadDir, 0755, true);
 $allBrands = $conn->query("SELECT id, brandname FROM brandlogo ORDER BY brandname ASC");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $brand_id = intval($_POST['brand_id'] ?? 0);
-    $name     = trim($_POST['name'] ?? '');
-    $mrp      = floatval($_POST['mrp'] ?? 0);
-    $sequence = intval($_POST['sequence'] ?? 0);
-    $status   = intval($_POST['status'] ?? 1);
-    $image    = $product['image'];
+    $brand_id    = intval($_POST['brand_id'] ?? 0);
+    $name        = trim($_POST['name'] ?? '');
+    $mrp         = floatval($_POST['mrp'] ?? 0);
+    $offer_price = floatval($_POST['offer_price'] ?? 0);
+    $quantity    = intval($_POST['quantity'] ?? 0);
+    $is_premium  = intval($_POST['is_premium'] ?? 0);
+    $sequence    = intval($_POST['sequence'] ?? 0);
+    $status      = intval($_POST['status'] ?? 1);
+    $image       = $product['image'];
 
     if (!$brand_id) $errors[] = "Please select a brand.";
     if (!$name)     $errors[] = "Product name is required.";
@@ -58,11 +61,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (!$errors) {
-        $stmt = $conn->prepare("UPDATE products SET brand_id=?, name=?, image=?, mrp=?, sequence=?, status=? WHERE id=?");
-        $stmt->bind_param("issdiii", $brand_id, $name, $image, $mrp, $sequence, $status, $id);
+        $stmt = $conn->prepare("UPDATE products SET brand_id=?, name=?, image=?, mrp=?, offer_price=?, quantity=?, is_premium=?, sequence=?, status=? WHERE id=?");
+        $stmt->bind_param("issddiiiii", $brand_id, $name, $image, $mrp, $offer_price, $quantity, $is_premium, $sequence, $status, $id);
         if ($stmt->execute()) {
             $success = "Product updated!";
-            $product = array_merge($product, compact('brand_id','name','image','mrp','sequence','status'));
+            $product = array_merge($product, compact('brand_id','name','image','mrp','offer_price','quantity','is_premium','sequence','status'));
         } else {
             $errors[] = "DB error: ".$conn->error;
         }
@@ -110,12 +113,34 @@ require_once '../includes/layout_top.php';
                     <input type="text" name="name" class="form-control"
                            value="<?= htmlspecialchars($product['name']) ?>" required>
                 </div>
-                <div class="mb-0">
-                    <label class="form-label">MRP (₹)</label>
-                    <div class="input-group">
-                        <span class="input-group-text">₹</span>
-                        <input type="number" name="mrp" class="form-control"
-                               value="<?= $product['mrp'] ?>" min="0" step="0.01">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">MRP (₹)</label>
+                        <div class="input-group">
+                            <span class="input-group-text">₹</span>
+                            <input type="number" name="mrp" class="form-control"
+                                   value="<?= $product['mrp'] ?>" min="0" step="0.01">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Offer Price (₹)</label>
+                        <div class="input-group">
+                            <span class="input-group-text">₹</span>
+                            <input type="number" name="offer_price" class="form-control"
+                                   value="<?= $product['offer_price'] ?>" min="0" step="0.01">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Quantity</label>
+                        <input type="number" name="quantity" class="form-control"
+                               value="<?= $product['quantity'] ?>" min="0">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Premium</label>
+                        <select name="is_premium" class="form-select">
+                            <option value="0" <?= $product['is_premium']==0?'selected':'' ?>>No</option>
+                            <option value="1" <?= $product['is_premium']==1?'selected':'' ?>>Yes</option>
+                        </select>
                     </div>
                 </div>
             </div>
