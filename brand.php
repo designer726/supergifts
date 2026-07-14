@@ -24,12 +24,31 @@ if ($result->num_rows > 0) {
     }
 }
 
+function resolveBrandLogoPath($imageno) {
+    $imageNo = intval($imageno);
+    if ($imageNo <= 0) {
+        return 'images/brandlogo/image1.jpg';
+    }
+
+    $baseDir = __DIR__ . '/images/brandlogo/';
+    $extensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp'];
+
+    foreach ($extensions as $ext) {
+        $filePath = $baseDir . 'image' . $imageNo . $ext;
+        if (file_exists($filePath)) {
+            return 'images/brandlogo/image' . $imageNo . $ext;
+        }
+    }
+
+    return 'images/brandlogo/image' . $imageNo . '.jpg';
+}
+
 // Get brand logo path (assuming logos are stored in images/brandlogo/)
-$brand_logo = 'images/brandlogo/' . strtolower(str_replace(' ', '-', $brand)) . '.png';
+$brand_logo = resolveBrandLogoPath($brand ?? null);
 $brand_logo_default = 'images/brandlogo/default.png';
 
 // Check if brand logo exists, otherwise use default
-if (!file_exists($brand_logo)) {
+if (!file_exists(__DIR__ . '/' . $brand_logo)) {
     $brand_logo = $brand_logo_default;
 }
 
