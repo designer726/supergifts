@@ -9,6 +9,25 @@ $dbname     = "superehc_sgipl"; // ← Change to your DB name
 $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) die("Connection failed: " . $conn->connect_error);
 
+function resolveBrandLogoPath($imageno) {
+    $imageNo = intval($imageno);
+    if ($imageNo <= 0) {
+        return 'images/brandlogo/image1.jpg';
+    }
+
+    $baseDir = __DIR__ . '/images/brandlogo/';
+    $extensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp'];
+
+    foreach ($extensions as $ext) {
+        $filePath = $baseDir . 'image' . $imageNo . $ext;
+        if (file_exists($filePath)) {
+            return 'images/brandlogo/image' . $imageNo . $ext;
+        }
+    }
+
+    return 'images/brandlogo/image' . $imageNo . '.jpg';
+}
+
 // Get brand slug from URL: brand-products.php?brand=blaupunkt
 $brand = trim($_GET['brand'] ?? '');
 if (!$brand) {
@@ -29,14 +48,7 @@ if (!$brand) {
     exit();
 }
 
-// Construct the brand logo path from imageno field
-// imageno contains just a number, so the full filename is image{imageno}.jpg
-if (!empty($brand['imageno'])) {
-    $brand['imageno'] = 'images/brandlogo/image' . intval($brand['imageno']) . '.jpg';
-} else {
-    // Fallback to first available logo if imageno is empty
-    $brand['imageno'] = 'images/brandlogo/image1.jpg';
-}
+$brand['imageno'] = resolveBrandLogoPath($brand['imageno'] ?? null);
 
 // Load products for this brand
 $products = $conn->query("SELECT * FROM products WHERE brand_id = {$brand['id']} AND status = 1 ORDER BY sequence ASC, id ASC");
@@ -166,7 +178,7 @@ $productCount = $products->num_rows;
                         <!-- Brand Logo -->
                         <div class="mb-20">
                             <div class="brand-logo-hero d-inline-flex">
-                                <img src="<?= $brand['imageno'] ?>" alt="<?= htmlspecialchars($brand['brandname']) ?>" style="max-height: 100px; max-width: 250px; object-fit: contain;">
+                                <img src="<?= htmlspecialchars($brand['imageno']) ?>" alt="<?= htmlspecialchars($brand['brandname']) ?>" style="max-height: 100px; max-width: 250px; object-fit: contain;">
                             </div>
                         </div>
 
@@ -176,13 +188,13 @@ $productCount = $products->num_rows;
                         </h1> -->
 
                         <!-- Brand Type Badge -->
-                        <div class="mb-20">
+                        <!-- <div class="mb-20">
                             <?php if ($brand['flag'] == 1): ?>
                                 <span style="background:#dbeafe;color:#1d4ed8;font-size:13px;padding:5px 16px;border-radius:20px;font-weight:600;">⭐ Authorised Brand Partner</span>
                             <?php else: ?>
                                 <span style="background:#fef9c3;color:#854d0e;font-size:13px;padding:5px 16px;border-radius:20px;font-weight:600;">🤝 We Also Deal</span>
                             <?php endif; ?>
-                        </div>
+                        </div> -->
 
                         <p class="section-descr mb-0 wow fadeIn" data-wow-delay="0.2s">
                             <?= $productCount ?> Product<?= $productCount != 1 ? 's' : '' ?> Available
