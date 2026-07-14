@@ -64,14 +64,14 @@ if (!$db->connect_error) {
         $brandPartners[] = array_merge($row, ['logoUrl' => findBrandLogoPath($row['imageno'])]);
 
     /* Premium products for carousel */
-    $r = $db->query("SELECT p.id, p.name, p.image, p.mrp, b.brandname AS category, b.imageno
+    $r = $db->query("SELECT p.id, p.name, p.image, p.mrp, p.offer_price, b.brandname AS category, b.imageno
                      FROM products p JOIN brandlogo b ON p.brand_id=b.id
                      WHERE p.status=1 AND p.is_premium=1 ORDER BY p.sequence ASC, p.id DESC LIMIT 8");
     if ($r) while ($row = $r->fetch_assoc())
         $premiumProducts[] = array_merge($row, ['brandLogoUrl' => findBrandLogoPath($row['imageno'])]);
 
     /* Product selection */
-    $r = $db->query("SELECT p.id, p.name, p.image, p.mrp, b.brandname AS category
+    $r = $db->query("SELECT p.id, p.name, p.image, p.mrp, p.offer_price, b.brandname AS category
                      FROM products p JOIN brandlogo b ON p.brand_id=b.id
                      WHERE p.status=1 AND p.quantity>=50 ORDER BY p.id DESC LIMIT 4");
     if ($r) while ($row = $r->fetch_assoc()) $selProducts[] = $row;
@@ -87,13 +87,13 @@ if (!$db->connect_error) {
     if ($r) while ($row = $r->fetch_assoc()) $testimonials[] = $row;
 
     /* Budget products by price range */
-    $r = $db->query("SELECT p.id,p.name,p.image,p.mrp FROM products p WHERE p.status=1 AND p.mrp>=10 AND p.mrp<=100 ORDER BY p.sequence ASC LIMIT 6");
+    $r = $db->query("SELECT p.id,p.name,p.image,p.mrp,p.offer_price FROM products p WHERE p.status=1 AND p.mrp>=10 AND p.mrp<=100 ORDER BY p.sequence ASC LIMIT 6");
     if ($r) while ($row=$r->fetch_assoc()) $budgetLow[]=$row;
-    $r = $db->query("SELECT p.id,p.name,p.image,p.mrp FROM products p WHERE p.status=1 AND p.mrp>100 AND p.mrp<=500 ORDER BY p.sequence ASC LIMIT 6");
+    $r = $db->query("SELECT p.id,p.name,p.image,p.mrp,p.offer_price FROM products p WHERE p.status=1 AND p.mrp>100 AND p.mrp<=500 ORDER BY p.sequence ASC LIMIT 6");
     if ($r) while ($row=$r->fetch_assoc()) $budgetMid[]=$row;
-    $r = $db->query("SELECT p.id,p.name,p.image,p.mrp FROM products p WHERE p.status=1 AND p.mrp>500 AND p.mrp<=1000 ORDER BY p.sequence ASC LIMIT 6");
+    $r = $db->query("SELECT p.id,p.name,p.image,p.mrp,p.offer_price FROM products p WHERE p.status=1 AND p.mrp>500 AND p.mrp<=1000 ORDER BY p.sequence ASC LIMIT 6");
     if ($r) while ($row=$r->fetch_assoc()) $budgetHigh[]=$row;
-    $r = $db->query("SELECT p.id,p.name,p.image,p.mrp FROM products p WHERE p.status=1 AND p.mrp>1000 ORDER BY p.sequence ASC LIMIT 6");
+    $r = $db->query("SELECT p.id,p.name,p.image,p.mrp,p.offer_price FROM products p WHERE p.status=1 AND p.mrp>1000 ORDER BY p.sequence ASC LIMIT 6");
     if ($r) while ($row=$r->fetch_assoc()) $budgetPremium[]=$row;
 
     /* Brands for appliances section */
@@ -222,12 +222,17 @@ if (!$db->connect_error) {
                                         <img src="<?= htmlspecialchars($p['brandLogoUrl']) ?>" alt="<?= htmlspecialchars($p['category']) ?>" loading="lazy" onerror="this.parentElement.style.display='none'">
                                     </div>
                                     <div class="hp-prod-name"><?= htmlspecialchars($p['name']) ?></div>
-                                    <!-- <div class="hp-prod-name"><?= number_format($p['mrp']) ?></div> -->
-                                    <?php if ($p['mrp'] > 0): ?>
-                                    <div class="hp-prod-price">₹<?= number_format($p['mrp'], 0) ?>/-</div>
+                                    <?php if (!empty($p['offer_price']) && $p['offer_price'] > 0 && $p['offer_price'] < $p['mrp']): ?>
+                                    <div class="hp-prod-price-row">
+                                        <div class="hp-prod-price">₹<?= number_format($p['offer_price'], 0) ?>/-</div>
+                                        <!-- <div class="hp-prod-mrp">₹<?= number_format($p['mrp'], 0) ?>/-</div> -->
+                                    </div>
+                                    <?php elseif ($p['offer_price'] > 0): ?>
+                                    <div class="hp-prod-price">₹<?= number_format($p['offer_price'], 0) ?>/-</div>
                                     <?php else: ?>
                                     <div class="hp-prod-price">Price on Request</div>
                                     <?php endif; ?>
+                                    <div class="hp-prod-mrp">₹<?= number_format($p['mrp'], 0) ?>/-</div>
                                 </div>
                             </a>
                             <?php endforeach; ?>
@@ -308,25 +313,22 @@ if (!$db->connect_error) {
                 <div class="hp-bulk-title">Bulk <span>Promotional Swag</span></div>
 
                 <div class="hp-bulk-steps">
-                    <div class="hp-bulk-step">
-                        <div class="hp-bulk-step-icon">🏭</div>
+                    <div class="hp-bulk-step" style="background-image:linear-gradient(180deg, rgba(15,20,35,0.55) 0%, rgba(15,20,35,0.85) 100%), url('images/warehouse.jpg');">
                         <div class="hp-bulk-step-val">5000+</div>
                         <div class="hp-bulk-step-label">Ready to Go Inventory</div>
                         <div class="hp-bulk-step-sub">Units available in stock, ready for immediate co-branding</div>
                     </div>
                     <div class="hp-bulk-arrow">→</div>
-                    <div class="hp-bulk-step">
-                        <div class="hp-bulk-step-icon">🎨</div>
+                    <div class="hp-bulk-step" style="background-image:linear-gradient(180deg, rgba(15,20,35,0.55) 0%, rgba(15,20,35,0.85) 100%), url('images/printing.jpg');">
                         <div class="hp-bulk-step-val">Quick</div>
                         <div class="hp-bulk-step-label">Co-Branding Option</div>
                         <div class="hp-bulk-step-sub">Your logo printed or embossed on any product within hours</div>
                     </div>
                     <div class="hp-bulk-arrow">→</div>
-                    <div class="hp-bulk-step">
-                        <div class="hp-bulk-step-icon">🚚</div>
-                        <div class="hp-bulk-step-val">48 hrs</div>
-                        <div class="hp-bulk-step-label">Within Delivery</div>
-                        <div class="hp-bulk-step-sub">Pan-India delivery within 48 business hours — guaranteed</div>
+                    <div class="hp-bulk-step" style="background-image:linear-gradient(180deg, rgba(15,20,35,0.55) 0%, rgba(15,20,35,0.85) 100%), url('images/logestic.jpg');">
+                        <div class="hp-bulk-step-val">Express</div>
+                        <div class="hp-bulk-step-label">Pan India Delivery</div>
+                        <div class="hp-bulk-step-sub">Through India Post, Blue Dart, Delhivery, & Express Bees</div>
                     </div>
                 </div>
             </section>
@@ -358,11 +360,17 @@ if (!$db->connect_error) {
                             <div class="hp-sel-info">
                                 <div class="hp-sel-name"><?= htmlspecialchars($p['name']) ?></div>
                                 <div class="hp-sel-cat"><?= htmlspecialchars($p['category']) ?></div>
-                                <?php if ($p['mrp'] > 0): ?>
-                                <div class="hp-sel-price">₹<?= number_format($p['mrp'], 0) ?>/-</div>
+                                <?php if (!empty($p['offer_price']) && $p['offer_price'] > 0 && $p['offer_price'] < $p['mrp']): ?>
+                                <div class="hp-sel-price-row">
+                                    <div class="hp-sel-price">₹<?= number_format($p['offer_price'], 0) ?>/-</div>
+                                    <!-- <div class="hp-sel-mrp">₹<?= number_format($p['mrp'], 0) ?>/-</div> -->
+                                </div>
+                                <?php elseif ($p['offer_price'] > 0): ?>
+                                <div class="hp-sel-price">₹<?= number_format($p['offer_price'], 0) ?>/-</div>
                                 <?php else: ?>
                                 <div class="hp-sel-price">Price on Request</div>
                                 <?php endif; ?>
+                                <div class="hp-sel-mrp">₹<?= number_format($p['mrp'], 0) ?>/-</div>
                             </div>
                         </a>
                         <?php endforeach; ?>
@@ -415,8 +423,13 @@ if (!$db->connect_error) {
                                 </div>
                                 <div class="hp-budget-card-body">
                                     <div class="hp-budget-card-name"><?= htmlspecialchars($item['name']) ?></div>
-                                    <?php if ($item['mrp'] > 0): ?>
-                                    <div class="hp-budget-card-price">₹<?= number_format($item['mrp'], 0) ?></div>
+                                    <?php if (!empty($item['offer_price']) && $item['offer_price'] > 0 && $item['offer_price'] < $item['mrp']): ?>
+                                    <div class="hp-budget-card-price-row">
+                                        <div class="hp-budget-card-price">₹<?= number_format($item['offer_price'], 0) ?></div>
+                                        <div class="hp-budget-card-mrp">₹<?= number_format($item['mrp'], 0) ?></div>
+                                    </div>
+                                    <?php elseif ($item['offer_price'] > 0): ?>
+                                    <div class="hp-budget-card-price">₹<?= number_format($item['offer_price'], 0) ?></div>
                                     <?php endif; ?>
                                 </div>
                             </a>
@@ -492,7 +505,7 @@ if (!$db->connect_error) {
 
             <!-- ═══════════ WHAT CLIENTS SAY ═══════════ -->
             <section class="hp-reviews-sec">
-                <div class="hp-sec-title">What Clients Say</div>
+                <div class="hp-sec-title">What Clients & Brand Say</div>
                 <div class="hp-reviews-grid">
                 <?php if (!empty($testimonials)):
                     foreach ($testimonials as $rev): ?>
@@ -536,9 +549,6 @@ if (!$db->connect_error) {
                 <?php endif; ?>
                 </div>
             </section>
-
-            
-
         </main>
 
         <?php include('common/footer.php'); ?>

@@ -103,10 +103,28 @@ $imgUrl = $product['image']
         }
 
         .product-price {
-            font-size: 28px;
+            font-size: 30px;
             font-weight: 700;
             color: #059669;
             margin-bottom: 20px;
+        }
+
+        .product-price-wrap {
+            display: flex;
+            align-items: baseline;
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .product-price-wrap .product-price {
+            margin-bottom: 0;
+        }
+
+        .product-mrp-strike {
+            font-size: 18px;
+            font-weight: 500;
+            color: #999;
+            text-decoration: line-through;
         }
 
         .product-description {
@@ -264,10 +282,24 @@ $imgUrl = $product['image']
         }
 
         .related-price {
-            font-size: 15px;
+            font-size: 16px;
             font-weight: 700;
             color: #059669;
             margin-top: auto;
+        }
+
+        .related-price-row {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            margin-top: auto;
+        }
+
+        .related-mrp-strike {
+            font-size: 12px;
+            font-weight: 500;
+            color: #999;
+            text-decoration: line-through;
         }
 
         .breadcrumb-nav {
@@ -363,7 +395,12 @@ $imgUrl = $product['image']
                     </h1>
 
                     <!-- Price -->
-                    <?php if ($product['mrp'] > 0): ?>
+                    <?php if (!empty($product['offer_price']) && $product['offer_price'] > 0 && $product['offer_price'] < $product['mrp']): ?>
+                        <div class="product-price-wrap">
+                            <div class="product-price">₹<?= number_format($product['offer_price'], 2) ?></div>
+                            <div class="product-mrp-strike">₹<?= number_format($product['mrp'], 2) ?></div>
+                        </div>
+                    <?php elseif ($product['mrp'] > 0): ?>
                         <div class="product-price">
                             ₹<?= number_format($product['mrp'], 2) ?>
                         </div>
@@ -440,7 +477,12 @@ $imgUrl = $product['image']
                             <div class="related-name">
                                 <?= htmlspecialchars($related['name']) ?>
                             </div>
-                            <?php if ($related['mrp'] > 0): ?>
+                            <?php if (!empty($related['offer_price']) && $related['offer_price'] > 0 && $related['offer_price'] < $related['mrp']): ?>
+                                <div class="related-price-row">
+                                    <div class="related-price">₹<?= number_format($related['offer_price'], 2) ?></div>
+                                    <div class="related-mrp-strike">₹<?= number_format($related['mrp'], 2) ?></div>
+                                </div>
+                            <?php elseif ($related['mrp'] > 0): ?>
                                 <div class="related-price">
                                     ₹<?= number_format($related['mrp'], 2) ?>
                                 </div>

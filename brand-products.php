@@ -103,6 +103,25 @@ $productCount = $products->num_rows;
             color: #059669;
         }
 
+        .product-price-row {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        .product-offer-price {
+            font-size: 16px;
+            font-weight: 800;
+            color: #059669;
+        }
+
+        .product-mrp-strike {
+            font-size: 12px;
+            font-weight: 500;
+            color: #999;
+            text-decoration: line-through;
+        }
+
         .brand-logo-hero {
             background: #fff;
             border: 1px solid #e9ecef;
@@ -233,7 +252,12 @@ $productCount = $products->num_rows;
                                             </div>
                                             <div class="product-info">
                                                 <div class="product-name"><?= htmlspecialchars($product['name']) ?></div>
-                                                <?php if ($product['mrp'] > 0): ?>
+                                                <?php if (!empty($product['offer_price']) && $product['offer_price'] > 0 && $product['offer_price'] < $product['mrp']): ?>
+                                                    <div class="product-price-row">
+                                                        <div class="product-offer-price">₹<?= number_format($product['offer_price'], 2) ?></div>
+                                                        <div class="product-mrp-strike">₹<?= number_format($product['mrp'], 2) ?></div>
+                                                    </div>
+                                                <?php elseif ($product['mrp'] > 0): ?>
                                                     <div class="product-mrp">MRP: ₹<?= number_format($product['mrp'], 2) ?></div>
                                                 <?php endif; ?>
                                             </div>
