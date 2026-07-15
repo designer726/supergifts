@@ -28,4 +28,9 @@ $premiumCol = $conn->query("SHOW COLUMNS FROM products LIKE 'is_premium'");
 if ($premiumCol && $premiumCol->num_rows === 0) {
     $conn->query("ALTER TABLE products ADD COLUMN is_premium TINYINT(1) DEFAULT 0 AFTER quantity");
 }
+
+$brandBannerCol = $conn->query("SHOW COLUMNS FROM brandlogo LIKE 'brand_banner'");
+if ($brandBannerCol && $brandBannerCol->num_rows === 0) {
+    $conn->query("ALTER TABLE brandlogo ADD COLUMN brand_banner VARCHAR(255) DEFAULT '' AFTER imageno");
+}
 ?>

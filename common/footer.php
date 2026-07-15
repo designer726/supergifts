@@ -37,7 +37,7 @@
           <div class="footer-col">
               <h5>For Resellers</h5>
               <ul>
-                  <li><a href="services">Services</a></li>
+                  <li><a href="services" style="font-size: 12px">Services</a></li>
                   <li><a href="contact">Bulk Inquiry</a></li>
                   <li><a href="#">Signup</a></li>
                   <li><a href="#">Partner Portal</a></li>

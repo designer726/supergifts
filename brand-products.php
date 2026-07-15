@@ -50,6 +50,10 @@ if (!$brand) {
 
 $brand['imageno'] = resolveBrandLogoPath($brand['imageno'] ?? null);
 
+$brandBannerUrl = !empty($brand['brand_banner'])
+    ? (($_SERVER['SERVER_NAME']==='localhost') ? '/supergifts/'.$brand['brand_banner'] : '/'.$brand['brand_banner'])
+    : '';
+
 // Load products for this brand
 $products = $conn->query("SELECT * FROM products WHERE brand_id = {$brand['id']} AND status = 1 ORDER BY sequence ASC, id ASC");
 $productCount = $products->num_rows;
@@ -190,7 +194,16 @@ $productCount = $products->num_rows;
         <main id="main">
 
             <!-- Brand Header -->
-            <section class="page-section bg-gray-light-1 bg-light-alpha-90 parallax-5" style="background-image: url(images/full-width-images/section-bg-1.jpg)">
+            <?php
+            if ($brandBannerUrl) {
+                $heroClasses = "page-section parallax-5 light-content";
+                $heroStyle   = "background-image: linear-gradient(180deg, rgba(10,15,30,0.35) 0%, rgba(10,15,30,0.75) 100%), url(" . htmlspecialchars($brandBannerUrl) . "); background-size: cover; background-position: center;";
+            } else {
+                $heroClasses = "page-section bg-gray-light-1 bg-light-alpha-90 parallax-5";
+                $heroStyle   = "background-image: url(images/full-width-images/section-bg-1.jpg)";
+            }
+            ?>
+            <section class="<?= $heroClasses ?>" style="<?= $heroStyle ?>">
                 <div class="container position-relative pt-30 pt-sm-50 pb-10">
                     <div class="text-center">
 
