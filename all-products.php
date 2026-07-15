@@ -13,7 +13,7 @@ if ($conn->connect_error) die("Connection failed: " . $conn->connect_error);
 $selectedBrands = array_filter(array_map('intval', $_GET['brand'] ?? []));
 $offerMin       = ($_GET['offer_min'] ?? '') !== '' ? floatval($_GET['offer_min']) : null;
 $offerMax       = ($_GET['offer_max'] ?? '') !== '' ? floatval($_GET['offer_max']) : null;
-$qtyMin         = ($_GET['qty_min'] ?? '') !== '' ? max(50, intval($_GET['qty_min'])) : 50;
+$qtyMin         = ($_GET['qty_min'] ?? '') !== '' ? max(10, intval($_GET['qty_min'])) : 10;
 
 // ── Build WHERE clause ──
 $where  = ["p.status = 1", "p.quantity >= ?"];
@@ -42,7 +42,7 @@ $stmt->close();
 // ── Brands available for filtering (only brands with qualifying products) ──
 $brandOptions = $conn->query("SELECT DISTINCT b.id, b.brandname FROM products p
                                JOIN brandlogo b ON p.brand_id = b.id
-                               WHERE p.status = 1 AND p.quantity >= 50
+                               WHERE p.status = 1 AND p.quantity >= 10
                                ORDER BY b.brandname ASC");
 ?>
 <!DOCTYPE html>
@@ -228,8 +228,8 @@ $brandOptions = $conn->query("SELECT DISTINCT b.id, b.brandname FROM products p
                                 <div class="filter-group mb-3">
                                     <h6>Minimum Quantity</h6>
                                     <input type="number" name="qty_min" class="form-control form-control-sm"
-                                           min="50" placeholder="50" value="<?= $qtyMin ?>">
-                                    <div class="text-muted small mt-1">Only products with 50+ quantity are shown.</div>
+                                           min="10" placeholder="10" value="<?= $qtyMin ?>">
+                                    <div class="text-muted small mt-1">Only products with 10+ quantity are shown.</div>
                                 </div>
 
                                 <button type="submit" class="btn btn-sm w-100 mb-2" style="background:linear-gradient(135deg,#c8a96e,#a07840);color:#fff;">
