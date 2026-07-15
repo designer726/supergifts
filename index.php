@@ -71,10 +71,12 @@ if (!$db->connect_error) {
         $premiumProducts[] = array_merge($row, ['brandLogoUrl' => findBrandLogoPath($row['imageno'])]);
 
     /* Product selection */
-    $r = $db->query("SELECT p.id, p.name, p.image, p.mrp, p.offer_price, b.brandname AS category
+    $r = $db->query("SELECT p.id, p.name, p.image, p.mrp, p.offer_price, p.quantity, b.brandname AS category, b.imageno
                      FROM products p JOIN brandlogo b ON p.brand_id=b.id
-                     WHERE p.status=1 AND p.quantity>=50 ORDER BY p.id DESC LIMIT 4");
-    if ($r) while ($row = $r->fetch_assoc()) $selProducts[] = $row;
+                     WHERE p.status=1 AND p.quantity>=10 ORDER BY p.id DESC LIMIT 4");
+    // if ($r) while ($row = $r->fetch_assoc()) $selProducts[] = $row;
+    if ($r) while ($row = $r->fetch_assoc())
+        $selProducts[] = array_merge($row, ['brandLogoUrl' => findBrandLogoPath($row['imageno'])]);
 
     /* Blog posts */
     $r = $db->query("SELECT id, title, slug, excerpt, image, category, created_at
@@ -353,13 +355,17 @@ if (!$db->connect_error) {
                                 <div style="display:flex;align-items:center;justify-content:center;height:100%;background:#f5f5f5;font-size:32px;color:#ccc;">🎁</div>
                                 <?php endif; ?>
                                 <div class="hp-qty-badge">
-                                    <strong>500+</strong>
+                                    <!-- <strong>500+</strong> -->
+                                     <div><?= htmlspecialchars($p['quantity']) ?></div>
                                     Available Qty.
                                 </div>
                             </div>
                             <div class="hp-sel-info">
+                                <div class="hp-prod-brand-logo">
+                                    <img src="<?= htmlspecialchars($p['brandLogoUrl']) ?>" alt="<?= htmlspecialchars($p['category']) ?>" loading="lazy" onerror="this.parentElement.style.display='none'">
+                                </div>
                                 <div class="hp-sel-name"><?= htmlspecialchars($p['name']) ?></div>
-                                <div class="hp-sel-cat"><?= htmlspecialchars($p['category']) ?></div>
+                                <!-- <div class="hp-sel-cat"><?= htmlspecialchars($p['category']) ?></div> -->
                                 <?php if (!empty($p['offer_price']) && $p['offer_price'] > 0 && $p['offer_price'] < $p['mrp']): ?>
                                 <div class="hp-sel-price-row">
                                     <div class="hp-sel-price">₹<?= number_format($p['offer_price'], 0) ?>/-</div>
