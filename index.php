@@ -112,7 +112,7 @@ if (!$db->connect_error) {
 <html lang="en">
 <head>
     <?php include('common/head.php'); ?>
-    <link rel="stylesheet" href="css/homepage.css">
+    <link rel="stylesheet" href="css/homepage.css?v=<?= @filemtime(__DIR__.'/css/homepage.css') ?: time() ?>">
 </head>
 <body class="hp-body appear-animate">
 
@@ -253,7 +253,7 @@ if (!$db->connect_error) {
             <section class="hp-updates-sec">
                 <div class="hp-updates-header">
                     <h2>Current Updates</h2>
-                    <a href="events" class="hp-see-all">See all →</a>
+                    <a href="blog" class="hp-see-all">See all →</a>
                 </div>
                 <div class="hp-updates-slider">
                     <div class="hp-updates-arrow" onclick="document.getElementById('updatesScroll').scrollLeft -= 340">&#8249;</div>
@@ -261,7 +261,7 @@ if (!$db->connect_error) {
                         <div id="updatesScroll" style="display:flex;gap:16px;overflow-x:auto;scroll-behavior:smooth;scrollbar-width:none;">
                             <?php if (!empty($blogPosts)): ?>
                                 <?php foreach ($blogPosts as $blog): ?>
-                                <a href="blog_details.php?slug=<?= htmlspecialchars($blog['slug']) ?>" class="hp-blog-card" style="min-width:calc(33.33% - 11px);flex-shrink:0;">
+                                <a href="blog_details?BlogDetails=<?= htmlspecialchars($blog['slug']) ?>" class="hp-blog-card" style="min-width:calc(22% - 13px);max-width:220px;flex-shrink:0;">
                                     <div class="hp-blog-img">
                                         <?php if (!empty($blog['image'])): ?>
                                         <img src="<?= htmlspecialchars($blog['image']) ?>" alt="<?= htmlspecialchars($blog['title']) ?>" loading="lazy">

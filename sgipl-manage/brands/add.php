@@ -10,12 +10,19 @@ $uploadDir = ($_SERVER['SERVER_NAME'] === 'localhost')
     ? $_SERVER['DOCUMENT_ROOT'] . '/supergifts/images/brandlogo/'
     : $_SERVER['DOCUMENT_ROOT'] . '/images/brandlogo/';
 
+// Upload dir for banners
+$bannerUploadDir = ($_SERVER['SERVER_NAME'] === 'localhost')
+    ? $_SERVER['DOCUMENT_ROOT'] . '/supergifts/images/brandbanner/'
+    : $_SERVER['DOCUMENT_ROOT'] . '/images/brandbanner/';
+if (!is_dir($bannerUploadDir)) mkdir($bannerUploadDir, 0755, true);
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $brandname = trim($_POST['brandname'] ?? '');
-    $links     = trim($_POST['links'] ?? '');
-    $flag      = intval($_POST['flag'] ?? 1);
-    $seqence   = intval($_POST['seqence'] ?? 0);
-    $imageno   = '';
+    $brandname    = trim($_POST['brandname'] ?? '');
+    $links        = trim($_POST['links'] ?? '');
+    $flag         = intval($_POST['flag'] ?? 1);
+    $seqence      = intval($_POST['seqence'] ?? 0);
+    $imageno      = '';
+    $brand_banner = '';
 
     if (!$brandname) $errors[] = "Brand name is required.";
 
@@ -44,9 +51,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = "Brand logo is required.";
     }
 
+    // Handle banner upload (optional)
+    if (!$errors && !empty($_FILES['banner']['name'])) {
+        $allowed = ['jpg','jpeg','png','webp'];
+        $ext = strtolower(pathinfo($_FILES['banner']['name'], PATHINFO_EXTENSION));
+        if (!in_array($ext, $allowed)) {
+            $errors[] = "Banner: only JPG, PNG, WEBP allowed.";
+        } elseif ($_FILES['banner']['size'] > 4 * 1024 * 1024) {
+            $errors[] = "Banner must be under 4MB.";
+        } else {
+            $bannerFilename = 'banner-' . $imageno . '-' . time() . '-' . uniqid() . '.' . $ext;
+            if (move_uploaded_file($_FILES['banner']['tmp_name'], $bannerUploadDir . $bannerFilename)) {
+                $brand_banner = 'images/brandbanner/' . $bannerFilename;
+            } else {
+                $errors[] = "Failed to upload banner. Check images/brandbanner/ folder permissions.";
+            }
+        }
+    }
+
     if (!$errors) {
-        $stmt = $conn->prepare("INSERT INTO brandlogo (brandname, links, imageno, seqence, flag) VALUES (?,?,?,?,?)");
-        $stmt->bind_param("ssiii", $brandname, $links, $imageno, $seqence, $flag);
+        $stmt = $conn->prepare("INSERT INTO brandlogo (brandname, links, imageno, brand_banner, seqence, flag) VALUES (?,?,?,?,?,?)");
+        $stmt->bind_param("ssissi", $brandname, $links, $imageno, $brand_banner, $seqence, $flag);
         if ($stmt->execute()) {
             $newId = $conn->insert_id;
             $success = "Brand added! <a href='../products/add.php?brand_id={$newId}'>Add products →</a>";
@@ -121,6 +146,17 @@ require_once '../includes/layout_top.php';
                        onchange="previewImage(this)" required>
                 <div class="text-muted small mt-1">Max 2MB. JPG, PNG or WEBP.</div>
             </div>
+
+            <div class="form-card mt-4">
+                <h6 class="fw-bold mb-3">Brand Banner <span class="text-muted small fw-normal">(shown on brand product page)</span></h6>
+                <div id="banner-preview-box" style="display:none;margin-bottom:10px;text-align:center;">
+                    <img id="banner-img-preview" src=""
+                         style="max-height:120px;max-width:100%;object-fit:contain;border:1px solid #eee;border-radius:6px;padding:6px;background:#fff;">
+                </div>
+                <input type="file" name="banner" class="form-control" accept="image/jpeg,image/png,image/webp"
+                       onchange="previewBanner(this)">
+                <div class="text-muted small mt-1">Max 4MB. Wide image recommended (e.g. 1600×400). Optional — falls back to default background if not uploaded.</div>
+            </div>
         </div>
     </div>
 
@@ -137,6 +173,17 @@ function previewImage(input) {
         reader.onload = e => {
             document.getElementById('img-preview').src = e.target.result;
             document.getElementById('preview-box').style.display = 'block';
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function previewBanner(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => {
+            document.getElementById('banner-img-preview').src = e.target.result;
+            document.getElementById('banner-preview-box').style.display = 'block';
         };
         reader.readAsDataURL(input.files[0]);
     }

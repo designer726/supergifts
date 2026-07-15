@@ -19,12 +19,18 @@ $uploadDir = ($_SERVER['SERVER_NAME'] === 'localhost')
     ? $_SERVER['DOCUMENT_ROOT'] . '/supergifts/images/brandlogo/'
     : $_SERVER['DOCUMENT_ROOT'] . '/images/brandlogo/';
 
+$bannerUploadDir = ($_SERVER['SERVER_NAME'] === 'localhost')
+    ? $_SERVER['DOCUMENT_ROOT'] . '/supergifts/images/brandbanner/'
+    : $_SERVER['DOCUMENT_ROOT'] . '/images/brandbanner/';
+if (!is_dir($bannerUploadDir)) mkdir($bannerUploadDir, 0755, true);
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $brandname = trim($_POST['brandname'] ?? '');
-    $links     = trim($_POST['links'] ?? '');
-    $flag      = intval($_POST['flag'] ?? 1);
-    $seqence   = intval($_POST['seqence'] ?? 0);
-    $imageno   = $brand['imageno']; // Keep old imageno by default
+    $brandname    = trim($_POST['brandname'] ?? '');
+    $links        = trim($_POST['links'] ?? '');
+    $flag         = intval($_POST['flag'] ?? 1);
+    $seqence      = intval($_POST['seqence'] ?? 0);
+    $imageno      = $brand['imageno']; // Keep old imageno by default
+    $brand_banner = $brand['brand_banner']; // Keep old banner by default
 
     if (!$brandname) $errors[] = "Brand name is required.";
 
@@ -48,12 +54,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    // Handle new banner upload (optional)
+    if (!$errors && !empty($_FILES['banner']['name'])) {
+        $allowed = ['jpg','jpeg','png','webp'];
+        $ext = strtolower(pathinfo($_FILES['banner']['name'], PATHINFO_EXTENSION));
+        if (!in_array($ext, $allowed)) {
+            $errors[] = "Banner: only JPG, PNG, WEBP allowed.";
+        } elseif ($_FILES['banner']['size'] > 4 * 1024 * 1024) {
+            $errors[] = "Banner must be under 4MB.";
+        } else {
+            $bannerFilename = 'banner-' . $imageno . '-' . time() . '-' . uniqid() . '.' . $ext;
+            if (move_uploaded_file($_FILES['banner']['tmp_name'], $bannerUploadDir . $bannerFilename)) {
+                // Delete old banner file
+                if ($brand['brand_banner']) {
+                    $oldBanner = ($_SERVER['SERVER_NAME']==='localhost')
+                        ? $_SERVER['DOCUMENT_ROOT'].'/supergifts/'.$brand['brand_banner']
+                        : $_SERVER['DOCUMENT_ROOT'].'/'.$brand['brand_banner'];
+                    if (file_exists($oldBanner)) @unlink($oldBanner);
+                }
+                $brand_banner = 'images/brandbanner/' . $bannerFilename;
+            } else {
+                $errors[] = "Failed to upload banner. Check folder permissions.";
+            }
+        }
+    }
+
     if (!$errors) {
-        $stmt = $conn->prepare("UPDATE brandlogo SET brandname=?, links=?, seqence=?, flag=? WHERE id=?");
-        $stmt->bind_param("ssiii", $brandname, $links, $seqence, $flag, $id);
+        $stmt = $conn->prepare("UPDATE brandlogo SET brandname=?, links=?, brand_banner=?, seqence=?, flag=? WHERE id=?");
+        $stmt->bind_param("sssiii", $brandname, $links, $brand_banner, $seqence, $flag, $id);
         if ($stmt->execute()) {
             $success = "Brand updated successfully!";
-            $brand = array_merge($brand, compact('brandname','links','seqence','flag'));
+            $brand = array_merge($brand, compact('brandname','links','brand_banner','seqence','flag'));
         } else {
             $errors[] = "DB error: " . $conn->error;
         }
@@ -62,6 +93,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $logoUrl = ($_SERVER['SERVER_NAME']==='localhost' ? '/supergifts/' : '/') . 'images/brandlogo/image' . $brand['imageno'] . '.jpg';
+$bannerUrl = $brand['brand_banner']
+    ? (($_SERVER['SERVER_NAME']==='localhost') ? '/supergifts/'.$brand['brand_banner'] : '/'.$brand['brand_banner'])
+    : '';
 
 require_once '../includes/layout_top.php';
 ?>
