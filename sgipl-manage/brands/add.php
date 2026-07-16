@@ -17,12 +17,14 @@ $bannerUploadDir = ($_SERVER['SERVER_NAME'] === 'localhost')
 if (!is_dir($bannerUploadDir)) mkdir($bannerUploadDir, 0755, true);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $brandname    = trim($_POST['brandname'] ?? '');
-    $links        = trim($_POST['links'] ?? '');
-    $flag         = intval($_POST['flag'] ?? 1);
-    $seqence      = intval($_POST['seqence'] ?? 0);
-    $imageno      = '';
-    $brand_banner = '';
+    $brandname      = trim($_POST['brandname'] ?? '');
+    $links          = trim($_POST['links'] ?? '');
+    $flag           = intval($_POST['flag'] ?? 1);
+    $seqence        = intval($_POST['seqence'] ?? 0);
+    $imageno        = '';
+    $brand_banner   = '';
+    $brand_banner_2 = '';
+    $brand_banner_3 = '';
 
     if (!$brandname) $errors[] = "Brand name is required.";
 
@@ -51,27 +53,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = "Brand logo is required.";
     }
 
-    // Handle banner upload (optional)
-    if (!$errors && !empty($_FILES['banner']['name'])) {
-        $allowed = ['jpg','jpeg','png','webp'];
-        $ext = strtolower(pathinfo($_FILES['banner']['name'], PATHINFO_EXTENSION));
-        if (!in_array($ext, $allowed)) {
-            $errors[] = "Banner: only JPG, PNG, WEBP allowed.";
-        } elseif ($_FILES['banner']['size'] > 4 * 1024 * 1024) {
-            $errors[] = "Banner must be under 4MB.";
-        } else {
-            $bannerFilename = 'banner-' . $imageno . '-' . time() . '-' . uniqid() . '.' . $ext;
-            if (move_uploaded_file($_FILES['banner']['tmp_name'], $bannerUploadDir . $bannerFilename)) {
-                $brand_banner = 'images/brandbanner/' . $bannerFilename;
+    // Handle banner uploads (optional, up to 3)
+    $bannerFields = ['banner1' => &$brand_banner, 'banner2' => &$brand_banner_2, 'banner3' => &$brand_banner_3];
+    $bannerSlot = 0;
+    foreach ($bannerFields as $fieldName => &$targetVar) {
+        $bannerSlot++;
+        if (!$errors && !empty($_FILES[$fieldName]['name'])) {
+            $allowed = ['jpg','jpeg','png','webp'];
+            $ext = strtolower(pathinfo($_FILES[$fieldName]['name'], PATHINFO_EXTENSION));
+            if (!in_array($ext, $allowed)) {
+                $errors[] = "Banner {$bannerSlot}: only JPG, PNG, WEBP allowed.";
+            } elseif ($_FILES[$fieldName]['size'] > 4 * 1024 * 1024) {
+                $errors[] = "Banner {$bannerSlot} must be under 4MB.";
             } else {
-                $errors[] = "Failed to upload banner. Check images/brandbanner/ folder permissions.";
+                $bannerFilename = 'banner-' . $imageno . '-' . $bannerSlot . '-' . time() . '-' . uniqid() . '.' . $ext;
+                if (move_uploaded_file($_FILES[$fieldName]['tmp_name'], $bannerUploadDir . $bannerFilename)) {
+                    $targetVar = 'images/brandbanner/' . $bannerFilename;
+                } else {
+                    $errors[] = "Failed to upload banner {$bannerSlot}. Check images/brandbanner/ folder permissions.";
+                }
             }
         }
     }
+    unset($targetVar);
 
     if (!$errors) {
-        $stmt = $conn->prepare("INSERT INTO brandlogo (brandname, links, imageno, brand_banner, seqence, flag) VALUES (?,?,?,?,?,?)");
-        $stmt->bind_param("ssissi", $brandname, $links, $imageno, $brand_banner, $seqence, $flag);
+        $stmt = $conn->prepare("INSERT INTO brandlogo (brandname, links, imageno, brand_banner, brand_banner_2, brand_banner_3, seqence, flag) VALUES (?,?,?,?,?,?,?,?)");
+        $stmt->bind_param("ssisssii", $brandname, $links, $imageno, $brand_banner, $brand_banner_2, $brand_banner_3, $seqence, $flag);
         if ($stmt->execute()) {
             $newId = $conn->insert_id;
             $success = "Brand added! <a href='../products/add.php?brand_id={$newId}'>Add products →</a>";
@@ -148,14 +156,19 @@ require_once '../includes/layout_top.php';
             </div>
 
             <div class="form-card mt-4">
-                <h6 class="fw-bold mb-3">Brand Banner <span class="text-muted small fw-normal">(shown on brand product page)</span></h6>
-                <div id="banner-preview-box" style="display:none;margin-bottom:10px;text-align:center;">
-                    <img id="banner-img-preview" src=""
-                         style="max-height:120px;max-width:100%;object-fit:contain;border:1px solid #eee;border-radius:6px;padding:6px;background:#fff;">
+                <h6 class="fw-bold mb-3">Brand Banners <span class="text-muted small fw-normal">(carousel on brand product page)</span></h6>
+                <?php for ($i = 1; $i <= 3; $i++): ?>
+                <div class="mb-3<?= $i === 3 ? ' mb-0' : '' ?>">
+                    <label class="form-label small fw-semibold">Banner <?= $i ?><?= $i === 1 ? '' : ' (optional)' ?></label>
+                    <div id="banner<?= $i ?>-preview-box" style="display:none;margin-bottom:8px;text-align:center;">
+                        <img id="banner<?= $i ?>-img-preview" src=""
+                             style="max-height:90px;max-width:100%;object-fit:contain;border:1px solid #eee;border-radius:6px;padding:4px;background:#fff;">
+                    </div>
+                    <input type="file" name="banner<?= $i ?>" class="form-control" accept="image/jpeg,image/png,image/webp"
+                           onchange="previewBanner(this, <?= $i ?>)">
                 </div>
-                <input type="file" name="banner" class="form-control" accept="image/jpeg,image/png,image/webp"
-                       onchange="previewBanner(this)">
-                <div class="text-muted small mt-1">Max 4MB. Wide image recommended (e.g. 1600×400). Optional — falls back to default background if not uploaded.</div>
+                <?php endfor; ?>
+                <div class="text-muted small mt-2">Max 4MB each. Wide image recommended (e.g. 1600×400). Leave all empty to hide the banner carousel on this brand's page — upload just 1 for a static banner, or 2–3 for a carousel.</div>
             </div>
         </div>
     </div>
@@ -178,12 +191,12 @@ function previewImage(input) {
     }
 }
 
-function previewBanner(input) {
+function previewBanner(input, idx) {
     if (input.files && input.files[0]) {
         const reader = new FileReader();
         reader.onload = e => {
-            document.getElementById('banner-img-preview').src = e.target.result;
-            document.getElementById('banner-preview-box').style.display = 'block';
+            document.getElementById('banner' + idx + '-img-preview').src = e.target.result;
+            document.getElementById('banner' + idx + '-preview-box').style.display = 'block';
         };
         reader.readAsDataURL(input.files[0]);
     }

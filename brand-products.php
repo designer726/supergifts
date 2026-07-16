@@ -50,9 +50,16 @@ if (!$brand) {
 
 $brand['imageno'] = resolveBrandLogoPath($brand['imageno'] ?? null);
 
-$brandBannerUrl = !empty($brand['brand_banner'])
-    ? (($_SERVER['SERVER_NAME']==='localhost') ? '/supergifts/'.$brand['brand_banner'] : '/'.$brand['brand_banner'])
-    : '';
+function resolveBannerUrl($path) {
+    if (empty($path)) return '';
+    return ($_SERVER['SERVER_NAME']==='localhost') ? '/supergifts/'.$path : '/'.$path;
+}
+$brandBanners = array_values(array_filter([
+    resolveBannerUrl($brand['brand_banner']),
+    resolveBannerUrl($brand['brand_banner_2']),
+    resolveBannerUrl($brand['brand_banner_3']),
+]));
+$bannerCount = count($brandBanners);
 
 // Load products for this brand
 $products = $conn->query("SELECT * FROM products WHERE brand_id = {$brand['id']} AND status = 1 ORDER BY sequence ASC, id ASC");
@@ -179,6 +186,105 @@ $productCount = $products->num_rows;
             padding: 60px 20px;
             color: #888;
         }
+
+        /* Brand banner carousel */
+        .brand-hero-carousel {
+            position: relative;
+            overflow: hidden;
+            background: #0d2b55;
+            min-height: 340px;
+            display: flex;
+            align-items: center;
+        }
+
+        .brand-hero-carousel.no-banner {
+            min-height: 0;
+            background: none;
+            overflow: visible;
+        }
+
+        @media (max-width: 768px) {
+            .brand-hero-carousel { min-height: 260px; }
+        }
+
+        @media (max-width: 480px) {
+            .brand-hero-carousel { min-height: 210px; }
+        }
+
+        .brand-hero-slides {
+            position: absolute;
+            inset: 0;
+        }
+
+        .brand-hero-slide {
+            position: absolute;
+            inset: 0;
+            display: none;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .brand-hero-slide.active {
+            display: block;
+        }
+
+        .brand-hero-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            border: 1.5px solid rgba(255, 255, 255, 0.3);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            backdrop-filter: blur(6px);
+            line-height: 1;
+        }
+
+        .brand-hero-arrow:hover {
+            background: rgba(212, 175, 55, 0.35);
+            border-color: #d4af37;
+        }
+
+        .brand-hero-arrow.prev { left: 20px; }
+        .brand-hero-arrow.next { right: 20px; }
+
+        @media (max-width: 600px) {
+            .brand-hero-arrow { display: none; }
+        }
+
+        .brand-hero-dots {
+            position: absolute;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .brand-hero-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .brand-hero-dot.active {
+            background: #d4af37;
+            width: 20px;
+            border-radius: 4px;
+        }
     </style>
 </head>
 
@@ -193,17 +299,26 @@ $productCount = $products->num_rows;
 
         <main id="main">
 
-            <!-- Brand Header -->
-            <?php
-            if ($brandBannerUrl) {
-                $heroClasses = "page-section parallax-5 light-content";
-                $heroStyle   = "background-image: linear-gradient(180deg, rgba(10,15,30,0.35) 0%, rgba(10,15,30,0.75) 100%), url(" . htmlspecialchars($brandBannerUrl) . "); background-size: cover; background-position: center;";
-            } else {
-                $heroClasses = "page-section bg-gray-light-1 bg-light-alpha-90 parallax-5";
-                $heroStyle   = "background-image: url(images/full-width-images/section-bg-1.jpg)";
-            }
-            ?>
-            <section class="<?= $heroClasses ?>" style="<?= $heroStyle ?>">
+            <!-- Brand Header / Banner Carousel -->
+            <section class="brand-hero-carousel<?= $bannerCount ? ' light-content' : ' no-banner' ?>" id="brandHeroCarousel">
+                <?php if ($bannerCount): ?>
+                    <div class="brand-hero-slides">
+                        <?php foreach ($brandBanners as $i => $url): ?>
+                        <div class="brand-hero-slide<?= $i === 0 ? ' active' : '' ?>"
+                             style="background-image: linear-gradient(180deg, rgba(10,15,30,0.35) 0%, rgba(10,15,30,0.75) 100%), url('<?= htmlspecialchars($url) ?>');"
+                             data-slide="<?= $i ?>"></div>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php if ($bannerCount > 1): ?>
+                        <button class="brand-hero-arrow prev" onclick="brandHeroNav(-1)" aria-label="Previous">&#8249;</button>
+                        <button class="brand-hero-arrow next" onclick="brandHeroNav(1)" aria-label="Next">&#8250;</button>
+                        <div class="brand-hero-dots">
+                            <?php foreach ($brandBanners as $i => $url): ?>
+                            <div class="brand-hero-dot<?= $i === 0 ? ' active' : '' ?>" onclick="brandHeroGo(<?= $i ?>)"></div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                <?php endif; ?>
                 <div class="container position-relative pt-30 pt-sm-50 pb-10">
                     <div class="text-center">
 
@@ -214,26 +329,44 @@ $productCount = $products->num_rows;
                             </div>
                         </div>
 
-                        <!-- Brand Name -->
-                        <!-- <h1 class="hs-title-1 mb-10">
-                            <span class="wow charsAnimIn" data-splitting="chars"><?= htmlspecialchars($brand['brandname']) ?></span>
-                        </h1> -->
-
-                        <!-- Brand Type Badge -->
-                        <!-- <div class="mb-20">
-                            <?php if ($brand['flag'] == 1): ?>
-                                <span style="background:#dbeafe;color:#1d4ed8;font-size:13px;padding:5px 16px;border-radius:20px;font-weight:600;">⭐ Authorised Brand Partner</span>
-                            <?php else: ?>
-                                <span style="background:#fef9c3;color:#854d0e;font-size:13px;padding:5px 16px;border-radius:20px;font-weight:600;">🤝 We Also Deal</span>
-                            <?php endif; ?>
-                        </div> -->
-
                         <p class="section-descr mb-0 wow fadeIn" data-wow-delay="0.2s">
                             <?= $productCount ?> Product<?= $productCount != 1 ? 's' : '' ?> Available
                         </p>
                     </div>
                 </div>
             </section>
+
+            <?php if ($bannerCount > 1): ?>
+            <script>
+            (function() {
+                var slides = document.querySelectorAll('#brandHeroCarousel .brand-hero-slide');
+                var dots   = document.querySelectorAll('#brandHeroCarousel .brand-hero-dot');
+                var current = 0;
+                var timer;
+
+                function show(idx) {
+                    current = (idx + slides.length) % slides.length;
+                    slides.forEach(function(s, i) { s.classList.toggle('active', i === current); });
+                    dots.forEach(function(d, i) { d.classList.toggle('active', i === current); });
+                }
+
+                window.brandHeroNav = function(dir) {
+                    show(current + dir);
+                    resetTimer();
+                };
+                window.brandHeroGo = function(idx) {
+                    show(idx);
+                    resetTimer();
+                };
+
+                function resetTimer() {
+                    clearInterval(timer);
+                    timer = setInterval(function() { show(current + 1); }, 4000);
+                }
+                resetTimer();
+            })();
+            </script>
+            <?php endif; ?>
 
             <!-- Products + Catalog Button -->
             <section class="page-section">

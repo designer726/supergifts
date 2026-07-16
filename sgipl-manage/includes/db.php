@@ -33,4 +33,12 @@ $brandBannerCol = $conn->query("SHOW COLUMNS FROM brandlogo LIKE 'brand_banner'"
 if ($brandBannerCol && $brandBannerCol->num_rows === 0) {
     $conn->query("ALTER TABLE brandlogo ADD COLUMN brand_banner VARCHAR(255) DEFAULT '' AFTER imageno");
 }
+$brandBanner2Col = $conn->query("SHOW COLUMNS FROM brandlogo LIKE 'brand_banner_2'");
+if ($brandBanner2Col && $brandBanner2Col->num_rows === 0) {
+    $conn->query("ALTER TABLE brandlogo ADD COLUMN brand_banner_2 VARCHAR(255) DEFAULT '' AFTER brand_banner");
+}
+$brandBanner3Col = $conn->query("SHOW COLUMNS FROM brandlogo LIKE 'brand_banner_3'");
+if ($brandBanner3Col && $brandBanner3Col->num_rows === 0) {
+    $conn->query("ALTER TABLE brandlogo ADD COLUMN brand_banner_3 VARCHAR(255) DEFAULT '' AFTER brand_banner_2");
+}
 ?>
