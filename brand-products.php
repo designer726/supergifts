@@ -64,6 +64,13 @@ $bannerCount = count($brandBanners);
 // Load products for this brand
 $products = $conn->query("SELECT * FROM products WHERE brand_id = {$brand['id']} AND status = 1 ORDER BY sequence ASC, id ASC");
 $productCount = $products->num_rows;
+
+// Distinct series for this brand, for the Series filter dropdown
+$seriesList = [];
+$seriesResult = $conn->query("SELECT DISTINCT series FROM products WHERE brand_id = {$brand['id']} AND status = 1 AND series != '' ORDER BY series ASC");
+while ($s = $seriesResult->fetch_assoc()) {
+    $seriesList[] = $s['series'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -192,23 +199,16 @@ $productCount = $products->num_rows;
             position: relative;
             overflow: hidden;
             background: #0d2b55;
-            min-height: 340px;
+            aspect-ratio: 2.4 / 1;
             display: flex;
             align-items: center;
         }
 
         .brand-hero-carousel.no-banner {
+            aspect-ratio: auto;
             min-height: 0;
             background: none;
             overflow: visible;
-        }
-
-        @media (max-width: 768px) {
-            .brand-hero-carousel { min-height: 260px; }
-        }
-
-        @media (max-width: 480px) {
-            .brand-hero-carousel { min-height: 210px; }
         }
 
         .brand-hero-slides {
@@ -295,8 +295,7 @@ $productCount = $products->num_rows;
     </div>
 
     <div class="page" id="top">
-        <?php include('common/nav.php'); ?>
-
+         <?php include('common/brandnav.php'); ?>
         <main id="main">
 
             <!-- Brand Header / Banner Carousel -->
@@ -305,7 +304,7 @@ $productCount = $products->num_rows;
                     <div class="brand-hero-slides">
                         <?php foreach ($brandBanners as $i => $url): ?>
                         <div class="brand-hero-slide<?= $i === 0 ? ' active' : '' ?>"
-                             style="background-image: linear-gradient(180deg, rgba(10,15,30,0.35) 0%, rgba(10,15,30,0.75) 100%), url('<?= htmlspecialchars($url) ?>');"
+                             style="background-image: url('<?= htmlspecialchars($url) ?>');"
                              data-slide="<?= $i ?>"></div>
                         <?php endforeach; ?>
                     </div>
@@ -323,15 +322,15 @@ $productCount = $products->num_rows;
                     <div class="text-center">
 
                         <!-- Brand Logo -->
-                        <div class="mb-20">
+                        <!-- <div class="mb-20">
                             <div class="brand-logo-hero d-inline-flex">
                                 <img src="<?= htmlspecialchars($brand['imageno']) ?>" alt="<?= htmlspecialchars($brand['brandname']) ?>" style="max-height: 100px; max-width: 250px; object-fit: contain;">
                             </div>
-                        </div>
+                        </div> -->
 
-                        <p class="section-descr mb-0 wow fadeIn" data-wow-delay="0.2s">
+                        <!-- <p class="section-descr mb-0 wow fadeIn" data-wow-delay="0.2s">
                             <?= $productCount ?> Product<?= $productCount != 1 ? 's' : '' ?> Available
-                        </p>
+                        </p> -->
                     </div>
                 </div>
             </section>
@@ -392,7 +391,7 @@ $productCount = $products->num_rows;
                     <?php if ($productCount > 0): ?>
                         <div class="row g-4">
                             <?php while ($product = $products->fetch_assoc()): ?>
-                                <div class="col-lg-3 col-md-4 col-sm-6">
+                                <div class="col-lg-3 col-md-4 col-sm-6 product-item" data-series="<?= htmlspecialchars($product['series'] ?? '') ?>" data-new-launch="<?= (int)($product['new_lunch'] ?? 0) ?>" data-name="<?= htmlspecialchars($product['name']) ?>">
                                     <a href="product-detail.php?id=<?= $product['id'] ?>" style="text-decoration:none;color:inherit;display:block;">
                                         <div class="product-card">
                                             <div class="product-img-wrap">
@@ -423,6 +422,13 @@ $productCount = $products->num_rows;
                                     </a>
                                 </div>
                             <?php endwhile; ?>
+                        </div>
+                        <div class="no-products" id="noFilterResults" style="display:none;">
+                            <svg width="64" height="64" fill="#ddd" viewBox="0 0 16 16">
+                                <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4z" />
+                            </svg>
+                            <h5 class="mt-3" style="color:#aaa;">No products match this filter</h5>
+                            <p style="color:#bbb;font-size:14px;">Try a different series or clear the filter.</p>
                         </div>
 
                     <?php else: ?>

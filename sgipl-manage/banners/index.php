@@ -112,6 +112,14 @@ for ($i = 1; $i <= 4; $i++) {
     }
 }
 
+/* Slot 5 = single banner shown on the All Products page (no static fallback) */
+if (!isset($banners[5])) {
+    $banners[5] = [
+        'slot'=>5,'title'=>'','subtitle'=>'','btn_text'=>'','btn_link'=>'',
+        'file_path'=>'','file_type'=>'image','status'=>1,'sort_order'=>4,'id'=>null
+    ];
+}
+
 require_once '../includes/layout_top.php';
 ?>
 
@@ -259,6 +267,118 @@ require_once '../includes/layout_top.php';
     </div>
 </div>
 <?php endfor; ?>
+</div>
+
+<hr class="my-4">
+
+<div class="d-flex align-items-center justify-content-between mb-3">
+    <div>
+        <h5 class="fw-bold mb-1">All Products Page Banner</h5>
+        <p class="text-muted small mb-0">Single banner shown at the top of the "All Products" page. Leave empty to hide it.</p>
+    </div>
+</div>
+
+<div class="banner-grid" style="grid-template-columns:1fr;max-width:600px;">
+<?php
+    $b       = $banners[5];
+    $hasFile = !empty($b['file_path']);
+    $isVideo = ($b['file_type'] === 'video');
+    $active  = intval($b['status'] ?? 1);
+    $slot    = 5;
+?>
+<div class="banner-card">
+    <div class="banner-card-header">
+        <h6><i class="bi bi-image me-2"></i>All Products Banner</h6>
+        <span class="badge <?= $hasFile ? 'bg-success' : 'bg-secondary' ?>">
+            <?= $hasFile ? ($isVideo ? 'Video' : 'Image') : 'Not set' ?>
+        </span>
+    </div>
+
+    <div class="banner-preview">
+        <?php if ($hasFile): ?>
+            <?php if ($isVideo): ?>
+            <video src="../../<?= htmlspecialchars($b['file_path']) ?>" muted playsinline></video>
+            <?php else: ?>
+            <img src="../../<?= htmlspecialchars($b['file_path']) ?>" alt="All Products Banner">
+            <?php endif; ?>
+        <?php else: ?>
+            <div class="banner-preview-empty">
+                <i class="bi bi-image-alt"></i>
+                No banner uploaded
+            </div>
+        <?php endif; ?>
+        <span class="banner-status-badge <?= $active ? 'bg-success' : 'bg-danger' ?>">
+            <?= $active ? 'Active' : 'Hidden' ?>
+        </span>
+    </div>
+
+    <div class="banner-form">
+        <?php if (!$hasFile): ?>
+        <div class="static-note">
+            <i class="bi bi-info-circle me-1"></i>
+            No file uploaded — the All Products page will not show a banner.
+        </div>
+        <?php endif; ?>
+
+        <form method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="slot" value="5">
+
+            <div class="mb-3">
+                <label class="form-label">Upload Image / Video <small class="text-muted">(JPG, PNG, WEBP, GIF, MP4, WEBM — max 30 MB)</small></label>
+                <input type="file" name="banner_file" class="form-control form-control-sm"
+                    accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime"
+                    onchange="previewFile(this, 5)">
+                <div id="preview_5" class="mt-2"></div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Title <small class="text-muted">(optional)</small></label>
+                <input type="text" name="title" class="form-control form-control-sm"
+                    value="<?= htmlspecialchars($b['title']) ?>" placeholder="Banner headline...">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Subtitle <small class="text-muted">(optional)</small></label>
+                <input type="text" name="subtitle" class="form-control form-control-sm"
+                    value="<?= htmlspecialchars($b['subtitle']) ?>" placeholder="Short description...">
+            </div>
+
+            <div class="row g-2 mb-3">
+                <div class="col-6">
+                    <label class="form-label">Button Text <small class="text-muted">(optional)</small></label>
+                    <input type="text" name="btn_text" class="form-control form-control-sm"
+                        value="<?= htmlspecialchars($b['btn_text']) ?>">
+                </div>
+                <div class="col-6">
+                    <label class="form-label">Button Link <small class="text-muted">(optional)</small></label>
+                    <input type="text" name="btn_link" class="form-control form-control-sm"
+                        value="<?= htmlspecialchars($b['btn_link']) ?>" placeholder="contact">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Status</label>
+                <select name="status" class="form-select form-select-sm">
+                    <option value="1" <?= $active ? 'selected' : '' ?>>Active (show on site)</option>
+                    <option value="0" <?= !$active ? 'selected' : '' ?>>Hidden</option>
+                </select>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-gold btn-sm flex-grow-1">
+                    <i class="bi bi-save me-1"></i>Save Banner
+                </button>
+                <?php if ($hasFile): ?>
+                <button type="submit" name="remove_file" value="1"
+                    class="btn btn-outline-danger btn-sm"
+                    onclick="return confirm('Remove the uploaded file?')">
+                    <i class="bi bi-trash"></i>
+                </button>
+                <?php endif; ?>
+            </div>
+        </form>
+    </div>
+</div>
 </div>
 
 <script>

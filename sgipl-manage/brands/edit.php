@@ -27,6 +27,7 @@ if (!is_dir($bannerUploadDir)) mkdir($bannerUploadDir, 0755, true);
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $brandname      = trim($_POST['brandname'] ?? '');
     $links          = trim($_POST['links'] ?? '');
+    $website        = trim($_POST['website'] ?? '');
     $flag           = intval($_POST['flag'] ?? 1);
     $seqence        = intval($_POST['seqence'] ?? 0);
     $imageno        = $brand['imageno']; // Keep old imageno by default
@@ -101,11 +102,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (!$errors) {
-        $stmt = $conn->prepare("UPDATE brandlogo SET brandname=?, links=?, brand_banner=?, brand_banner_2=?, brand_banner_3=?, seqence=?, flag=? WHERE id=?");
-        $stmt->bind_param("sssssiii", $brandname, $links, $brand_banner, $brand_banner_2, $brand_banner_3, $seqence, $flag, $id);
+        $stmt = $conn->prepare("UPDATE brandlogo SET brandname=?, links=?, website=?, brand_banner=?, brand_banner_2=?, brand_banner_3=?, seqence=?, flag=? WHERE id=?");
+        $stmt->bind_param("ssssssiii", $brandname, $links, $website, $brand_banner, $brand_banner_2, $brand_banner_3, $seqence, $flag, $id);
         if ($stmt->execute()) {
             $success = "Brand updated successfully!";
-            $brand = array_merge($brand, compact('brandname','links','brand_banner','brand_banner_2','brand_banner_3','seqence','flag'));
+            $brand = array_merge($brand, compact('brandname','links','website','brand_banner','brand_banner_2','brand_banner_3','seqence','flag'));
         } else {
             $errors[] = "DB error: " . $conn->error;
         }
@@ -144,11 +145,17 @@ require_once '../includes/layout_top.php';
                     <input type="text" name="brandname" class="form-control"
                            value="<?= htmlspecialchars($brand['brandname']) ?>" required>
                 </div>
-                <div class="mb-0">
+                <div class="mb-3">
                     <label class="form-label">Catalog URL</label>
                     <input type="text" name="links" class="form-control"
                            value="<?= htmlspecialchars($brand['links']) ?>"
                            placeholder="https://drive.google.com/...">
+                </div>
+                <div class="mb-0">
+                    <label class="form-label">Brand Website <span class="text-muted small fw-normal">(used by "About Brand" link)</span></label>
+                    <input type="text" name="website" class="form-control"
+                           value="<?= htmlspecialchars($brand['website'] ?? '') ?>"
+                           placeholder="https://www.brandwebsite.com">
                 </div>
             </div>
         </div>

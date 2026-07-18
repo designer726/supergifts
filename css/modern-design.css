@@ -811,7 +811,8 @@ footer {
 }
 
 .footer-brand p {
-  font-size: 12px;
+  font-family: Calibri, sans-serif;
+  font-size: 18px;
   color: #000000; /* PREMIUM UPDATE - Silver Blue */
   line-height: 1.7;
   margin: 12px 0 16px;
@@ -844,7 +845,8 @@ footer {
 }
 
 .footer-col h5 {
-  font-size: 12px;
+  font-family: Calibri, sans-serif;
+  font-size: 23px;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -866,7 +868,8 @@ footer {
 }
 
 .footer-col li a {
-  font-size: 13px;
+  font-family: cambria, sans-serif;
+  font-size: 20px;
   color: #000000; /* PREMIUM UPDATE - Silver Blue */
   text-decoration: none;
   transition: color 0.2s;
@@ -885,7 +888,8 @@ footer {
 }
 
 .footer-bottom p {
-  font-size: 12px;
+  font-family: cambria, sans-serif;
+  font-size: 18px;
   color: #071624; /* PREMIUM UPDATE - Gold muted */
 }
 
