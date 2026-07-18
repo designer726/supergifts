@@ -21,6 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $offer_price = floatval($_POST['offer_price'] ?? 0);
     $quantity    = intval($_POST['quantity'] ?? 0);
     $is_premium  = intval($_POST['is_premium'] ?? 0);
+    $new_lunch   = intval($_POST['new_lunch'] ?? 0);
+    $series      = trim($_POST['series'] ?? '');
     $sequence    = intval($_POST['sequence'] ?? 0);
     $status      = intval($_POST['status'] ?? 1);
     $image       = '';
@@ -46,11 +48,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (!$errors) {
-        $stmt = $conn->prepare("INSERT INTO products (brand_id, name, image, mrp, offer_price, quantity, is_premium, sequence, status) VALUES (?,?,?,?,?,?,?,?,?)");
-        $stmt->bind_param("issddiiii", $brand_id, $name, $image, $mrp, $offer_price, $quantity, $is_premium, $sequence, $status);
+        $stmt = $conn->prepare("INSERT INTO products (brand_id, name, image, mrp, offer_price, quantity, is_premium, new_lunch, series, sequence, status) VALUES (?,?,?,?,?,?,?,?,?,?,?)");
+        $stmt->bind_param("issddiiisii", $brand_id, $name, $image, $mrp, $offer_price, $quantity, $is_premium, $new_lunch, $series, $sequence, $status);
         if ($stmt->execute()) {
             $success = "Product added! <a href='index.php?brand_id={$brand_id}'>View brand products →</a>";
-            $name = ''; $mrp = 0; $offer_price = 0; $quantity = 0; $is_premium = 0; $sequence = 0;
+            $name = ''; $mrp = 0; $offer_price = 0; $quantity = 0; $is_premium = 0; $new_lunch = 0; $series = ''; $sequence = 0;
         } else {
             $errors[] = "DB error: ".$conn->error;
         }
@@ -128,6 +130,18 @@ require_once '../includes/layout_top.php';
                             <option value="0">No</option>
                             <option value="1">Yes</option>
                         </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">New Launch</label>
+                        <select name="new_lunch" class="form-select">
+                            <option value="0">No</option>
+                            <option value="1">Yes</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Series</label>
+                        <input type="text" name="series" class="form-control"
+                               value="<?= htmlspecialchars($series ?? '') ?>" placeholder="e.g. Urban Jungle">
                     </div>
                 </div>
             </div>

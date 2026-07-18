@@ -66,18 +66,28 @@ if (!$db->connect_error) {
     /* Premium products for carousel */
     $r = $db->query("SELECT p.id, p.name, p.image, p.mrp, p.offer_price, b.brandname AS category, b.imageno
                      FROM products p JOIN brandlogo b ON p.brand_id=b.id
-                     WHERE p.status=1 AND p.is_premium=1 ORDER BY p.sequence ASC, p.id DESC LIMIT 8");
+                     WHERE p.status=1 AND p.is_premium=1 ORDER BY p.sequence ASC, p.id DESC LIMIT 20");
     if ($r) while ($row = $r->fetch_assoc())
         $premiumProducts[] = array_merge($row, ['brandLogoUrl' => findBrandLogoPath($row['imageno'])]);
 
-    /* Product selection */
-    $r = $db->query("SELECT p.id, p.name, p.image, p.mrp, p.offer_price, p.quantity, b.brandname AS category, b.imageno
+    /* Product selection — round-robin across brands: one product per brand per pass
+       (brand A, brand B, brand C, ... then back to brand A's 2nd product, etc.)
+       so a single brand never dominates consecutive cards. Includes qty=1 items. */
+    $r = $db->query("SELECT p.id, p.name, p.image, p.mrp, p.offer_price, p.quantity, p.brand_id, b.brandname AS category, b.imageno
                      FROM products p JOIN brandlogo b ON p.brand_id=b.id
-                     WHERE p.status=1 AND p.quantity>=10 ORDER BY p.id DESC LIMIT 4");
-    // if ($r) while ($row = $r->fetch_assoc()) $selProducts[] = $row;
+                     WHERE p.status=1 AND p.quantity>=1 ORDER BY p.brand_id ASC, p.id DESC");
+    $selByBrand = [];
     if ($r) while ($row = $r->fetch_assoc())
-        $selProducts[] = array_merge($row, ['brandLogoUrl' => findBrandLogoPath($row['imageno'])]);
+        $selByBrand[$row['brand_id']][] = array_merge($row, ['brandLogoUrl' => findBrandLogoPath($row['imageno'])]);
+    while (!empty($selByBrand)) {
+        foreach ($selByBrand as $bId => &$queue) {
+            $selProducts[] = array_shift($queue);
+            if (empty($queue)) unset($selByBrand[$bId]);
+        }
+        unset($queue);
+    }
 
+    
     /* Blog posts */
     $r = $db->query("SELECT id, title, slug, excerpt, image, category, created_at
                      FROM blogs WHERE status='published' ORDER BY created_at DESC LIMIT 3");
@@ -315,20 +325,26 @@ if (!$db->connect_error) {
                 <div class="hp-bulk-title">Bulk <span>Promotional Swag</span></div>
 
                 <div class="hp-bulk-steps">
-                    <div class="hp-bulk-step" style="background-image:linear-gradient(180deg, rgba(15,20,35,0.55) 0%, rgba(15,20,35,0.85) 100%), url('images/warehouse.jpg');">
-                        <div class="hp-bulk-step-val">5000+</div>
+                    <div class="hp-bulk-step-wrap">
+                        <div class="hp-bulk-step" style="background-image:linear-gradient(180deg, rgba(15,20,35,0.55) 0%, rgba(15,20,35,0.85) 100%), url('images/warehouse.jpg');">
+                            <div class="hp-bulk-step-val">5000+</div>
+                        </div>
                         <div class="hp-bulk-step-label">Ready to Go Inventory</div>
                         <div class="hp-bulk-step-sub">Units available in stock, ready for immediate co-branding</div>
                     </div>
                     <div class="hp-bulk-arrow">→</div>
-                    <div class="hp-bulk-step" style="background-image:linear-gradient(180deg, rgba(15,20,35,0.55) 0%, rgba(15,20,35,0.85) 100%), url('images/printing.jpg');">
-                        <div class="hp-bulk-step-val">Quick</div>
+                    <div class="hp-bulk-step-wrap">
+                        <div class="hp-bulk-step" style="background-image:linear-gradient(180deg, rgba(15,20,35,0.55) 0%, rgba(15,20,35,0.85) 100%), url('images/printing.jpg');">
+                            <div class="hp-bulk-step-val">Quick</div>
+                        </div>
                         <div class="hp-bulk-step-label">Co-Branding Option</div>
                         <div class="hp-bulk-step-sub">Your logo printed or embossed on any product within hours</div>
                     </div>
                     <div class="hp-bulk-arrow">→</div>
-                    <div class="hp-bulk-step" style="background-image:linear-gradient(180deg, rgba(15,20,35,0.55) 0%, rgba(15,20,35,0.85) 100%), url('images/logestic.jpg');">
-                        <div class="hp-bulk-step-val">Express</div>
+                    <div class="hp-bulk-step-wrap">
+                        <div class="hp-bulk-step" style="background-image:linear-gradient(180deg, rgba(15,20,35,0.55) 0%, rgba(15,20,35,0.85) 100%), url('images/logestic.jpg');">
+                            <div class="hp-bulk-step-val">Express</div>
+                        </div>
                         <div class="hp-bulk-step-label">Pan India Delivery</div>
                         <div class="hp-bulk-step-sub">Through India Post, Blue Dart, Delhivery, & Express Bees</div>
                     </div>
@@ -478,34 +494,36 @@ if (!$db->connect_error) {
             <!-- ═══════════ AVAILABLE GIFT VOUCHERS ═══════════ -->
             <section class="hp-vouchers-sec">
                 <div class="hp-sec-title">Available Gift Vouchers</div>
-                <div class="hp-vouchers-grid">
-                    <?php if (!empty($dbVouchers)): ?>
-                        <?php foreach ($dbVouchers as $v): ?>
-                        <div class="hp-voucher-card">
-                            <img src="<?= htmlspecialchars($v['image']) ?>" alt="<?= htmlspecialchars($v['title']) ?>" loading="lazy">
-                        </div>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <?php
-                        $staticVouchers = [
-                            ['icon' => '🛍️', 'label' => 'Shopping Voucher'],
-                            ['icon' => '🍽️', 'label' => 'Dining Voucher'],
-                            ['icon' => '✈️', 'label' => 'Travel Voucher'],
-                            ['icon' => '💆', 'label' => 'Wellness Voucher'],
-                            ['icon' => '🎬', 'label' => 'Entertainment'],
-                            ['icon' => '📱', 'label' => 'Tech Voucher'],
-                            ['icon' => '⚽', 'label' => 'Sports Voucher'],
-                            ['icon' => '🎓', 'label' => 'Education Voucher'],
-                        ];
-                        foreach ($staticVouchers as $v): ?>
-                        <div class="hp-voucher-card">
-                            <div class="hp-voucher-placeholder">
-                                <span class="icon"><?= $v['icon'] ?></span>
-                                <span><?= $v['label'] ?></span>
+                <div class="hp-vouchers-track-wrapper">
+                    <div class="hp-vouchers-track">
+                        <?php if (!empty($dbVouchers)): ?>
+                            <?php foreach (array_merge($dbVouchers, $dbVouchers) as $v): ?>
+                            <a href="voucher-detail.php?id=<?= intval($v['id']) ?>" class="hp-voucher-card">
+                                <img src="<?= htmlspecialchars($v['image']) ?>" alt="<?= htmlspecialchars($v['title']) ?>" loading="lazy">
+                            </a>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <?php
+                            $staticVouchers = [
+                                ['icon' => '🛍️', 'label' => 'Shopping Voucher'],
+                                ['icon' => '🍽️', 'label' => 'Dining Voucher'],
+                                ['icon' => '✈️', 'label' => 'Travel Voucher'],
+                                ['icon' => '💆', 'label' => 'Wellness Voucher'],
+                                ['icon' => '🎬', 'label' => 'Entertainment'],
+                                ['icon' => '📱', 'label' => 'Tech Voucher'],
+                                ['icon' => '⚽', 'label' => 'Sports Voucher'],
+                                ['icon' => '🎓', 'label' => 'Education Voucher'],
+                            ];
+                            foreach (array_merge($staticVouchers, $staticVouchers) as $v): ?>
+                            <div class="hp-voucher-card">
+                                <div class="hp-voucher-placeholder">
+                                    <span class="icon"><?= $v['icon'] ?></span>
+                                    <span><?= $v['label'] ?></span>
+                                </div>
                             </div>
-                        </div>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </section>
 

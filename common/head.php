@@ -33,7 +33,7 @@
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
         
         <!-- Modern Design CSS -->
-        <link rel="stylesheet" href="css/modern-design.css"> 
+        <link rel="stylesheet" href="css/modern-design.css?v=<?php echo filemtime(__DIR__ . '/../css/modern-design.css'); ?>">
         <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-9SF4YKK0M8"></script>
 <script>

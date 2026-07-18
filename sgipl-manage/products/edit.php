@@ -29,6 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $offer_price = floatval($_POST['offer_price'] ?? 0);
     $quantity    = intval($_POST['quantity'] ?? 0);
     $is_premium  = intval($_POST['is_premium'] ?? 0);
+    $new_lunch   = intval($_POST['new_lunch'] ?? 0);
+    $series      = trim($_POST['series'] ?? '');
     $sequence    = intval($_POST['sequence'] ?? 0);
     $status      = intval($_POST['status'] ?? 1);
     $image       = $product['image'];
@@ -61,11 +63,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (!$errors) {
-        $stmt = $conn->prepare("UPDATE products SET brand_id=?, name=?, image=?, mrp=?, offer_price=?, quantity=?, is_premium=?, sequence=?, status=? WHERE id=?");
-        $stmt->bind_param("issddiiiii", $brand_id, $name, $image, $mrp, $offer_price, $quantity, $is_premium, $sequence, $status, $id);
+        $stmt = $conn->prepare("UPDATE products SET brand_id=?, name=?, image=?, mrp=?, offer_price=?, quantity=?, is_premium=?, new_lunch=?, series=?, sequence=?, status=? WHERE id=?");
+        $stmt->bind_param("issddiiisiii", $brand_id, $name, $image, $mrp, $offer_price, $quantity, $is_premium, $new_lunch, $series, $sequence, $status, $id);
         if ($stmt->execute()) {
             $success = "Product updated!";
-            $product = array_merge($product, compact('brand_id','name','image','mrp','offer_price','quantity','is_premium','sequence','status'));
+            $product = array_merge($product, compact('brand_id','name','image','mrp','offer_price','quantity','is_premium','new_lunch','series','sequence','status'));
         } else {
             $errors[] = "DB error: ".$conn->error;
         }
@@ -141,6 +143,18 @@ require_once '../includes/layout_top.php';
                             <option value="0" <?= $product['is_premium']==0?'selected':'' ?>>No</option>
                             <option value="1" <?= $product['is_premium']==1?'selected':'' ?>>Yes</option>
                         </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">New Launch</label>
+                        <select name="new_lunch" class="form-select">
+                            <option value="0" <?= $product['new_lunch']==0?'selected':'' ?>>No</option>
+                            <option value="1" <?= $product['new_lunch']==1?'selected':'' ?>>Yes</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Series</label>
+                        <input type="text" name="series" class="form-control"
+                               value="<?= htmlspecialchars($product['series'] ?? '') ?>" placeholder="e.g. Urban Jungle">
                     </div>
                 </div>
             </div>

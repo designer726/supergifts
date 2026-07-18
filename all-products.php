@@ -13,7 +13,7 @@ if ($conn->connect_error) die("Connection failed: " . $conn->connect_error);
 $selectedBrands = array_filter(array_map('intval', $_GET['brand'] ?? []));
 $offerMin       = ($_GET['offer_min'] ?? '') !== '' ? floatval($_GET['offer_min']) : null;
 $offerMax       = ($_GET['offer_max'] ?? '') !== '' ? floatval($_GET['offer_max']) : null;
-$qtyMin         = ($_GET['qty_min'] ?? '') !== '' ? max(10, intval($_GET['qty_min'])) : 10;
+$qtyMin         = ($_GET['qty_min'] ?? '') !== '' ? max(10, intval($_GET['qty_min'])) : 1   ;
 
 // ── Build WHERE clause ──
 $where  = ["p.status = 1", "p.quantity >= ?"];
@@ -42,8 +42,11 @@ $stmt->close();
 // ── Brands available for filtering (only brands with qualifying products) ──
 $brandOptions = $conn->query("SELECT DISTINCT b.id, b.brandname FROM products p
                                JOIN brandlogo b ON p.brand_id = b.id
-                               WHERE p.status = 1 AND p.quantity >= 10
+                               WHERE p.status = 1 AND p.quantity >= 1
                                ORDER BY b.brandname ASC");
+
+// ── Page banner uploaded from the admin dashboard (slot 5) ──
+$pageBanner = $conn->query("SELECT * FROM banners WHERE slot=5 AND status=1 LIMIT 1")->fetch_assoc() ?: [];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -161,6 +164,64 @@ $brandOptions = $conn->query("SELECT DISTINCT b.id, b.brandname FROM products p
             padding: 60px 20px;
             color: #888;
         }
+
+        .ap-banner-wrap {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            max-height: 380px;
+        }
+
+        .ap-banner-wrap img,
+        .ap-banner-wrap video {
+            width: 100%;
+            height: 100%;
+            max-height: 380px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .ap-banner-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, rgba(13, 43, 85, .78) 0%, rgba(13, 43, 85, .35) 55%, transparent 100%);
+            display: flex;
+            align-items: center;
+        }
+
+        .ap-banner-content {
+            padding: 30px 40px;
+            color: #fff;
+            max-width: 520px;
+        }
+
+        .ap-banner-content h2 {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .ap-banner-content p {
+            font-size: 14px;
+            opacity: .9;
+            margin-bottom: 16px;
+        }
+
+        .ap-banner-btn {
+            display: inline-block;
+            padding: 10px 22px;
+            background: linear-gradient(135deg, #c8a96e, #a07840);
+            color: #fff;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .ap-banner-content { padding: 20px; }
+            .ap-banner-content h2 { font-size: 20px; }
+        }
     </style>
 </head>
 
@@ -174,6 +235,30 @@ $brandOptions = $conn->query("SELECT DISTINCT b.id, b.brandname FROM products p
         <?php include('common/nav.php'); ?>
 
         <main id="main">
+
+            <!-- ═══════════ PAGE BANNER (uploaded from admin dashboard) ═══════════ -->
+            <?php if (!empty($pageBanner['file_path'])): ?>
+            <div class="ap-banner-wrap">
+                <?php if ($pageBanner['file_type'] === 'video'): ?>
+                <video autoplay muted loop playsinline>
+                    <source src="<?= htmlspecialchars($pageBanner['file_path']) ?>">
+                </video>
+                <?php else: ?>
+                <img src="<?= htmlspecialchars($pageBanner['file_path']) ?>" alt="<?= htmlspecialchars($pageBanner['title'] ?: 'All Products') ?>">
+                <?php endif; ?>
+                <?php if (!empty($pageBanner['title']) || !empty($pageBanner['subtitle'])): ?>
+                <div class="ap-banner-overlay">
+                    <div class="ap-banner-content">
+                        <?php if (!empty($pageBanner['title'])): ?><h2><?= htmlspecialchars($pageBanner['title']) ?></h2><?php endif; ?>
+                        <?php if (!empty($pageBanner['subtitle'])): ?><p><?= htmlspecialchars($pageBanner['subtitle']) ?></p><?php endif; ?>
+                        <?php if (!empty($pageBanner['btn_text']) && !empty($pageBanner['btn_link'])): ?>
+                        <a href="<?= htmlspecialchars($pageBanner['btn_link']) ?>" class="ap-banner-btn"><?= htmlspecialchars($pageBanner['btn_text']) ?></a>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
+            </div>
+            <?php endif; ?>
 
             <!-- Header -->
             <section class="page-section bg-gray-light-1 bg-light-alpha-90 parallax-5" style="background-image: url(images/full-width-images/section-bg-1.jpg)">

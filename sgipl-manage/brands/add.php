@@ -19,6 +19,7 @@ if (!is_dir($bannerUploadDir)) mkdir($bannerUploadDir, 0755, true);
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $brandname      = trim($_POST['brandname'] ?? '');
     $links          = trim($_POST['links'] ?? '');
+    $website        = trim($_POST['website'] ?? '');
     $flag           = intval($_POST['flag'] ?? 1);
     $seqence        = intval($_POST['seqence'] ?? 0);
     $imageno        = '';
@@ -78,12 +79,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     unset($targetVar);
 
     if (!$errors) {
-        $stmt = $conn->prepare("INSERT INTO brandlogo (brandname, links, imageno, brand_banner, brand_banner_2, brand_banner_3, seqence, flag) VALUES (?,?,?,?,?,?,?,?)");
-        $stmt->bind_param("ssisssii", $brandname, $links, $imageno, $brand_banner, $brand_banner_2, $brand_banner_3, $seqence, $flag);
+        $stmt = $conn->prepare("INSERT INTO brandlogo (brandname, links, website, imageno, brand_banner, brand_banner_2, brand_banner_3, seqence, flag) VALUES (?,?,?,?,?,?,?,?,?)");
+        $stmt->bind_param("sssisssii", $brandname, $links, $website, $imageno, $brand_banner, $brand_banner_2, $brand_banner_3, $seqence, $flag);
         if ($stmt->execute()) {
             $newId = $conn->insert_id;
             $success = "Brand added! <a href='../products/add.php?brand_id={$newId}'>Add products →</a>";
-            $brandname = $links = ''; $flag = 1; $seqence = 0;
+            $brandname = $links = $website = ''; $flag = 1; $seqence = 0;
         } else {
             $errors[] = "DB error: " . $conn->error;
         }
@@ -116,11 +117,17 @@ require_once '../includes/layout_top.php';
                            value="<?= htmlspecialchars($brandname ?? '') ?>"
                            placeholder="e.g. Blaupunkt" required>
                 </div>
-                <div class="mb-0">
+                <div class="mb-3">
                     <label class="form-label">Catalog URL <span class="text-muted small fw-normal">(Google Drive / PDF link)</span></label>
                     <input type="text" name="links" class="form-control"
                            value="<?= htmlspecialchars($links ?? '') ?>"
                            placeholder="https://drive.google.com/...">
+                </div>
+                <div class="mb-0">
+                    <label class="form-label">Brand Website <span class="text-muted small fw-normal">(used by "About Brand" link)</span></label>
+                    <input type="text" name="website" class="form-control"
+                           value="<?= htmlspecialchars($website ?? '') ?>"
+                           placeholder="https://www.brandwebsite.com">
                 </div>
             </div>
         </div>
