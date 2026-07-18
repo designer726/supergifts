@@ -65,8 +65,9 @@
           </div>
       </div>
       <div class="footer-bottom">
-          <p>© 2025 <span>SuperGifts</span>. All rights reserved.</p>
-          <p>Made with ❤️ in Hyderabad, India</p>
+          <p>Copyright © 2026 <span>Super Gifts</span>. All Rights Reserved.</p>
+          <!-- <p>Made with ❤️ in Hyderabad, India</p> -->
+          <p>Your presence is the best gift we could ask for. Welcome to Super Gifts!</p>
       </div>
   </footer>
   <!-- End Modern Footer -->

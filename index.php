@@ -90,7 +90,7 @@ if (!$db->connect_error) {
     
     /* Blog posts */
     $r = $db->query("SELECT id, title, slug, excerpt, image, category, created_at
-                     FROM blogs WHERE status='published' ORDER BY created_at DESC LIMIT 3");
+                     FROM blogs WHERE status='published' ORDER BY created_at DESC LIMIT 6");
     if ($r) while ($row = $r->fetch_assoc()) $blogPosts[] = $row;
 
     /* Testimonials */
@@ -268,12 +268,12 @@ if (!$db->connect_error) {
                     <a href="blog" class="hp-see-all">See all →</a>
                 </div>
                 <div class="hp-updates-slider">
-                    <div class="hp-updates-arrow" onclick="document.getElementById('updatesScroll').scrollLeft -= 340">&#8249;</div>
+                    <div class="hp-updates-arrow" onclick="var s=document.getElementById('updatesScroll');s.scrollLeft -= s.clientWidth">&#8249;</div>
                     <div style="overflow:hidden;flex:1;">
                         <div id="updatesScroll" style="display:flex;gap:16px;overflow-x:auto;scroll-behavior:smooth;scrollbar-width:none;">
                             <?php if (!empty($blogPosts)): ?>
                                 <?php foreach ($blogPosts as $blog): ?>
-                                <a href="blog_details?BlogDetails=<?= htmlspecialchars($blog['slug']) ?>" class="hp-blog-card" style="min-width:calc(22% - 13px);max-width:220px;flex-shrink:0;">
+                                <a href="blog_details?BlogDetails=<?= htmlspecialchars($blog['slug']) ?>" class="hp-blog-card" style="min-width:calc(33.333% - 11px);max-width:calc(33.333% - 11px);flex-shrink:0;">
                                     <div class="hp-blog-img">
                                         <?php if (!empty($blog['image'])): ?>
                                         <img src="<?= htmlspecialchars($blog['image']) ?>" alt="<?= htmlspecialchars($blog['title']) ?>" loading="lazy">
@@ -293,7 +293,7 @@ if (!$db->connect_error) {
                             <?php endif; ?>
                         </div>
                     </div>
-                    <div class="hp-updates-arrow" onclick="document.getElementById('updatesScroll').scrollLeft += 340">&#8250;</div>
+                    <div class="hp-updates-arrow" onclick="var s=document.getElementById('updatesScroll');s.scrollLeft += s.clientWidth">&#8250;</div>
                 </div>
             </section>
 
