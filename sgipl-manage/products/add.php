@@ -15,12 +15,17 @@ if (!is_dir($imgUploadDir)) mkdir($imgUploadDir, 0755, true);
 $allBrands = $conn->query("SELECT id, brandname FROM brandlogo ORDER BY brandname ASC");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $brand_id = intval($_POST['brand_id'] ?? 0);
-    $name     = trim($_POST['name'] ?? '');
-    $mrp      = floatval($_POST['mrp'] ?? 0);
-    $sequence = intval($_POST['sequence'] ?? 0);
-    $status   = intval($_POST['status'] ?? 1);
-    $image    = '';
+    $brand_id    = intval($_POST['brand_id'] ?? 0);
+    $name        = trim($_POST['name'] ?? '');
+    $mrp         = floatval($_POST['mrp'] ?? 0);
+    $offer_price = floatval($_POST['offer_price'] ?? 0);
+    $quantity    = intval($_POST['quantity'] ?? 0);
+    $is_premium  = intval($_POST['is_premium'] ?? 0);
+    $new_lunch   = intval($_POST['new_lunch'] ?? 0);
+    $series      = trim($_POST['series'] ?? '');
+    $sequence    = intval($_POST['sequence'] ?? 0);
+    $status      = intval($_POST['status'] ?? 1);
+    $image       = '';
 
     if (!$brand_id) $errors[] = "Please select a brand.";
     if (!$name)     $errors[] = "Product name is required.";
@@ -43,11 +48,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (!$errors) {
-        $stmt = $conn->prepare("INSERT INTO products (brand_id, name, image, mrp, sequence, status) VALUES (?,?,?,?,?,?)");
-        $stmt->bind_param("issdii", $brand_id, $name, $image, $mrp, $sequence, $status);
+        $stmt = $conn->prepare("INSERT INTO products (brand_id, name, image, mrp, offer_price, quantity, is_premium, new_lunch, series, sequence, status) VALUES (?,?,?,?,?,?,?,?,?,?,?)");
+        $stmt->bind_param("issddiiisii", $brand_id, $name, $image, $mrp, $offer_price, $quantity, $is_premium, $new_lunch, $series, $sequence, $status);
         if ($stmt->execute()) {
             $success = "Product added! <a href='index.php?brand_id={$brand_id}'>View brand products →</a>";
-            $name = ''; $mrp = 0; $sequence = 0;
+            $name = ''; $mrp = 0; $offer_price = 0; $quantity = 0; $is_premium = 0; $new_lunch = 0; $series = ''; $sequence = 0;
         } else {
             $errors[] = "DB error: ".$conn->error;
         }
@@ -97,12 +102,46 @@ require_once '../includes/layout_top.php';
                            value="<?= htmlspecialchars($name ?? '') ?>"
                            placeholder="e.g. Blaupunkt Bluetooth Speaker BT-200" required>
                 </div>
-                <div class="mb-0">
-                    <label class="form-label">MRP (₹)</label>
-                    <div class="input-group">
-                        <span class="input-group-text">₹</span>
-                        <input type="number" name="mrp" class="form-control"
-                               value="<?= $mrp ?? 0 ?>" min="0" step="0.01" placeholder="999.00">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">MRP (₹)</label>
+                        <div class="input-group">
+                            <span class="input-group-text">₹</span>
+                            <input type="number" name="mrp" class="form-control"
+                                   value="<?= $mrp ?? 0 ?>" min="0" step="0.01" placeholder="999.00">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Offer Price (₹)</label>
+                        <div class="input-group">
+                            <span class="input-group-text">₹</span>
+                            <input type="number" name="offer_price" class="form-control"
+                                   value="<?= $offer_price ?? 0 ?>" min="0" step="0.01" placeholder="799.00">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Quantity</label>
+                        <input type="number" name="quantity" class="form-control"
+                               value="<?= $quantity ?? 0 ?>" min="0" placeholder="0">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Premium</label>
+                        <select name="is_premium" class="form-select">
+                            <option value="0">No</option>
+                            <option value="1">Yes</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">New Launch</label>
+                        <select name="new_lunch" class="form-select">
+                            <option value="0">No</option>
+                            <option value="1">Yes</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Series</label>
+                        <input type="text" name="series" class="form-control"
+                               value="<?= htmlspecialchars($series ?? '') ?>" placeholder="e.g. Urban Jungle">
                     </div>
                 </div>
             </div>

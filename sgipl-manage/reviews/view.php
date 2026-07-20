@@ -77,6 +77,13 @@ require_once '../includes/layout_top.php';
                         $class = $statusClass[$review['status']] ?? 'badge-secondary';
                         ?>
                         <span class="badge <?= $class ?>"><?= ucfirst($review['status']) ?></span>
+                        <div class="mt-2">
+                            <?php if (!empty($review['is_hidden'])): ?>
+                                <span class="badge bg-secondary">Hidden from website</span>
+                            <?php else: ?>
+                                <span class="badge bg-success-subtle text-success-emphasis">Visible on website</span>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </div>
             </div>

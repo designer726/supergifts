@@ -1,6 +1,16 @@
 <?php 
 $pagename = basename($_SERVER['PHP_SELF']); 
 require_once 'sgipl-manage/includes/db.php';
+
+function renderStars($rating, $size = 18) {
+    $safeRating = max(0, min(5, (int)$rating));
+    $html = '';
+    for ($i = 0; $i < 5; $i++) {
+        $filled = $i < $safeRating;
+        $html .= '<span class="review-star' . ($filled ? ' filled' : '') . '" style="color:' . ($filled ? '#ffc107' : '#d0d0d0') . '; font-size:' . $size . 'px; display:inline-block; margin-right:2px;">' . ($filled ? '★' : '☆') . '</span>';
+    }
+    return $html;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -45,7 +55,7 @@ require_once 'sgipl-manage/includes/db.php';
                                 if (!$conn) {
                                     echo '<p class="text-center text-danger">Database connection error. Please try again later.</p>';
                                 } else {
-                                    $stmt = $conn->prepare("SELECT * FROM reviews WHERE status = 'approved' ORDER BY created_at DESC LIMIT 50");
+                                    $stmt = $conn->prepare("SELECT * FROM reviews WHERE status = 'approved' AND is_hidden = 0 ORDER BY created_at DESC LIMIT 50");
                                     if (!$stmt) {
                                         echo '<p class="text-center text-warning">Reviews table not found. Please run the setup script.</p>';
                                     } else {
@@ -59,13 +69,8 @@ require_once 'sgipl-manage/includes/db.php';
                                 ?>
                                 <div class="review-card mb-40 pb-40" style="border-bottom: 1px solid #e9e9e9;">
                                     <!-- Rating Stars -->
-                                    <div class="mb-15" style="color: #ffc107; font-size: 18px;">
-                                        <?php for($s=0; $s<$review['rating']; $s++): ?>
-                                            <i class="fa fa-star"></i>
-                                        <?php endfor; ?>
-                                        <?php for($s=$review['rating']; $s<5; $s++): ?>
-                                            <i class="fa fa-star-o"></i>
-                                        <?php endfor; ?>
+                                    <div class="mb-15">
+                                        <?= renderStars($review['rating'] ?? 0, 18) ?>
                                     </div>
 
                                     <!-- Review Text -->
@@ -114,7 +119,7 @@ require_once 'sgipl-manage/includes/db.php';
                                             COUNT(*) as total,
                                             AVG(rating) as avg_rating
                                         FROM reviews 
-                                        WHERE status = 'approved'
+                                        WHERE status = 'approved' AND is_hidden = 0
                                     ");
                                     if ($result) {
                                         $stats = $result->fetch_assoc();
@@ -126,14 +131,8 @@ require_once 'sgipl-manage/includes/db.php';
                                         <?= number_format($stats['avg_rating'] ?? 0, 1) ?>
                                         <span style="font-size: 24px;">/ 5</span>
                                     </div>
-                                    <div style="color: #ffc107; font-size: 18px; margin-top: 5px;">
-                                        <?php $avg = $stats['avg_rating'] ?? 0; 
-                                        for($s=0; $s<floor($avg); $s++): ?>
-                                            <i class="fa fa-star"></i>
-                                        <?php endfor; ?>
-                                        <?php if($avg - floor($avg) > 0): ?>
-                                            <i class="fa fa-star-half-o"></i>
-                                        <?php endif; ?>
+                                    <div style="margin-top: 5px;">
+                                        <?= renderStars($stats['avg_rating'] ?? 0, 18) ?>
                                     </div>
                                     <small class="text-muted d-block mt-10">
                                         Based on <?= $stats['total'] ?> reviews
@@ -162,10 +161,10 @@ require_once 'sgipl-manage/includes/db.php';
 
                                     <div class="mb-20">
                                         <label class="form-label">Your Rating *</label>
-                                        <div class="rating-input" style="font-size: 24px; color: #ccc; cursor: pointer;">
+                                        <div class="rating-input" style="font-size: 24px; color: #000000; cursor: pointer;">
                                             <input type="hidden" id="rating" name="rating" value="5" required>
                                             <?php for($i=1; $i<=5; $i++): ?>
-                                                <i class="fa fa-star star-icon" data-rating="<?= $i ?>" style="cursor: pointer; margin-right: 10px;"></i>
+                                                <span class="star-icon" data-rating="<?= $i ?>" role="button" tabindex="0" aria-label="Rate <?= $i ?> stars" style="cursor: pointer; margin-right: 10px; color: #d0d0d0; display: inline-block;">★</span>
                                             <?php endfor; ?>
                                         </div>
                                         <small class="text-muted d-block mt-5">Click to rate</small>

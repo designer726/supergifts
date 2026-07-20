@@ -12,9 +12,9 @@ $allBrands = $conn->query("SELECT id, brandname FROM brandlogo ORDER BY brandnam
 if (isset($_GET['download_sample'])) {
     header('Content-Type: text/csv');
     header('Content-Disposition: attachment; filename="products_template.csv"');
-    echo "Product Name,MRP,Display Order\n";
-    echo "Sample Product Name,999.00,1\n";
-    echo "Another Product,1499.00,2\n";
+    echo "Product Name,MRP,Display Order,Offer Price,Quantity,Premium\n";
+    echo "Sample Product Name,999.00,1,799.00,10,0\n";
+    echo "Another Product,1499.00,2,1199.00,5,1\n";
     exit();
 }
 
@@ -34,12 +34,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $seq = 1;
             while (($row = fgetcsv($handle)) !== false) {
                 if (empty($row[0])) continue;
-                $name     = trim($row[0]);
-                $mrp      = floatval($row[1] ?? 0);
-                $sequence = intval($row[2] ?? $seq);
+                $name        = trim($row[0]);
+                $mrp         = floatval($row[1] ?? 0);
+                $sequence    = intval($row[2] ?? $seq);
+                $offer_price = floatval($row[3] ?? 0);
+                $quantity    = intval($row[4] ?? 0);
+                $is_premium  = (intval($row[5] ?? 0) === 1) ? 1 : 0;
                 if (!$name) continue;
-                $stmt = $conn->prepare("INSERT INTO products (brand_id, name, mrp, sequence, status) VALUES (?,?,?,?,1)");
-                $stmt->bind_param("isdi", $brand_id, $name, $mrp, $sequence);
+                $stmt = $conn->prepare("INSERT INTO products (brand_id, name, mrp, sequence, offer_price, quantity, is_premium, status) VALUES (?,?,?,?,?,?,?,1)");
+                $stmt->bind_param("isdidii", $brand_id, $name, $mrp, $sequence, $offer_price, $quantity, $is_premium);
                 if ($stmt->execute()) $imported++;
                 $stmt->close();
                 $seq++;
@@ -71,7 +74,7 @@ require_once '../includes/layout_top.php';
         <ol class="mb-1 mt-1">
             <li>Download the sample CSV template</li>
             <li>Open in Excel or Google Sheets</li>
-            <li>Fill: <strong>Product Name</strong>, <strong>MRP</strong>, <strong>Display Order</strong></li>
+            <li>Fill: <strong>Product Name</strong>, <strong>MRP</strong>, <strong>Display Order</strong>, <strong>Offer Price</strong>, <strong>Quantity</strong>, <strong>Premium</strong> (0 = No, 1 = Yes)</li>
             <li>Save as CSV and upload here</li>
             <li>After upload, edit each product to add images</li>
         </ol>
@@ -116,14 +119,21 @@ require_once '../includes/layout_top.php';
     <h6 class="fw-bold mb-3">📋 CSV Format</h6>
     <table class="table table-sm table-bordered mb-0" style="font-size:13px;">
         <thead class="table-light">
-            <tr><th>Column A — Product Name</th><th>Column B — MRP</th><th>Column C — Order</th></tr>
+            <tr>
+                <th>A — Product Name</th>
+                <th>B — MRP</th>
+                <th>C — Order</th>
+                <th>D — Offer Price</th>
+                <th>E — Quantity</th>
+                <th>F — Premium</th>
+            </tr>
         </thead>
         <tbody>
-            <tr><td>Blaupunkt BT Speaker</td><td>999.00</td><td>1</td></tr>
-            <tr><td>Blaupunkt Headphones</td><td>1499.00</td><td>2</td></tr>
+            <tr><td>Blaupunkt BT Speaker</td><td>999.00</td><td>1</td><td>799.00</td><td>10</td><td>0</td></tr>
+            <tr><td>Blaupunkt Headphones</td><td>1499.00</td><td>2</td><td>1199.00</td><td>5</td><td>1</td></tr>
         </tbody>
     </table>
-    <div class="text-muted small mt-2">⚠️ Do not change column headers. Images added manually after upload.</div>
+    <div class="text-muted small mt-2">⚠️ Do not change column headers. Premium: 0 = No, 1 = Yes. Images added manually after upload.</div>
 </div>
 
 <?php require_once '../includes/layout_bottom.php'; ?>

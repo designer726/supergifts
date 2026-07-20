@@ -116,7 +116,7 @@ $next = $conn->query("SELECT title, slug FROM blogs WHERE status='published' AND
                             <div class="blog-media mb-50">
                                 <img src="<?= htmlspecialchars($blog['image']) ?>"
                                      alt="<?= htmlspecialchars($blog['title']) ?>"
-                                     style="width:100%;border-radius:8px;object-fit:cover;max-height:450px;" />
+                                     style="width:100%;height:auto;border-radius:8px;" />
                             </div>
                             <?php endif; ?>
                             <!-- End Featured Image -->
