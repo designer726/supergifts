@@ -35,7 +35,7 @@
               </div>
           </div>
           <div class="footer-col">
-              <h5>For Resellers</h5>
+              <h5>Partners</h5>
               <ul>
                   <li><a href="services">Services</a></li>
                   <li><a href="contact">Bulk Inquiry</a></li>
@@ -44,7 +44,7 @@
               </ul>
           </div>
           <div class="footer-col">
-              <h5>For Corporates</h5>
+              <h5>Corporate</h5>
               <ul>
                   <li><a href="services">Branding</a></li>
                   <li><a href="services">Logistics</a></li>
@@ -54,7 +54,6 @@
               </ul>
           </div>
           <div class="footer-col">
-              <h5>Company</h5>
               <ul>
                   <li><a href="about">About Us</a></li>
                   <li><a href="#">Our Team</a></li>
@@ -65,9 +64,8 @@
           </div>
       </div>
       <div class="footer-bottom">
-          <p>Copyright © 2026 <span>Super Gifts</span>. All Rights Reserved.</p>
-          <!-- <p>Made with ❤️ in Hyderabad, India</p> -->
-          <p>Your presence is the best gift we could ask for. Welcome to Super Gifts!</p>
+          <p class="footer-copyright">Copyright © 2026 <span>Super Gifts</span>. All Rights Reserved.</p>
+          <p class="footer-tagline">Your presence is the best gift we could ask for. Welcome to Super Gifts!</p>
       </div>
   </footer>
   <!-- End Modern Footer -->

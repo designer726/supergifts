@@ -201,10 +201,9 @@ if (!$db->connect_error) {
                     </a>
                     <?php endforeach; ?>
                 </div>
-                <p style="color:#000000;font: size 50px;px; text-align: right; margin
-                : 20px">& many more...</p>
+                <p style="color:#6B7280;font-size:13px;text-align:right;margin-top:14px;">&amp; many more...</p>
                 <?php else: ?>
-                <p style="color:#999;font-size:14px;">Brand partners coming soon.</p>
+                <p style="color:#9CA3AF;font-size:14px;">Brand partners coming soon.</p>
                 <?php endif; ?>
             </section>
 
@@ -226,7 +225,7 @@ if (!$db->connect_error) {
                                     <?php if (!empty($p['image'])): ?>
                                     <img src="<?= htmlspecialchars($p['image']) ?>" alt="<?= htmlspecialchars($p['name']) ?>" loading="lazy">
                                     <?php else: ?>
-                                    <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#ccc;font-size:36px;">🎁</div>
+                                    <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#9CA3AF;font-size:36px;">🎁</div>
                                     <?php endif; ?>
                                 </div>
                                 <div class="hp-prod-card-body">
@@ -249,7 +248,7 @@ if (!$db->connect_error) {
                             </a>
                             <?php endforeach; ?>
                         <?php else: ?>
-                            <div style="padding:40px;color:#999;font-size:14px;">Products coming soon.</div>
+                            <div style="padding:40px;color:#9CA3AF;font-size:14px;">Products coming soon.</div>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -278,7 +277,7 @@ if (!$db->connect_error) {
                                         <?php if (!empty($blog['image'])): ?>
                                         <img src="<?= htmlspecialchars($blog['image']) ?>" alt="<?= htmlspecialchars($blog['title']) ?>" loading="lazy">
                                         <?php else: ?>
-                                        <div style="display:flex;align-items:center;justify-content:center;height:100%;background:#f0f4ff;color:#bbb;font-size:32px;">📰</div>
+                                        <div style="display:flex;align-items:center;justify-content:center;height:100%;background:#F4F3F8;color:#9CA3AF;font-size:32px;">📰</div>
                                         <?php endif; ?>
                                     </div>
                                     <div class="hp-blog-body">
@@ -289,7 +288,7 @@ if (!$db->connect_error) {
                                 </a>
                                 <?php endforeach; ?>
                             <?php else: ?>
-                                <div style="padding:40px;color:#999;font-size:14px;">No updates available yet.</div>
+                                <div style="padding:40px;color:#9CA3AF;font-size:14px;">No updates available yet.</div>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -310,7 +309,7 @@ if (!$db->connect_error) {
                     <?php endforeach; ?>
                 </div>
                 <?php else: ?>
-                <div style="color:#999;font-size:14px;padding:20px 0;">Brands coming soon.</div>
+                <div style="color:#9CA3AF;font-size:14px;padding:20px 0;">Brands coming soon.</div>
                 <?php endif; ?>
             </section>
 
@@ -368,7 +367,7 @@ if (!$db->connect_error) {
                                 <?php if (!empty($p['image'])): ?>
                                 <img src="<?= htmlspecialchars($p['image']) ?>" alt="<?= htmlspecialchars($p['name']) ?>" loading="lazy">
                                 <?php else: ?>
-                                <div style="display:flex;align-items:center;justify-content:center;height:100%;background:#f5f5f5;font-size:32px;color:#ccc;">🎁</div>
+                                <div style="display:flex;align-items:center;justify-content:center;height:100%;background:#F4F3F8;font-size:32px;color:#9CA3AF;">🎁</div>
                                 <?php endif; ?>
                                 <div class="hp-qty-badge">
                                     <!-- <strong>500+</strong> -->
@@ -399,7 +398,7 @@ if (!$db->connect_error) {
                     </div>
                 </div>
                 <?php else: ?>
-                <p style="color:#999;font-size:14px;padding:20px 0;">Products coming soon.</p>
+                <p style="color:#9CA3AF;font-size:14px;padding:20px 0;">Products coming soon.</p>
                 <?php endif; ?>
             </section>
 
@@ -459,7 +458,7 @@ if (!$db->connect_error) {
                         </div>
                     </div>
                     <?php else: ?>
-                    <p style="text-align:center;color:#999;font-size:14px;padding:20px 0;">No products in this range yet.</p>
+                    <p style="text-align:center;color:#9CA3AF;font-size:14px;padding:20px 0;">No products in this range yet.</p>
                     <?php endif; ?>
                 </div>
                 <?php endforeach; ?>
@@ -558,7 +557,7 @@ if (!$db->connect_error) {
                         <div class="hp-review-stars">★★★★★</div>
                         <div class="hp-review-text">"We've been ordering quarterly for 2 years. Product quality is consistently excellent and the after-sales support is second to none."</div>
                         <div class="hp-reviewer">
-                            <div class="hp-reviewer-avatar" style="background:#2d8a4e;">P</div>
+                            <div class="hp-reviewer-avatar" style="background:#0B7A43;">P</div>
                             <div><div class="hp-reviewer-name">Priya Sharma</div><div class="hp-reviewer-role">HR Manager, Infosys</div></div>
                         </div>
                     </div>
@@ -566,7 +565,7 @@ if (!$db->connect_error) {
                         <div class="hp-review-stars">★★★★☆</div>
                         <div class="hp-review-text">"The bulk order facility and inventory management saved us weeks of effort. Highly recommend for large enterprise gifting needs."</div>
                         <div class="hp-reviewer">
-                            <div class="hp-reviewer-avatar" style="background:#D4AF37;color:#0D2B55;">A</div>
+                            <div class="hp-reviewer-avatar" style="background:#FFD400;color:#241C6B;">A</div>
                             <div><div class="hp-reviewer-name">Arjun Nair</div><div class="hp-reviewer-role">Operations Lead, HDFC</div></div>
                         </div>
                     </div>

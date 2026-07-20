@@ -109,19 +109,19 @@
 
                
                 <!-- Team Section -->
-                <section class="page-section pt-0 bg-gray-light-1" id="team">
+                <!-- <section class="page-section pt-0 bg-gray-light-1" id="team">
                     <div class="container">
                         
-                        <div class="row position-relative mt-n40 mb-80 mb-sm-40 wow fadeInUp" data-wow-delay="0.2s">
-                        <h2 class="section-title mt-30 mb-30 text-center">Our Team</h2>
+                        <div class="row position-relative mt-n40 mb-80 mb-sm-40 wow fadeInUp" data-wow-delay="0.2s"> -->
+                        <!-- <h2 class="section-title mt-30 mb-30 text-center">Our Team</h2> -->
                             <!-- Decorative Waves -->
-                            <div class="decoration-8 d-none d-sm-block"  data-rellax-y data-rellax-speed="-0.6" data-rellax-percentage="-0.17">
+                            <!-- <div class="decoration-8 d-none d-sm-block"  data-rellax-y data-rellax-speed="-0.6" data-rellax-percentage="-0.17">
                                 <img src="images/decoration-1.svg" alt="" />
-                            </div>
+                            </div> -->
                             <!-- End Decorative Waves -->
                             
                             <!-- Team item -->
-                            <div class="col-sm-6 col-lg-3 mt-40">                                
+                            <!-- <div class="col-sm-6 col-lg-3 mt-40">                                
                                 <div class="team-item">
                                     
                                     <div class="team-item-image">
@@ -142,11 +142,11 @@
                                     </div>
                                     
                                 </div>                      
-                            </div>
+                            </div> -->
                             <!-- End Team item -->
                             
                             <!-- Team item -->
-                            <div class="col-sm-6 col-lg-3 mt-40">
+                            <!-- <div class="col-sm-6 col-lg-3 mt-40">
                                 <div class="team-item">
                                     
                                     <div class="team-item-image">
@@ -166,11 +166,11 @@
                                     </div>
                                     
                                 </div>         
-                            </div>
+                            </div> -->
                             <!-- End Team item -->
                             
                             <!-- Team item -->
-                            <div class="col-sm-6 col-lg-3 mt-40">                                
+                            <!-- <div class="col-sm-6 col-lg-3 mt-40">                                
                                 <div class="team-item">
                                     
                                     <div class="team-item-image">
@@ -192,11 +192,11 @@
                                     </div>
                                     
                                 </div>                     
-                            </div>
+                            </div> -->
                             <!-- End Team item -->
                             
                             <!-- Team item -->
-                            <div class="col-sm-6 col-lg-3 mt-40">                                
+                            <!-- <div class="col-sm-6 col-lg-3 mt-40">                                
                                 <div class="team-item">
                                     
                                     <div class="team-item-image">
@@ -217,11 +217,11 @@
                                     </div>
                                     
                                 </div>
-                            </div>
+                            </div> -->
                             <!-- End Team item -->
                                          <!-- Team item -->
-                                         <div class="col-sm-6 col-lg-3 mt-40">                                
-                                <div class="team-item">
+                                         <!-- <div class="col-sm-6 col-lg-3 mt-40">                                 -->
+                                <!-- <div class="team-item">
                                     
                                     <div class="team-item-image">
                                         
@@ -240,8 +240,8 @@
                                         </div>
                                     </div>
                                     
-                                </div>
-                            </div>
+                                </div> -->
+                            <!-- </div> -->
                             <!-- End Team item -->
 
                             <!--
@@ -449,11 +449,11 @@
 
 
 
-                        </div>
+                        <!-- </div>
                      
                         
                     </div>
-                </section>
+                </section> -->
                 <!-- End Team Section -->
 
                

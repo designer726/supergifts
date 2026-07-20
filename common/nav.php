@@ -32,7 +32,7 @@
 <nav class="mobile-nav" id="mobileNav">
     <div class="mobile-nav-header">
         <img src="images/logo.png" alt="SGIPL" style="height:36px;">
-        <button onclick="closeMobileNav()" aria-label="Close" style="background:none;border:none;font-size:22px;cursor:pointer;color: #000;button>
+        <button onclick="closeMobileNav()" aria-label="Close" style="background:none;border:none;font-size:22px;cursor:pointer;color:#241C6B;">&times;</button>
     </div>
     <a href="index" <?php if (isset($pagename) && $pagename == "index.php") echo "class='active'"; ?>>Home</a>
     <a href="about" <?php if (isset($pagename) && $pagename == "about.php") echo "class='active'"; ?>>About us</a>
@@ -60,7 +60,7 @@
     display: block;
     width: 24px;
     height: 2px;
-    background: #0D2B55;
+    background: #241C6B;
     border-radius: 2px;
     transition: all .25s;
 }
@@ -99,7 +99,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 16px 20px;
-    border-bottom: 1px solid #000
+    border-bottom: 1px solid #E5E7EB;
 }
 
 .mobile-nav a {
@@ -113,12 +113,12 @@
     transition: background .15s, color .15s;
 }
 .mobile-nav a:hover,
-.mobile-nav a.active { background: #f5f8ff; color: #0D2B55; }
+.mobile-nav a.active { background: #F4F3F8; color: #241C6B; }
 
 .mobile-nav-cta {
     margin: 16px 20px;
-    background: #D4AF37 !important;
-    color: #0D2B55 !important;
+    background: #D0021B !important;
+    color: #ffffff !important;
     border-radius: 8px !important;
     font-weight: 700 !important;
     text-align: center;
