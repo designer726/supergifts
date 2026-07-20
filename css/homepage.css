@@ -15,12 +15,12 @@
 .hp-body {
   background: #fff;
   font-family:
-    "DM Sans",
+    "Poppins",
     -apple-system,
     BlinkMacSystemFont,
     "Segoe UI",
     sans-serif;
-  color: #1a1a1a;
+  color: #241C6B;
 }
 
 /* ── CONTAINER ── */
@@ -36,16 +36,16 @@
 }
 
 .hp-sec-alt {
-  background: #f7f7f7;
+  background: #F4F3F8;
 }
 
 .hp-sec-title {
   font-size: 15px;
-  font-weight: 800;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: #111;
-  margin-bottom: 24px;
+  color: #241C6B;
+  margin-bottom: 18px;
 }
 
 /* ═══════════════════════════════
@@ -59,7 +59,7 @@
   width: 100%;
   aspect-ratio: 10 / 3;
   overflow: hidden;
-  background: #f5f8ff;
+  background: #F4F3F8;
 }
 
 /* Slides container */
@@ -87,7 +87,7 @@
 .hp-banner-bg-gradient {
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, #0d2b55 0%, #1b4b7c 60%, #0d2b55 100%);
+  background: linear-gradient(135deg, #241C6B 0%, #4B3F9E 60%, #241C6B 100%);
   z-index: 0;
 }
 
@@ -101,7 +101,7 @@
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    rgba(212, 175, 55, 0.22) 0%,
+    rgba(208, 2, 27, 0.22) 0%,
     transparent 70%
   );
 }
@@ -148,8 +148,8 @@
 }
 
 .hp-banner-arrow:hover {
-  background: rgba(212, 175, 55, 0.35);
-  border-color: #d4af37;
+  background: rgba(208, 2, 27, 0.35);
+  border-color: #D0021B;
 }
 
 .hp-banner-arrow.prev {
@@ -179,7 +179,7 @@
 }
 
 .hp-hero-dot.active {
-  background: #d4af37;
+  background: #D0021B;
   width: 20px;
   border-radius: 4px;
 }
@@ -199,8 +199,8 @@
    AUTHORISED BRAND PARTNER
 ═══════════════════════════════ */
 .brand-partner-sec {
-  padding: 40px;
-  border-bottom: 1px solid #f0f0f0;
+  padding: 32px 40px;
+  border-bottom: 1px solid #E5E7EB;
 }
 
 .brand-logo-grid {
@@ -210,7 +210,7 @@
 }
 
 .brand-logo-box {
-  border: 1px solid #e4e4e4;
+  border: 1px solid #E5E7EB;
   border-radius: 8px;
   padding: 10px 8px;
   display: flex;
@@ -226,8 +226,8 @@
 }
 
 .brand-logo-box:hover {
-  border-color: #d4af37;
-  box-shadow: 0 2px 10px rgba(212, 175, 55, 0.15);
+  border-color: #D0021B;
+  box-shadow: 0 2px 10px rgba(208, 2, 27, 0.15);
 }
 
 .brand-logo-box img {
@@ -240,8 +240,8 @@
    PRODUCT CAROUSEL (Premium Branded)
 ═══════════════════════════════ */
 .hp-carousel-sec {
-  padding: 40px;
-  border-bottom: 1px solid #f0f0f0;
+  padding: 32px 40px;
+  border-bottom: 1px solid #E5E7EB;
 }
 
 .hp-carousel-header {
@@ -256,7 +256,7 @@
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.8px;
-  color: #111;
+  color: #241C6B;
 }
 
 .hp-carousel-nav {
@@ -268,21 +268,21 @@
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  border: 1.5px solid #ddd;
+  border: 1.5px solid #E5E7EB;
   background: #fff;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 15px;
-  color: #555;
+  color: #6B7280;
   transition: all 0.2s;
   user-select: none;
 }
 
 .hp-c-btn:hover {
-  background: #0d2b55;
-  border-color: #0d2b55;
+  background: #241C6B;
+  border-color: #241C6B;
   color: #fff;
 }
 
@@ -300,19 +300,28 @@
 .hp-prod-card {
   min-width: calc(25% - 12px);
   max-width: 230px;
-  border: 1px solid #e8e8e8;
-  border-radius: 10px;
+  border: 1px solid #E5E7EB;
+  border-radius: 14px;
   overflow: hidden;
   background: #fff;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
+  box-shadow: 0 1px 4px rgba(36, 28, 107, 0.06);
+  transition:
+    box-shadow 0.25s,
+    transform 0.25s;
+}
+
+.hp-prod-card:hover {
+  box-shadow: 0 14px 30px rgba(36, 28, 107, 0.14);
+  transform: translateY(-4px);
 }
 
 .hp-prod-card-image {
   aspect-ratio: 1 / 1;
   overflow: hidden;
-  background: #f5f5f5;
+  background: #F4F3F8;
   position: relative;
 }
 
@@ -351,19 +360,19 @@
 .hp-prod-name {
   font-size: 14px;
   font-weight: 700;
-  color: #111;
+  color: #241C6B;
   line-height: 1.3;
 }
 
 .hp-prod-sub {
   font-size: 12px;
-  color: #888;
+  color: #6B7280;
 }
 
 .hp-prod-price {
   font-size: 17px;
   font-weight: 800;
-  color: #0d2b55;
+  color: #241C6B;
   margin-top: 6px;
 }
 
@@ -381,7 +390,7 @@
 .hp-prod-mrp {
   font-size: 12px;
   font-weight: 500;
-  color: #999;
+  color: #9CA3AF;
   text-decoration: line-through;
 }
 
@@ -396,13 +405,13 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #ddd;
+  background: #E5E7EB;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .hp-carousel-dot.active {
-  background: #0d2b55;
+  background: #241C6B;
   width: 18px;
   border-radius: 4px;
 }
@@ -411,8 +420,8 @@
    CURRENT UPDATES (Blog)
 ═══════════════════════════════ */
 .hp-updates-sec {
-  padding: 40px;
-  border-bottom: 1px solid #f0f0f0;
+  padding: 32px 40px;
+  border-bottom: 1px solid #E5E7EB;
 }
 
 .hp-updates-header {
@@ -427,18 +436,18 @@
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.8px;
-  color: #111;
+  color: #241C6B;
 }
 
 .hp-see-all {
   font-size: 13px;
-  color: #0d2b55;
+  color: #241C6B;
   text-decoration: none;
   font-weight: 600;
 }
 
 .hp-see-all:hover {
-  color: #d4af37;
+  color: #D0021B;
 }
 
 .hp-updates-slider {
@@ -452,22 +461,22 @@
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  border: 1.5px solid #ddd;
+  border: 1.5px solid #E5E7EB;
   background: #fff;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 18px;
-  color: #555;
+  color: #6B7280;
   flex-shrink: 0;
   transition: all 0.2s;
   user-select: none;
 }
 
 .hp-updates-arrow:hover {
-  background: #0d2b55;
-  border-color: #0d2b55;
+  background: #241C6B;
+  border-color: #241C6B;
   color: #fff;
 }
 
@@ -480,7 +489,7 @@
 }
 
 .hp-blog-card {
-  border: 1px solid #e8e8e8;
+  border: 1px solid #E5E7EB;
   border-radius: 10px;
   /* height: 500px; */
   overflow: hidden;
@@ -499,7 +508,7 @@
 .hp-blog-img {
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  background: #f0f0f0;
+  background: #E5E7EB;
 }
 
 .hp-blog-img img {
@@ -526,20 +535,20 @@
   font-size: 11px;
   text-transform: uppercase;
   font-weight: 700;
-  color: #d4af37;
+  color: #D0021B;
   letter-spacing: 0.5px;
 }
 
 .hp-blog-title {
   font-size: 14px;
   font-weight: 700;
-  color: #111;
+  color: #241C6B;
   line-height: 1.4;
 }
 
 .hp-blog-excerpt {
   font-size: 12px;
-  color: #666;
+  color: #6B7280;
   line-height: 1.55;
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -551,9 +560,9 @@
    WHAT CLIENTS SAY (Reviews)
 ═══════════════════════════════ */
 .hp-reviews-sec {
-  padding: 40px;
-  background: #f9f9f9;
-  border-bottom: 1px solid #f0f0f0;
+  padding: 32px 40px;
+  background: #F4F3F8;
+  border-bottom: 1px solid #E5E7EB;
 }
 
 .hp-reviews-grid {
@@ -565,7 +574,7 @@
 
 .hp-review-card {
   background: #fff;
-  border: 1px solid #e8e8e8;
+  border: 1px solid #E5E7EB;
   border-radius: 10px;
   padding: 20px;
   display: flex;
@@ -574,14 +583,14 @@
 }
 
 .hp-review-stars {
-  color: #f59e0b;
+  color: #FFD400;
   font-size: 16px;
   letter-spacing: 2px;
 }
 
 .hp-review-text {
   font-size: 13px;
-  color: #555;
+  color: #6B7280;
   line-height: 1.65;
   flex: 1;
 }
@@ -596,7 +605,7 @@
   width: 42px;
   height: 42px;
   border-radius: 50%;
-  background: #0d2b55;
+  background: #241C6B;
   color: #fff;
   display: flex;
   align-items: center;
@@ -609,35 +618,36 @@
 .hp-reviewer-name {
   font-size: 14px;
   font-weight: 700;
-  color: #111;
+  color: #241C6B;
   line-height: 1.2;
 }
 
 .hp-reviewer-role {
   font-size: 12px;
-  color: #888;
+  color: #6B7280;
 }
 
 /* ═══════════════════════════════
    BULK PROMOTIONAL SWAG
 ═══════════════════════════════ */
 .hp-bulk-sec {
-  padding: 60px 40px;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  padding: 44px 40px;
+  /* background: linear-gradient(135deg, #241C6B 0%, #140F3D 100%); */
+  background: #ffffff;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   text-align: center;
 }
 
 .hp-bulk-title {
   font-size: clamp(1.4rem, 2.5vw, 2rem);
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: -0.3px;
-  color: #fff;
-  margin-bottom: 2.5rem;
+  color: #241C6B;
+  margin-bottom: 1.75rem;
 }
 
 .hp-bulk-title span {
-  color: #f59e0b;
+  color: #D0021B;
 }
 
 .hp-bulk-steps {
@@ -663,7 +673,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #1a1a2e;
+  background-color: #241C6B;
   background-size: cover;
   background-position: center;
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -681,14 +691,14 @@
 .hp-bulk-step-val {
   font-size: 2.2rem;
   font-weight: 800;
-  color: #f59e0b;
+  color: #FFD400;
   line-height: 1;
 }
 
 .hp-bulk-step-label {
   font-size: 13px;
   font-weight: 700;
-  color: #fff;
+  color: #241C6B;
   text-transform: uppercase;
   letter-spacing: 1px;
   margin-top: 18px;
@@ -697,14 +707,14 @@
 
 .hp-bulk-step-sub {
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.65);
+  color: #6B7280;
   line-height: 1.5;
   padding: 0 8px;
 }
 
 .hp-bulk-arrow {
   font-size: 1.8rem;
-  color: #f59e0b;
+  color: #D0021B;
   padding: 0 14px;
   flex-shrink: 0;
   font-weight: 900;
@@ -717,9 +727,9 @@
    PRODUCT SELECTION (with Qty)
 ═══════════════════════════════ */
 .hp-sel-sec {
-  padding: 40px;
+  padding: 32px 40px;
   background: #fff;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid #E5E7EB;
 }
 
 .hp-sel-header {
@@ -734,7 +744,7 @@
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.8px;
-  color: #111;
+  color: #241C6B;
 }
 
 .hp-sel-track-wrapper {
@@ -765,7 +775,7 @@
 
 .hp-sel-track {
   display: flex;
-  gap: 14px;
+  gap: 18px;
   width: max-content;
   animation: hpSelScroll 40s linear infinite;
 }
@@ -786,25 +796,31 @@
 .hp-sel-card {
   width: 240px;
   flex-shrink: 0;
-  border: 1px solid #e8e8e8;
-  border-radius: 10px;
+  border: 1px solid #E5E7EB;
+  border-radius: 14px;
   overflow: hidden;
   background: #fff;
   text-decoration: none;
   color: inherit;
   display: flex;
   flex-direction: column;
-  transition: box-shadow 0.2s;
+  box-shadow: 0 1px 4px rgba(36, 28, 107, 0.06);
+  transition:
+    box-shadow 0.25s,
+    transform 0.25s,
+    border-color 0.25s;
 }
 
 .hp-sel-card:hover {
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 14px 30px rgba(36, 28, 107, 0.14);
+  border-color: #E5E7EB;
+  transform: translateY(-4px);
 }
 
 .hp-sel-img-wrap {
   height: 150px;
   position: relative;
-  background: #f5f5f5;
+  background: #F4F3F8;
   overflow: hidden;
 }
 
@@ -812,58 +828,68 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.35s;
+}
+
+.hp-sel-card:hover .hp-sel-img-wrap img {
+  transform: scale(1.05);
 }
 
 .hp-qty-badge {
   position: absolute;
   top: 10px;
   right: 10px;
-  background: rgba(13, 43, 85, 0.82);
+  background: rgba(36, 28, 107, 0.85);
+  backdrop-filter: blur(3px);
   color: #fff;
   border-radius: 20px;
-  padding: 4px 10px;
-  font-size: 11px;
+  padding: 5px 11px 6px;
+  font-size: 10px;
   text-align: center;
-  line-height: 1.3;
+  line-height: 1.25;
 }
 
-.hp-qty-badge strong {
+.hp-qty-badge strong,
+.hp-qty-badge div {
   display: block;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 800;
-  color: #d4af37;
+  color: #FFD400;
 }
 
 .hp-sel-info {
-  padding: 12px;
+  padding: 13px 14px 15px;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 4px;
 }
 
 .hp-sel-name {
   font-size: 13px;
   font-weight: 700;
-  color: #111;
+  color: #241C6B;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .hp-sel-cat {
   font-size: 11px;
-  color: #888;
+  color: #6B7280;
 }
 
 .hp-sel-price {
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 800;
-  color: #0d2b55;
-  margin-top: 4px;
+  color: #241C6B;
+  margin-top: 5px;
 }
 
 .hp-sel-price-row {
   display: flex;
   align-items: baseline;
   gap: 7px;
-  margin-top: 4px;
+  margin-top: 5px;
 }
 
 .hp-sel-price-row .hp-sel-price {
@@ -873,7 +899,7 @@
 .hp-sel-mrp {
   font-size: 12px;
   font-weight: 500;
-  color: #999;
+  color: #9CA3AF;
   text-decoration: line-through;
 }
 
@@ -881,22 +907,22 @@
    BUDGET FRIENDLY GIFT OPTIONS
 ═══════════════════════════════ */
 .hp-budget-sec {
-  padding: 60px 40px;
-  background: #f3f4f6;
-  border-bottom: 1px solid #f0f0f0;
+  padding: 44px 40px;
+  background: #F4F3F8;
+  border-bottom: 1px solid #E5E7EB;
   text-align: center;
 }
 
 .hp-budget-title {
   font-size: clamp(1.4rem, 2.5vw, 2rem);
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: -0.3px;
-  color: #1a1a2e;
-  margin-bottom: 2rem;
+  color: #241C6B;
+  margin-bottom: 1.5rem;
 }
 
 .hp-budget-title span {
-  color: #e63329;
+  color: #D0021B;
 }
 
 .hp-budget-tabs {
@@ -904,15 +930,15 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: 10px;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 }
 
 .hp-budget-tab {
   padding: 10px 22px;
   border-radius: 50px;
-  border: 2px solid #e4e4e4;
+  border: 2px solid #E5E7EB;
   background: #fff;
-  color: #374151;
+  color: #241C6B;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -921,9 +947,9 @@
 
 .hp-budget-tab:hover,
 .hp-budget-tab.active {
-  border-color: #e63329;
-  color: #e63329;
-  background: #fff0f0;
+  border-color: #D0021B;
+  color: #D0021B;
+  background: #FBE7E9;
 }
 
 .hp-budget-panel {
@@ -953,12 +979,12 @@
 
 .hp-budget-track-wrapper::before {
   left: 0;
-  background: linear-gradient(to right, #f3f4f6, transparent);
+  background: linear-gradient(to right, #F4F3F8, transparent);
 }
 
 .hp-budget-track-wrapper::after {
   right: 0;
-  background: linear-gradient(to left, #f3f4f6, transparent);
+  background: linear-gradient(to left, #F4F3F8, transparent);
 }
 
 .hp-budget-track {
@@ -1003,7 +1029,7 @@
 
 .hp-budget-card-img {
   height: 170px;
-  background: linear-gradient(135deg, #e0e0e0, #f5f5f5);
+  background: linear-gradient(135deg, #e0e0e0, #F4F3F8);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1020,7 +1046,7 @@
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 1px;
-  color: #b0b0b0;
+  color: #9CA3AF;
   text-transform: uppercase;
 }
 
@@ -1031,7 +1057,7 @@
 .hp-budget-card-name {
   font-size: 15px;
   font-weight: 700;
-  color: #1a1a2e;
+  color: #241C6B;
   margin-bottom: 4px;
   white-space: nowrap;
   overflow: hidden;
@@ -1041,7 +1067,7 @@
 .hp-budget-card-price {
   font-size: 16px;
   font-weight: 700;
-  color: #e63329;
+  color: #D0021B;
 }
 
 .hp-budget-card-price-row {
@@ -1053,7 +1079,7 @@
 .hp-budget-card-mrp {
   font-size: 12px;
   font-weight: 500;
-  color: #999;
+  color: #9CA3AF;
   text-decoration: line-through;
 }
 
@@ -1061,9 +1087,9 @@
    LONGTERM GIFTING PARTNERS
 ═══════════════════════════════ */
 /* .hp-partners-sec {
-  padding: 60px 40px;
+  padding: 44px 40px;
   background: #fff;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid #E5E7EB;
   text-align: center;
 } */
 
@@ -1082,10 +1108,10 @@
 
 .hp-partners-sec {
   position: relative;
-  padding: 80px 30px;
+  padding: 56px 30px;
   text-align: center;
   overflow: hidden;
-  min-height: 500px;
+  min-height: 380px;
 
   background-image: url("../images/collaborate.jpg");
   background-size: cover;
@@ -1097,12 +1123,12 @@
   font-size: clamp(1.4rem, 2.5vw, 2rem);
   font-weight: 800;
   letter-spacing: -0.3px;
-  color: #1a1a2e;
+  color: #241C6B;
   margin-bottom: 2.5rem;
 }
 
 .hp-partners-title span {
-  color: #e63329;
+  color: #D0021B;
 }
 
 .hp-partners-boxes {
@@ -1122,7 +1148,7 @@
   border-radius: 16px;
   font-size: 16px;
   font-weight: 700;
-  color: #1a1a2e;
+  color: #241C6B;
   text-align: center;
   line-height: 1.5;
   transition:
@@ -1132,7 +1158,7 @@
 }
 
 .hp-partner-box:hover {
-  border-color: #e63329;
+  border-color: #D0021B;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
   transform: translateY(-4px);
 }
@@ -1144,7 +1170,7 @@
 
 .hp-tieup-btn {
   display: inline-block;
-  background: #1a6e3c;
+  background: #0B7A43;
   color: #fff;
   font-size: 16px;
   font-weight: 800;
@@ -1160,7 +1186,7 @@
 }
 
 .hp-tieup-btn:hover {
-  background: #145530;
+  background: #075C33;
   color: #fff;
   transform: translateY(-2px);
 }
@@ -1188,14 +1214,14 @@
 
 /* Heading */
 .hp-partners-title {
-  font-size: 40px;
+  font-size: 34px;
   font-weight: 700;
   color: #fff;
-  margin-bottom: 40px;
+  margin-bottom: 28px;
 }
 
 .hp-partners-title span {
-  color: #ffd700;
+  color: #FFD400;
 }
 
 /* Boxes */
@@ -1289,8 +1315,8 @@
 
 /* Tagline */
 .hp-tieup-tagline {
-  margin-top: 35px;
-  font-size: 20px;
+  margin-top: 24px;
+  font-size: 18px;
   color: #fff;
   font-weight: 500;
 }
@@ -1314,8 +1340,8 @@
    GIFT VOUCHERS
 ═══════════════════════════════ */
 .hp-vouchers-sec {
-  padding: 40px;
-  border-bottom: 1px solid #f0f0f0;
+  padding: 32px 40px;
+  border-bottom: 1px solid #E5E7EB;
 }
 
 .hp-vouchers-track-wrapper {
@@ -1370,15 +1396,17 @@
   flex-shrink: 0;
   border-radius: 10px;
   overflow: hidden;
-  /* background: linear-gradient(135deg, #0d2b55 0%, #1a4080 100%); */
+  /* background: linear-gradient(135deg, #241C6B 0%, #4B3F9E 100%); */
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #e8e8e8;
+  border: 1px solid #E5E7EB;
   position: relative;
   text-decoration: none;
   color: inherit;
-  transition: box-shadow 0.2s, transform 0.2s;
+  transition:
+    box-shadow 0.2s,
+    transform 0.2s;
 }
 
 .hp-voucher-card:hover {
@@ -1394,7 +1422,7 @@
 
 .hp-voucher-placeholder {
   text-align: center;
-  color: #d4af37;
+  color: #D0021B;
 }
 
 .hp-voucher-placeholder .icon {
@@ -1413,9 +1441,9 @@
    LARGE HOME & COMMERCIAL APPLIANCES
 ═══════════════════════════════ */
 .hp-appliances-sec {
-  padding: 40px;
-  background: #f9f9f9;
-  border-bottom: 1px solid #f0f0f0;
+  padding: 32px 40px;
+  background: #F4F3F8;
+  border-bottom: 1px solid #E5E7EB;
 }
 
 .hp-appliances-grid {
@@ -1440,7 +1468,7 @@
 }
 
 .hp-appliance-box:hover {
-  border-color: #0d2b55;
+  border-color: #241C6B;
 }
 
 .hp-appliance-box img {
@@ -1452,7 +1480,7 @@
 .hp-appliance-name {
   font-size: 12px;
   font-weight: 700;
-  color: #555;
+  color: #6B7280;
   text-align: center;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -1462,13 +1490,18 @@
    PAN INDIA DELIVERY
 ═══════════════════════════════ */
 .hp-pan-india {
-  padding: 32px 40px;
-  background: linear-gradient(135deg, #0d2b55, #1a4080);
+  position: relative;
+  padding: 28px 40px;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0) 60%),
+    radial-gradient(circle at 100% 100%, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0) 60%),
+    linear-gradient(135deg, #241C6B, #4B3F9E);
   text-align: center;
+  overflow: hidden;
 }
 
 .hp-pan-india h3 {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 800;
   color: #fff;
   letter-spacing: 0.5px;

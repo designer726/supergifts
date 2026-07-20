@@ -3,34 +3,38 @@
    ═══════════════════════════════════════════════════════════════ */
 
 :root {
-  /* PREMIUM UPDATE - Navy & Gold Corporate Elite Theme */
-  --primary: #0d2b55; /* Navy Deep */ /* PREMIUM UPDATE */
-  --primary-mid: #1a4080; /* Navy Mid */ /* PREMIUM UPDATE */
-  --accent: #d4af37; /* Gold Primary */ /* PREMIUM UPDATE */
-  --accent-dark: #b8962e; /* Gold Dark - hover */ /* PREMIUM UPDATE */
-  --accent-light: #f7e98e; /* Gold Light - subtle */ /* PREMIUM UPDATE */
-  --midnight: #071624; /* Midnight - footer */ /* PREMIUM UPDATE */
-  --silver: #b8c9e0; /* Silver Blue - text */ /* PREMIUM UPDATE */
-  --pearl: #f5f8ff; /* Pearl White - bg */ /* PREMIUM UPDATE */
+  /* Brand palette — sampled directly from the Super Gifts logo mark */
+  --primary: #241C6B; /* Navy — wordmark, headings, structure */
+  --primary-mid: #4B3F9E; /* Navy, lighter — gradient stop */
+  --accent: #D0021B; /* Red — CTAs & highlights */
+  --accent-dark: #A5010F; /* Red, darker — hover/pressed */
+  --accent-light: #FBE7E9; /* Red, tinted — soft accent surfaces */
+  --brand-yellow: #FFD400; /* Yellow — ratings, small badges */
+  --brand-green: #0B7A43; /* Green — success / available states */
+  --brand-green-dark: #075C33;
+  --midnight: #140F3D; /* Deepest navy — dark surfaces */
+  --silver: #6B7280; /* Muted text on light surfaces */
+  --pearl: #F4F3F8; /* Soft neutral surface tint */
 
-  /* Legacy variables mapped to new theme */
-  --brand-orange: #d4af37; /* PREMIUM UPDATE */
-  --brand-teal: #0d2b55; /* PREMIUM UPDATE */
-  --brand-gold: #d4af37; /* PREMIUM UPDATE */
-  --brand-navy: #0d2b55; /* PREMIUM UPDATE */
-  --brand-soft: #fdf6dc; /* PREMIUM UPDATE */
-  --text-main: #0d2b55; /* PREMIUM UPDATE */
-  --text-muted: #b8c9e0; /* PREMIUM UPDATE */
-  --border: #e5dcc8; /* PREMIUM UPDATE */
+  /* Legacy variables mapped to the brand palette */
+  --brand-orange: #D0021B;
+  --brand-teal: #241C6B;
+  --brand-gold: #D0021B;
+  --brand-navy: #241C6B;
+  --brand-soft: #F4F3F8;
+  --text-main: #241C6B;
+  --text-muted: #6B7280;
+  --border: #E5E7EB;
   --white: #ffffff;
-  --gray-light: #fdf6dc; /* PREMIUM UPDATE */
-  --card-shadow: 0 4px 24px rgba(13, 43, 85, 0.1); /* PREMIUM UPDATE */
+  --gray-light: #F4F3F8;
+  --card-shadow: 0 4px 24px rgba(36, 28, 107, 0.1);
   --radius-lg: 16px;
   --radius-md: 10px;
   --radius-sm: 6px;
-  --ff-display: "Playfair Display", serif;
+  --ff-display:
+    "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --ff-body:
-    "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 /* ── RESET & BASE ── */
@@ -38,11 +42,17 @@
   box-sizing: border-box;
 }
 
+html {
+  overflow-x: hidden;
+}
+
 body {
   font-family: var(--ff-body);
-  background: #f5f8ff; /* PREMIUM UPDATE - Pearl White */
+  background: #F4F3F8; /* PREMIUM UPDATE - Pearl White */
   color: var(--text-main);
   line-height: 1.6;
+  overflow-x: hidden;
+  max-width: 100vw;
 }
 
 /* ══════════════════════════════════════════
@@ -51,7 +61,7 @@ body {
 
 .site-header {
   background: var(--white);
-  border-bottom: 2px solid #e5dcc8; /* PREMIUM UPDATE - Gold border */
+  border-bottom: 2px solid #E5E7EB; /* PREMIUM UPDATE - Gold border */
   padding: 0 32px;
   height: 64px;
   display: flex;
@@ -60,7 +70,7 @@ body {
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 2px 8px rgba(13, 43, 85, 0.06); /* PREMIUM UPDATE */
+  box-shadow: 0 2px 8px rgba(36, 28, 107, 0.06); /* PREMIUM UPDATE */
 }
 
 .logo-wrap {
@@ -75,8 +85,8 @@ body {
   border-radius: 8px;
   background: linear-gradient(
     135deg,
-    #0d2b55,
-    #d4af37
+    #241C6B,
+    #D0021B
   ); /* PREMIUM UPDATE - Navy to Gold */
   display: flex;
   align-items: center;
@@ -114,19 +124,19 @@ body {
 }
 
 .nav-menu a:hover {
-  color: #0d2b55; /* PREMIUM UPDATE - Navy Deep */
-  background: #fdf6dc; /* PREMIUM UPDATE - Gold Light */
+  color: #241C6B; /* PREMIUM UPDATE - Navy Deep */
+  background: #F4F3F8; /* PREMIUM UPDATE - Gold Light */
 }
 
 .nav-menu a.active {
-  color: #d4af37; /* PREMIUM UPDATE - Gold Primary */
+  color: #D0021B; /* PREMIUM UPDATE - Gold Primary */
   font-weight: 600;
-  background: #fdf6dc; /* PREMIUM UPDATE - Gold Light */
+  background: #F4F3F8; /* PREMIUM UPDATE - Gold Light */
 }
 
 .header-cta {
-  background: #d4af37; /* PREMIUM UPDATE - Gold Primary */
-  color: #0d2b55 !important; /* PREMIUM UPDATE - Navy Deep text */
+  background: #D0021B; /* Brand red — primary CTA */
+  color: #ffffff !important;
   border-radius: 8px;
   padding: 8px 18px !important;
   font-weight: 600 !important;
@@ -134,7 +144,7 @@ body {
 }
 
 .header-cta:hover {
-  background: #b8962e !important; /* PREMIUM UPDATE - Gold Dark */
+  background: #A5010F !important; /* PREMIUM UPDATE - Gold Dark */
   transform: translateY(-1px);
 }
 
@@ -145,9 +155,9 @@ body {
 .hero {
   background: linear-gradient(
     130deg,
-    #0d2b55 0%,
-    #1a4080 55%,
-    #071624 100%
+    #241C6B 0%,
+    #4B3F9E 55%,
+    #140F3D 100%
   ); /* PREMIUM UPDATE - Navy gradient */
   padding: 60px 48px;
   position: relative;
@@ -167,7 +177,7 @@ body {
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    rgba(212, 175, 55, 0.2) 0%,
+    rgba(208, 2, 27, 0.2) 0%,
     transparent 70%
   ); /* PREMIUM UPDATE - Gold glow */
 }
@@ -182,7 +192,7 @@ body {
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    rgba(180, 150, 46, 0.15) 0%,
+    rgba(255, 196, 0, 0.15) 0%,
     transparent 70%
   ); /* PREMIUM UPDATE - Gold glow */
 }
@@ -197,9 +207,9 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(212, 175, 55, 0.15); /* PREMIUM UPDATE - Gold Light bg */
-  border: 1px solid rgba(212, 175, 55, 0.4); /* PREMIUM UPDATE - Gold border */
-  color: #d4af37; /* PREMIUM UPDATE - Gold text */
+  background: rgba(255, 212, 0, 0.15); /* Yellow tint — reads on dark navy */
+  border: 1px solid rgba(255, 212, 0, 0.4);
+  color: #FFD400;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.1em;
@@ -219,7 +229,7 @@ body {
 }
 
 .hero h1 em {
-  color: #d4af37; /* PREMIUM UPDATE - Gold Primary */
+  color: #FFD400;
   font-style: normal;
 }
 
@@ -239,8 +249,8 @@ body {
 
 /* ── BUTTONS ── */
 .btn-primary {
-  background: #d4af37; /* PREMIUM UPDATE - Gold Primary */
-  color: #0d2b55; /* PREMIUM UPDATE - Navy Deep text */
+  background: #D0021B; /* Brand red — primary CTA */
+  color: #ffffff;
   font-weight: 600;
   font-size: 14px;
   padding: 12px 24px;
@@ -255,7 +265,7 @@ body {
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(212, 175, 55, 0.3); /* PREMIUM UPDATE - Gold shadow */
+  box-shadow: 0 8px 24px rgba(208, 2, 27, 0.3); /* PREMIUM UPDATE - Gold shadow */
 }
 
 .btn-outline {
@@ -300,7 +310,7 @@ body {
   font-family: var(--ff-display);
   font-size: 26px;
   font-weight: 700;
-  color: #d4af37; /* PREMIUM UPDATE - Gold Primary */
+  color: #FFD400;
 }
 
 .stat-card .lbl {
@@ -315,20 +325,20 @@ body {
   gap: 6px;
   justify-content: center;
   padding: 14px;
-  background: #fdf6dc; /* PREMIUM UPDATE - Gold Light */
+  background: #F4F3F8; /* PREMIUM UPDATE - Gold Light */
 }
 
 .dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #e5dcc8; /* PREMIUM UPDATE - Gold border color */
+  background: #E5E7EB; /* PREMIUM UPDATE - Gold border color */
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .dot.active {
-  background: #d4af37; /* PREMIUM UPDATE - Gold Primary */
+  background: #D0021B; /* PREMIUM UPDATE - Gold Primary */
   width: 22px;
   border-radius: 4px;
 }
@@ -341,12 +351,12 @@ body {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0;
-  border-top: 2px solid #e5dcc8; /* PREMIUM UPDATE - Gold border */
+  border-top: 2px solid #E5E7EB; /* PREMIUM UPDATE - Gold border */
 }
 
 .col-panel {
   padding: 32px;
-  border-right: 2px solid #e5dcc8; /* PREMIUM UPDATE - Gold border */
+  border-right: 2px solid #E5E7EB; /* PREMIUM UPDATE - Gold border */
   background: var(--white);
 }
 
@@ -358,7 +368,7 @@ body {
   font-family: var(--ff-display);
   font-size: 18px;
   font-weight: 700;
-  color: #0d2b55; /* PREMIUM UPDATE - Navy Deep */
+  color: #241C6B; /* PREMIUM UPDATE - Navy Deep */
   margin-bottom: 20px;
   display: flex;
   align-items: center;
@@ -371,8 +381,8 @@ body {
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  background: #fdf6dc; /* PREMIUM UPDATE - Gold Light bg */
-  color: #d4af37; /* PREMIUM UPDATE - Gold text */
+  background: #F4F3F8; /* PREMIUM UPDATE - Gold Light bg */
+  color: #D0021B; /* PREMIUM UPDATE - Gold text */
   padding: 3px 8px;
   border-radius: 20px;
 }
@@ -386,13 +396,13 @@ body {
 
 .brand-chip {
   background: var(--white);
-  border: 1.5px solid #e5dcc8; /* PREMIUM UPDATE - Gold border */
+  border: 1.5px solid #E5E7EB; /* PREMIUM UPDATE - Gold border */
   border-radius: 8px;
   padding: 9px 6px;
   text-align: center;
   font-size: 11px;
   font-weight: 500;
-  color: #b8c9e0; /* PREMIUM UPDATE - Silver Blue text */
+  color: #6B7280; /* PREMIUM UPDATE - Silver Blue text */
   transition: all 0.2s;
   cursor: pointer;
   display: flex;
@@ -402,10 +412,10 @@ body {
 }
 
 .brand-chip:hover {
-  border-color: #d4af37; /* PREMIUM UPDATE - Gold hover */
-  color: #d4af37; /* PREMIUM UPDATE - Gold text */
+  border-color: #D0021B; /* PREMIUM UPDATE - Gold hover */
+  color: #D0021B; /* PREMIUM UPDATE - Gold text */
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.15); /* PREMIUM UPDATE - Gold shadow */
+  box-shadow: 0 4px 12px rgba(208, 2, 27, 0.15); /* PREMIUM UPDATE - Gold shadow */
 }
 
 /* ── ADD-ON SERVICES ── */
@@ -420,19 +430,19 @@ body {
   align-items: center;
   gap: 12px;
   padding: 11px 14px;
-  border: 1.5px solid #e5dcc8; /* PREMIUM UPDATE - Gold border */
+  border: 1.5px solid #E5E7EB; /* PREMIUM UPDATE - Gold border */
   border-radius: var(--radius-md);
   font-size: 13px;
   font-weight: 500;
-  color: #0d2b55; /* PREMIUM UPDATE - Navy text */
+  color: #241C6B; /* PREMIUM UPDATE - Navy text */
   cursor: pointer;
   transition: all 0.2s;
   background: var(--white);
 }
 
 .service-row:hover {
-  border-color: #0d2b55; /* PREMIUM UPDATE - Navy Deep */
-  background: rgba(13, 43, 85, 0.04); /* PREMIUM UPDATE - Navy tint */
+  border-color: #241C6B; /* PREMIUM UPDATE - Navy Deep */
+  background: rgba(36, 28, 107, 0.04); /* PREMIUM UPDATE - Navy tint */
   transform: translateX(3px);
 }
 
@@ -440,8 +450,8 @@ body {
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: #fdf6dc; /* PREMIUM UPDATE - Gold Light bg */
-  color: #d4af37; /* PREMIUM UPDATE - Gold text */
+  background: #F4F3F8; /* PREMIUM UPDATE - Gold Light bg */
+  color: #D0021B; /* PREMIUM UPDATE - Gold text */
   font-size: 10px;
   font-weight: 700;
   display: flex;
@@ -451,8 +461,8 @@ body {
 }
 
 .service-row:hover .service-num {
-  background: #0d2b55; /* PREMIUM UPDATE - Navy Deep */
-  color: #d4af37; /* PREMIUM UPDATE - Gold text */
+  background: #241C6B;
+  color: #FFD400;
 }
 
 /* ══════════════════════════════════════════
@@ -462,11 +472,11 @@ body {
 .updates-section {
   background: linear-gradient(
     180deg,
-    #f5f8ff 0%,
+    #F4F3F8 0%,
     var(--white) 100%
   ); /* PREMIUM UPDATE - Pearl White gradient */
   padding: 36px 32px;
-  border-top: 2px solid #e5dcc8; /* PREMIUM UPDATE - Gold border */
+  border-top: 2px solid #E5E7EB; /* PREMIUM UPDATE - Gold border */
 }
 
 .updates-header {
@@ -479,7 +489,7 @@ body {
 .see-all {
   font-size: 13px;
   font-weight: 600;
-  color: #d4af37; /* PREMIUM UPDATE - Gold */
+  color: #D0021B; /* PREMIUM UPDATE - Gold */
   text-decoration: none;
   display: flex;
   align-items: center;
@@ -502,21 +512,21 @@ body {
   height: 38px;
   border-radius: 50%;
   background: var(--white);
-  border: 1.5px solid #e5dcc8; /* PREMIUM UPDATE - Gold border */
+  border: 1.5px solid #E5E7EB; /* PREMIUM UPDATE - Gold border */
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 16px;
   cursor: pointer;
-  color: #b8c9e0; /* PREMIUM UPDATE - Silver Blue */
+  color: #6B7280; /* PREMIUM UPDATE - Silver Blue */
   flex-shrink: 0;
   align-self: center;
   transition: all 0.2s;
 }
 
 .nav-arrow:hover {
-  border-color: #d4af37; /* PREMIUM UPDATE - Gold */
-  color: #d4af37; /* PREMIUM UPDATE - Gold */
+  border-color: #D0021B; /* PREMIUM UPDATE - Gold */
+  color: #D0021B; /* PREMIUM UPDATE - Gold */
 }
 
 .blog-cards {
@@ -530,13 +540,13 @@ body {
   background: var(--white);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  border: 1.5px solid #e5dcc8; /* PREMIUM UPDATE - Gold border */
+  border: 1.5px solid #E5E7EB; /* PREMIUM UPDATE - Gold border */
   transition: all 0.25s;
   cursor: pointer;
 }
 
 .blog-card:hover {
-  border-color: #d4af37; /* PREMIUM UPDATE - Gold */
+  border-color: #D0021B; /* PREMIUM UPDATE - Gold */
   transform: translateY(-4px);
   box-shadow: var(--card-shadow);
 }
@@ -554,24 +564,24 @@ body {
 .blog-card:nth-child(1) .blog-img {
   background: linear-gradient(
     135deg,
-    #0d2b55,
-    #1a4080
+    #241C6B,
+    #4B3F9E
   ); /* PREMIUM UPDATE - Navy gradient */
 }
 
 .blog-card:nth-child(2) .blog-img {
   background: linear-gradient(
     135deg,
-    #071624,
-    #0d2b55
+    #140F3D,
+    #241C6B
   ); /* PREMIUM UPDATE - Midnight to Navy */
 }
 
 .blog-card:nth-child(3) .blog-img {
   background: linear-gradient(
     135deg,
-    #d4af37,
-    #b8962e
+    #D0021B,
+    #A5010F
   ); /* PREMIUM UPDATE - Gold gradient */
 }
 
@@ -584,30 +594,30 @@ body {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #0d2b55; /* PREMIUM UPDATE - Navy */
+  color: #241C6B; /* PREMIUM UPDATE - Navy */
   margin-bottom: 6px;
 }
 
 .blog-card:nth-child(2) .blog-tag {
-  color: #071624; /* PREMIUM UPDATE - Midnight */
+  color: #140F3D; /* PREMIUM UPDATE - Midnight */
 }
 
 .blog-card:nth-child(3) .blog-tag {
-  color: #d4af37; /* PREMIUM UPDATE - Gold */
+  color: #D0021B; /* PREMIUM UPDATE - Gold */
 }
 
 .blog-heading {
   font-family: var(--ff-display);
   font-size: 15px;
   font-weight: 700;
-  color: #0d2b55; /* PREMIUM UPDATE - Navy */
+  color: #241C6B; /* PREMIUM UPDATE - Navy */
   margin-bottom: 8px;
   line-height: 1.3;
 }
 
 .blog-excerpt {
   font-size: 12px;
-  color: #b8c9e0; /* PREMIUM UPDATE - Silver Blue */
+  color: #6B7280; /* PREMIUM UPDATE - Silver Blue */
   line-height: 1.6;
 }
 
@@ -616,7 +626,7 @@ body {
 ═══════════════════════════════════════════ */
 
 .clients-section {
-  border-top: 2px solid #e5dcc8; /* PREMIUM UPDATE - Gold border */
+  border-top: 2px solid #E5E7EB; /* PREMIUM UPDATE - Gold border */
   padding: 32px;
   background: var(--white);
   text-align: center;
@@ -632,13 +642,13 @@ body {
 }
 
 .client-chip {
-  background: #fdf6dc; /* PREMIUM UPDATE - Gold Light */
-  border: 1.5px solid #e5dcc8; /* PREMIUM UPDATE - Gold border */
+  background: #F4F3F8; /* PREMIUM UPDATE - Gold Light */
+  border: 1.5px solid #E5E7EB; /* PREMIUM UPDATE - Gold border */
   border-radius: 10px;
   padding: 10px 20px;
   font-size: 12px;
   font-weight: 600;
-  color: #b8c9e0; /* PREMIUM UPDATE - Silver Blue */
+  color: #6B7280; /* PREMIUM UPDATE - Silver Blue */
   cursor: pointer;
   transition: all 0.2s;
   display: flex;
@@ -647,9 +657,9 @@ body {
 }
 
 .client-chip:hover {
-  border-color: #0d2b55; /* PREMIUM UPDATE - Navy */
-  color: #0d2b55; /* PREMIUM UPDATE - Navy */
-  background: #f5f8ff; /* PREMIUM UPDATE - Pearl White */
+  border-color: #241C6B; /* PREMIUM UPDATE - Navy */
+  color: #241C6B; /* PREMIUM UPDATE - Navy */
+  background: #F4F3F8; /* PREMIUM UPDATE - Pearl White */
 }
 
 /* ══════════════════════════════════════════
@@ -657,9 +667,9 @@ body {
 ═══════════════════════════════════════════ */
 
 .reviews-section {
-  background: #0d2b55; /* PREMIUM UPDATE - Navy Deep */
+  background: #241C6B; /* PREMIUM UPDATE - Navy Deep */
   padding: 40px 32px;
-  border-top: 2px solid #d4af37; /* PREMIUM UPDATE - Gold border */
+  border-top: 2px solid #D0021B; /* PREMIUM UPDATE - Gold border */
 }
 
 .reviews-section .section-title {
@@ -667,8 +677,8 @@ body {
 }
 
 .reviews-section .section-title .pill {
-  background: rgba(212, 175, 55, 0.15); /* PREMIUM UPDATE - Gold Light */
-  color: #d4af37; /* PREMIUM UPDATE - Gold */
+  background: rgba(255, 212, 0, 0.15);
+  color: #FFD400;
 }
 
 .reviews-grid {
@@ -692,7 +702,7 @@ body {
 }
 
 .stars {
-  color: #d4af37; /* PREMIUM UPDATE - Gold */
+  color: #FFD400;
   font-size: 13px;
   margin-bottom: 10px;
 }
@@ -739,9 +749,9 @@ body {
 ═══════════════════════════════════════════ */
 
 .trust-section {
-  background: #fdf6dc; /* PREMIUM UPDATE - Gold Light */
+  background: #F4F3F8; /* PREMIUM UPDATE - Gold Light */
   padding: 36px 32px;
-  border-top: 2px solid #e5dcc8; /* PREMIUM UPDATE - Gold border */
+  border-top: 2px solid #E5E7EB; /* PREMIUM UPDATE - Gold border */
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
@@ -752,12 +762,12 @@ body {
   border-radius: var(--radius-lg);
   padding: 24px 20px;
   text-align: center;
-  border: 1.5px solid #e5dcc8; /* PREMIUM UPDATE - Gold border */
+  border: 1.5px solid #E5E7EB; /* PREMIUM UPDATE - Gold border */
   transition: all 0.2s;
 }
 
 .trust-card:hover {
-  border-color: #d4af37; /* PREMIUM UPDATE - Gold */
+  border-color: #D0021B; /* PREMIUM UPDATE - Gold */
   transform: translateY(-3px);
   box-shadow: var(--card-shadow);
 }
@@ -777,13 +787,13 @@ body {
   font-family: var(--ff-display);
   font-size: 20px;
   font-weight: 700;
-  color: #0d2b55; /* PREMIUM UPDATE - Navy */
+  color: #241C6B; /* PREMIUM UPDATE - Navy */
   margin-bottom: 4px;
 }
 
 .trust-card p {
   font-size: 12px;
-  color: #b8c9e0; /* PREMIUM UPDATE - Silver Blue */
+  color: #6B7280; /* PREMIUM UPDATE - Silver Blue */
   line-height: 1.5;
 }
 
@@ -792,17 +802,16 @@ body {
 ═══════════════════════════════════════════ */
 
 footer {
-  background: #ffffff; /* PREMIUM UPDATE - Midnight */
-  padding: 36px 32px 20px;
-  border-top: 2px solid #d4af37;
-  /* PREMIUM UPDATE - Gold border */
+  background: #ffffff;
+  padding: 32px 32px 18px;
+  border-top: 2px solid #D0021B;
 }
 
 .footer-top {
   display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr 1fr;
-  gap: 32px;
-  margin-bottom: 28px;
+  grid-template-columns: 1.6fr 1fr 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 22px;
 }
 
 /* Ensure footer columns align to the top of the brand block */
@@ -811,11 +820,11 @@ footer {
 }
 
 .footer-brand p {
-  font-family: Calibri, sans-serif;
-  font-size: 18px;
-  color: #000000; /* PREMIUM UPDATE - Silver Blue */
-  line-height: 1.7;
-  margin: 12px 0 16px;
+  font-family: var(--ff-body);
+  font-size: 13.5px;
+  color: #6B7280;
+  line-height: 1.55;
+  margin: 10px 0 14px;
 }
 
 .socials {
@@ -824,33 +833,33 @@ footer {
 }
 
 .soc-btn {
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   border-radius: 8px;
-  background: rgba(212, 175, 55, 0.08); /* PREMIUM UPDATE - Gold tint */
-  border: 1px solid rgba(212, 175, 55, 0.2); /* PREMIUM UPDATE - Gold border */
+  background: rgba(208, 2, 27, 0.08);
+  border: 1px solid rgba(208, 2, 27, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s;
-  color: #d4af37; /* PREMIUM UPDATE - Gold */
+  color: #D0021B;
 }
 
 .soc-btn:hover {
-  background: #d4af37; /* PREMIUM UPDATE - Gold */
-  border-color: #d4af37; /* PREMIUM UPDATE - Gold */
-  color: #0d2b55; /* PREMIUM UPDATE - Navy text */
+  background: #D0021B;
+  border-color: #D0021B;
+  color: #ffffff;
 }
 
 .footer-col h5 {
-  font-family: Calibri, sans-serif;
-  font-size: 23px;
-  font-weight: 600;
+  font-family: var(--ff-body);
+  font-size: 12.5px;
+  font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #071624; /* PREMIUM UPDATE - Gold */
+  color: #241C6B;
   margin-bottom: 14px;
 }
 
@@ -858,43 +867,58 @@ footer {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 9px;
   margin: 0;
   padding: 0;
 }
 
 .footer-col li {
-  margin: 6px 0;
+  margin: 0;
 }
 
 .footer-col li a {
-  font-family: cambria, sans-serif;
-  font-size: 20px;
-  color: #000000; /* PREMIUM UPDATE - Silver Blue */
+  font-family: var(--ff-body);
+  font-size: 13.5px;
+  line-height: 1.3;
+  color: #4B5563;
   text-decoration: none;
   transition: color 0.2s;
 }
 
 .footer-col li a:hover {
-  color: #071624; /* PREMIUM UPDATE - Gold */
+  color: #D0021B;
 }
 
 .footer-bottom {
-  border-top: 1px solid rgba(212, 175, 55, 0.15); /* PREMIUM UPDATE - Gold border */
-  padding-top: 18px;
+  border-top: 1px solid rgba(208, 2, 27, 0.15);
+  padding-top: 14px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
-.footer-bottom p {
-  font-family: cambria, sans-serif;
-  font-size: 18px;
-  color: #071624; /* PREMIUM UPDATE - Gold muted */
+.footer-copyright,
+.footer-tagline {
+  font-family: var(--ff-body);
+  font-size: 12.5px;
+  margin: 0;
+  min-width: 0;
+}
+
+.footer-copyright {
+  color: #241C6B;
+}
+
+.footer-tagline {
+  color: #9CA3AF;
+  font-style: italic;
 }
 
 .footer-bottom span {
-  color: #071624; /* PREMIUM UPDATE - Gold */
+  color: #D0021B;
+  font-weight: 600;
 }
 
 /* ══════════════════════════════════════════
@@ -906,8 +930,8 @@ footer {
   padding: 80px 32px;
   background: linear-gradient(
     135deg,
-    #f5f8ff 0%,
-    #fdf6dc 100%
+    #F4F3F8 0%,
+    #F4F3F8 100%
   ); /* PREMIUM UPDATE - Pearl to Gold gradient */
   border-radius: var(--radius-lg);
   margin: 40px;
@@ -926,12 +950,12 @@ footer {
 .contact-header .section-title {
   font-size: 42px;
   margin-bottom: 16px;
-  color: #0d2b55; /* PREMIUM UPDATE - Navy */
+  color: #241C6B; /* PREMIUM UPDATE - Navy */
 }
 
 .contact-subtitle {
   font-size: 16px;
-  color: #b8c9e0; /* PREMIUM UPDATE - Silver Blue */
+  color: #6B7280; /* PREMIUM UPDATE - Silver Blue */
   max-width: 600px;
   margin: 0 auto;
   line-height: 1.6;
@@ -948,13 +972,13 @@ footer {
   background: var(--white);
   padding: 40px;
   border-radius: var(--radius-lg);
-  box-shadow: 0 8px 32px rgba(13, 43, 85, 0.1); /* PREMIUM UPDATE - Navy shadow */
+  box-shadow: 0 8px 32px rgba(36, 28, 107, 0.1); /* PREMIUM UPDATE - Navy shadow */
 }
 
 .contact-info h4 {
   font-family: var(--ff-display);
   font-size: 24px;
-  color: #0d2b55; /* PREMIUM UPDATE - Navy */
+  color: #241C6B; /* PREMIUM UPDATE - Navy */
   margin-bottom: 32px;
   font-weight: 700;
 }
@@ -964,7 +988,7 @@ footer {
   gap: 16px;
   margin-bottom: 28px;
   padding-bottom: 28px;
-  border-bottom: 1px solid #e5dcc8; /* PREMIUM UPDATE - Gold border */
+  border-bottom: 1px solid #E5E7EB; /* PREMIUM UPDATE - Gold border */
 }
 
 .info-item:last-of-type {
@@ -981,7 +1005,7 @@ footer {
   flex-shrink: 0;
   width: 48px;
   height: 48px;
-  background: rgba(212, 175, 55, 0.12); /* PREMIUM UPDATE - Gold Light bg */
+  background: rgba(208, 2, 27, 0.12); /* PREMIUM UPDATE - Gold Light bg */
   border-radius: 12px;
 }
 
@@ -992,7 +1016,7 @@ footer {
 .info-label {
   font-size: 12px;
   font-weight: 700;
-  color: #d4af37; /* PREMIUM UPDATE - Gold */
+  color: #D0021B; /* PREMIUM UPDATE - Gold */
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 6px;
@@ -1000,7 +1024,7 @@ footer {
 
 .info-value {
   font-size: 15px;
-  color: #0d2b55; /* PREMIUM UPDATE - Navy */
+  color: #241C6B; /* PREMIUM UPDATE - Navy */
   line-height: 1.6;
   font-weight: 500;
 }
@@ -1010,14 +1034,14 @@ footer {
   gap: 12px;
   margin-top: 32px;
   padding-top: 32px;
-  border-top: 1px solid #e5dcc8; /* PREMIUM UPDATE - Gold border */
+  border-top: 1px solid #E5E7EB; /* PREMIUM UPDATE - Gold border */
 }
 
 .social-link {
   display: inline-block;
   padding: 10px 16px;
-  background: #d4af37; /* PREMIUM UPDATE - Gold */
-  color: #0d2b55; /* PREMIUM UPDATE - Navy text */
+  background: #D0021B;
+  color: #ffffff;
   text-decoration: none;
   border-radius: 8px;
   font-size: 13px;
@@ -1027,14 +1051,14 @@ footer {
 
 .social-link:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(212, 175, 55, 0.25); /* PREMIUM UPDATE - Gold shadow */
+  box-shadow: 0 8px 16px rgba(208, 2, 27, 0.25); /* PREMIUM UPDATE - Gold shadow */
 }
 
 .contact-form-wrapper {
   background: var(--white);
   padding: 40px;
   border-radius: var(--radius-lg);
-  box-shadow: 0 8px 32px rgba(13, 43, 85, 0.1); /* PREMIUM UPDATE - Navy shadow */
+  box-shadow: 0 8px 32px rgba(36, 28, 107, 0.1); /* PREMIUM UPDATE - Navy shadow */
 }
 
 .contact-form {
@@ -1051,7 +1075,7 @@ footer {
 .form-group label {
   font-size: 12px;
   font-weight: 700;
-  color: #0d2b55; /* PREMIUM UPDATE - Navy */
+  color: #241C6B; /* PREMIUM UPDATE - Navy */
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 8px;
@@ -1060,25 +1084,25 @@ footer {
 .form-group input,
 .form-group textarea {
   padding: 14px 16px;
-  border: 2px solid #e5dcc8; /* PREMIUM UPDATE - Gold border */
+  border: 2px solid #E5E7EB; /* PREMIUM UPDATE - Gold border */
   border-radius: 8px;
   font-family: var(--ff-body);
   font-size: 14px;
   transition: all 0.3s ease;
   background: var(--white);
-  color: #0d2b55; /* PREMIUM UPDATE - Navy */
+  color: #241C6B; /* PREMIUM UPDATE - Navy */
 }
 
 .form-group input::placeholder,
 .form-group textarea::placeholder {
-  color: #b8c9e0; /* PREMIUM UPDATE - Silver Blue */
+  color: #6B7280; /* PREMIUM UPDATE - Silver Blue */
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: #d4af37; /* PREMIUM UPDATE - Gold */
-  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.15); /* PREMIUM UPDATE - Gold shadow */
+  border-color: #D0021B; /* PREMIUM UPDATE - Gold */
+  box-shadow: 0 0 0 4px rgba(208, 2, 27, 0.15); /* PREMIUM UPDATE - Gold shadow */
 }
 
 .contact-form button {
@@ -1129,7 +1153,7 @@ footer {
 
 .contact-card {
   background: var(--white);
-  border: 2px solid #e5dcc8; /* PREMIUM UPDATE - Gold border */
+  border: 2px solid #E5E7EB; /* PREMIUM UPDATE - Gold border */
   border-radius: var(--radius-lg);
   padding: 24px;
   transition: all 0.3s ease;
@@ -1137,7 +1161,7 @@ footer {
 }
 
 .contact-card:hover {
-  border-color: #d4af37; /* PREMIUM UPDATE - Gold */
+  border-color: #D0021B; /* PREMIUM UPDATE - Gold */
   transform: translateY(-4px);
   box-shadow: var(--card-shadow);
 }
@@ -1151,13 +1175,13 @@ footer {
   font-family: var(--ff-display);
   font-size: 16px;
   font-weight: 700;
-  color: #0d2b55; /* PREMIUM UPDATE - Navy */
+  color: #241C6B; /* PREMIUM UPDATE - Navy */
   margin-bottom: 8px;
 }
 
 .contact-card p {
   font-size: 13px;
-  color: #b8c9e0; /* PREMIUM UPDATE - Silver Blue */
+  color: #6B7280; /* PREMIUM UPDATE - Silver Blue */
   margin-bottom: 12px;
   line-height: 1.6;
 }
@@ -1165,7 +1189,7 @@ footer {
 .contact-card a {
   display: block;
   font-size: 13px;
-  color: #d4af37; /* PREMIUM UPDATE - Gold */
+  color: #D0021B; /* PREMIUM UPDATE - Gold */
   text-decoration: none;
   font-weight: 500;
   margin-bottom: 4px;
@@ -1213,7 +1237,7 @@ footer {
 .contact-form .field-group label {
   font-size: 11px;
   font-weight: 600;
-  color: #b8c9e0; /* PREMIUM UPDATE - Silver Blue */
+  color: #6B7280; /* PREMIUM UPDATE - Silver Blue */
   letter-spacing: 0.05em;
   text-transform: uppercase;
   margin-bottom: 6px;
@@ -1221,7 +1245,7 @@ footer {
 
 .contact-form .field-group input,
 .contact-form .field-group textarea {
-  border: 2px solid #e5dcc8; /* PREMIUM UPDATE - Gold border */
+  border: 2px solid #E5E7EB; /* PREMIUM UPDATE - Gold border */
   border-radius: var(--radius-md);
   padding: 14px 16px;
   font-size: 14px;
@@ -1231,8 +1255,8 @@ footer {
 
 .contact-form .field-group input:focus,
 .contact-form .field-group textarea:focus {
-  border-color: #d4af37; /* PREMIUM UPDATE - Gold */
-  box-shadow: 0 4px 16px rgba(212, 175, 55, 0.15); /* PREMIUM UPDATE - Gold shadow */
+  border-color: #D0021B; /* PREMIUM UPDATE - Gold */
+  box-shadow: 0 4px 16px rgba(208, 2, 27, 0.15); /* PREMIUM UPDATE - Gold shadow */
   outline: none;
 }
 
@@ -1274,9 +1298,9 @@ footer {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(255, 215, 0, 0.15);
-  border: 1px solid rgba(255, 215, 0, 0.3);
-  color: #ffd700;
+  background: rgba(255, 212, 0, 0.15);
+  border: 1px solid rgba(255, 212, 0, 0.3);
+  color: #FFD400;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.1em;
@@ -1293,12 +1317,12 @@ footer {
 .products-carousel-section {
   background: linear-gradient(
     180deg,
-    #fdf6dc 0%,
+    #F4F3F8 0%,
     var(--white) 100%
   ); /* PREMIUM UPDATE - Gold to White */
   padding: 60px 32px;
-  border-top: 2px solid #e5dcc8; /* PREMIUM UPDATE - Gold border */
-  border-bottom: 2px solid #e5dcc8; /* PREMIUM UPDATE - Gold border */
+  border-top: 2px solid #E5E7EB; /* PREMIUM UPDATE - Gold border */
+  border-bottom: 2px solid #E5E7EB; /* PREMIUM UPDATE - Gold border */
 }
 
 .carousel-header {
@@ -1309,7 +1333,7 @@ footer {
 }
 
 .carousel-header .section-title {
-  color: #0d2b55; /* PREMIUM UPDATE - Navy */
+  color: #241C6B; /* PREMIUM UPDATE - Navy */
   margin-bottom: 0;
 }
 
@@ -1344,7 +1368,7 @@ footer {
   background: var(--white);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  border: 1.5px solid #e5dcc8; /* PREMIUM UPDATE - Gold border */
+  border: 1.5px solid #E5E7EB; /* PREMIUM UPDATE - Gold border */
   box-shadow: var(--card-shadow);
   transition: all 0.3s ease;
   cursor: pointer;
@@ -1354,8 +1378,8 @@ footer {
 }
 
 .product-card:hover {
-  border-color: #d4af37; /* PREMIUM UPDATE - Gold */
-  box-shadow: 0 12px 32px rgba(13, 43, 85, 0.15); /* PREMIUM UPDATE - Navy shadow */
+  border-color: #D0021B; /* PREMIUM UPDATE - Gold */
+  box-shadow: 0 12px 32px rgba(36, 28, 107, 0.15); /* PREMIUM UPDATE - Navy shadow */
   transform: translateY(-6px);
 }
 
@@ -1396,7 +1420,7 @@ footer {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #d4af37; /* PREMIUM UPDATE - Gold */
+  color: #D0021B; /* PREMIUM UPDATE - Gold */
   margin-bottom: 8px;
 }
 
@@ -1404,14 +1428,14 @@ footer {
   font-family: var(--ff-display);
   font-size: 16px;
   font-weight: 700;
-  color: #0d2b55; /* PREMIUM UPDATE - Navy */
+  color: #241C6B; /* PREMIUM UPDATE - Navy */
   margin-bottom: 6px;
   line-height: 1.3;
 }
 
 .product-desc {
   font-size: 12px;
-  color: #b8c9e0; /* PREMIUM UPDATE - Silver Blue */
+  color: #6B7280; /* PREMIUM UPDATE - Silver Blue */
   line-height: 1.5;
   margin-bottom: 12px;
   flex-grow: 1;
@@ -1421,15 +1445,15 @@ footer {
   font-family: var(--ff-display);
   font-size: 18px;
   font-weight: 700;
-  color: #d4af37; /* PREMIUM UPDATE - Gold */
+  color: #D0021B; /* PREMIUM UPDATE - Gold */
 }
 
 .carousel-btn {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: #d4af37; /* PREMIUM UPDATE - Gold */
-  color: #0d2b55; /* PREMIUM UPDATE - Navy */
+  background: #D0021B;
+  color: #ffffff;
   border: none;
   font-size: 18px;
   cursor: pointer;
@@ -1442,7 +1466,7 @@ footer {
 }
 
 .carousel-btn:hover {
-  background: #b8962e; /* PREMIUM UPDATE - Gold Dark */
+  background: #A5010F; /* PREMIUM UPDATE - Gold Dark */
   transform: scale(1.1);
 }
 
@@ -1460,19 +1484,19 @@ footer {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #e5dcc8; /* PREMIUM UPDATE - Gold border */
+  background: #E5E7EB; /* PREMIUM UPDATE - Gold border */
   cursor: pointer;
   transition: all 0.3s ease;
   border: 2px solid transparent;
 }
 
 .dot:hover {
-  background: #d4af37; /* PREMIUM UPDATE - Gold */
+  background: #D0021B; /* PREMIUM UPDATE - Gold */
   transform: scale(1.2);
 }
 
 .dot.active {
-  background: #d4af37; /* PREMIUM UPDATE - Gold */
+  background: #D0021B; /* PREMIUM UPDATE - Gold */
   width: 28px;
   border-radius: 5px;
 }
@@ -1614,6 +1638,24 @@ footer {
 
   .footer-top {
     grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .footer-bottom {
+    display: block;
+    text-align: left;
+  }
+
+  .footer-copyright,
+  .footer-tagline {
+    display: block;
+    width: 100%;
+    max-width: calc(100vw - 64px);
+    overflow-wrap: break-word;
+  }
+
+  .footer-tagline {
+    margin-top: 6px;
   }
 
   .form-row {
