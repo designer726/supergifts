@@ -99,13 +99,13 @@ if (!$db->connect_error) {
     if ($r) while ($row = $r->fetch_assoc()) $testimonials[] = $row;
 
     /* Budget products by price range */
-    $r = $db->query("SELECT p.id,p.name,p.image,p.mrp,p.offer_price FROM products p WHERE p.status=1 AND p.mrp>=10 AND p.mrp<=100 ORDER BY p.sequence ASC LIMIT 6");
+    $r = $db->query("SELECT p.id,p.name,p.image,p.mrp,p.offer_price FROM products p WHERE p.status=1 AND p.offer_price>=10 AND p.offer_price<=100 ORDER BY p.sequence ASC LIMIT 6");
     if ($r) while ($row=$r->fetch_assoc()) $budgetLow[]=$row;
-    $r = $db->query("SELECT p.id,p.name,p.image,p.mrp,p.offer_price FROM products p WHERE p.status=1 AND p.mrp>100 AND p.mrp<=500 ORDER BY p.sequence ASC LIMIT 6");
+    $r = $db->query("SELECT p.id,p.name,p.image,p.mrp,p.offer_price FROM products p WHERE p.status=1 AND p.offer_price>100 AND p.offer_price<=500 ORDER BY p.sequence ASC LIMIT 6");
     if ($r) while ($row=$r->fetch_assoc()) $budgetMid[]=$row;
-    $r = $db->query("SELECT p.id,p.name,p.image,p.mrp,p.offer_price FROM products p WHERE p.status=1 AND p.mrp>500 AND p.mrp<=1000 ORDER BY p.sequence ASC LIMIT 6");
+    $r = $db->query("SELECT p.id,p.name,p.image,p.mrp,p.offer_price FROM products p WHERE p.status=1 AND p.offer_price>500 AND p.offer_price<=1000 ORDER BY p.sequence ASC LIMIT 6");
     if ($r) while ($row=$r->fetch_assoc()) $budgetHigh[]=$row;
-    $r = $db->query("SELECT p.id,p.name,p.image,p.mrp,p.offer_price FROM products p WHERE p.status=1 AND p.mrp>1000 ORDER BY p.sequence ASC LIMIT 6");
+    $r = $db->query("SELECT p.id,p.name,p.image,p.mrp,p.offer_price FROM products p WHERE p.status=1 AND p.offer_price>1000 ORDER BY p.sequence ASC LIMIT 6");
     if ($r) while ($row=$r->fetch_assoc()) $budgetPremium[]=$row;
 
     /* Brands for appliances section */
@@ -272,7 +272,8 @@ if (!$db->connect_error) {
                         <div id="updatesScroll" style="display:flex;gap:16px;overflow-x:auto;scroll-behavior:smooth;scrollbar-width:none;">
                             <?php if (!empty($blogPosts)): ?>
                                 <?php foreach ($blogPosts as $blog): ?>
-                                <a href="blog_details?BlogDetails=<?= htmlspecialchars($blog['slug']) ?>" class="hp-blog-card" style="min-width:calc(33.333% - 11px);max-width:calc(33.333% - 11px);flex-shrink:0;">
+                                <!--<a href="blog_details?BlogDetails=<?= htmlspecialchars($blog['slug']) ?>" class="hp-blog-card" style="min-width:calc(33.333% - 11px);max-width:calc(33.333% - 11px);flex-shrink:0;">-->
+                                <a href="blog_details?BlogDetails=<?= htmlspecialchars($blog['slug']) ?>" class="hp-blog-card">
                                     <div class="hp-blog-img">
                                         <?php if (!empty($blog['image'])): ?>
                                         <img src="<?= htmlspecialchars($blog['image']) ?>" alt="<?= htmlspecialchars($blog['title']) ?>" loading="lazy">
@@ -325,7 +326,7 @@ if (!$db->connect_error) {
 
                 <div class="hp-bulk-steps">
                     <div class="hp-bulk-step-wrap">
-                        <div class="hp-bulk-step" style="background-image:linear-gradient(180deg, rgba(15,20,35,0.55) 0%, rgba(15,20,35,0.85) 100%), url('images/warehouse.jpg');">
+                        <div class="hp-bulk-step" style="background-image:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 100%), url('images/warehouse.jpg');">
                             <div class="hp-bulk-step-val">5000+</div>
                         </div>
                         <div class="hp-bulk-step-label">Ready to Go Inventory</div>
@@ -333,7 +334,7 @@ if (!$db->connect_error) {
                     </div>
                     <div class="hp-bulk-arrow">→</div>
                     <div class="hp-bulk-step-wrap">
-                        <div class="hp-bulk-step" style="background-image:linear-gradient(180deg, rgba(15,20,35,0.55) 0%, rgba(15,20,35,0.85) 100%), url('images/printing.jpg');">
+                        <div class="hp-bulk-step" style="background-image:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 100%), url('images/printing.jpg');">
                             <div class="hp-bulk-step-val">Quick</div>
                         </div>
                         <div class="hp-bulk-step-label">Co-Branding Option</div>
@@ -341,7 +342,7 @@ if (!$db->connect_error) {
                     </div>
                     <div class="hp-bulk-arrow">→</div>
                     <div class="hp-bulk-step-wrap">
-                        <div class="hp-bulk-step" style="background-image:linear-gradient(180deg, rgba(15,20,35,0.55) 0%, rgba(15,20,35,0.85) 100%), url('images/logestic.jpg');">
+                        <div class="hp-bulk-step" style="background-image:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 100%), url('images/logestic.jpg');">
                             <div class="hp-bulk-step-val">Express</div>
                         </div>
                         <div class="hp-bulk-step-label">Pan India Delivery</div>
@@ -369,11 +370,11 @@ if (!$db->connect_error) {
                                 <?php else: ?>
                                 <div style="display:flex;align-items:center;justify-content:center;height:100%;background:#F4F3F8;font-size:32px;color:#9CA3AF;">🎁</div>
                                 <?php endif; ?>
-                                <div class="hp-qty-badge">
+                                <!--<div class="hp-qty-badge">-->
                                     <!-- <strong>500+</strong> -->
-                                     <div><?= htmlspecialchars($p['quantity']) ?></div>
-                                    Available Qty.
-                                </div>
+                                <!--     <div><?= htmlspecialchars($p['quantity']) ?></div>-->
+                                <!--    Available Qty.-->
+                                <!--</div>-->
                             </div>
                             <div class="hp-sel-info">
                                 <div class="hp-prod-brand-logo">
@@ -476,7 +477,7 @@ if (!$db->connect_error) {
 
                     <div class="hp-partner-box hp-box-2">
                         <div class="hp-partner-content">
-                            Birthday &amp; Wedding Anniversary Gifts
+                            Consumer, Dealer, Distributor &amp; Trade Scheme
                         </div>
                     </div>
 

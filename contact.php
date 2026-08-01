@@ -89,7 +89,7 @@
                                             </div>
                                             <h4 class="alt-features-title">Hyderabad </h4>
                                                 <div class="alt-features-descr">
-                                                Mr. Saad Anwer<br> +91 82979 15711 <br> <a class="aiir_c_link" href="mailto:rehan@supergifts.in" >sales@supergift.in </a>
+                                                Mr. Saad Anwer<br> +91 82979 15711 <br> <a class="aiir_c_link" href="mailto:rehan@supergifts.in" >sales@supergifts.in </a>
                                                <br>  
                                             </div>
                                         </div>
@@ -128,7 +128,7 @@
                                             </div>
                                             <h4 class="alt-features-title">Bengaluru</h4>
                                             <div class="alt-features-descr">
-                                            Irfan <br> +91 +91 98455 70778 <br> <a class="aiir_c_link" href="mailto:operations@supergifts.in" >operations@supergifts.in</a>
+                                            Mr. Vishal Singh <br> +91 70223 74746 <br> <a class="aiir_c_link" href="mailto:vishal@supergifts.in" >vishal@supergifts.in</a>
                                             </div>
                                         </div>
                                     </div>

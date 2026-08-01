@@ -28,6 +28,10 @@
                   <a href="https://www.instagram.com/supergifts_official/" rel="noopener nofollow" target="_blank" class="soc-btn">
                   <img src="images/instagram.png" alt="Instagram">
                   </a>
+                  
+                  <a href="https://wa.me/919392685811" rel="noopener nofollow" target="_blank" class="soc-btn">
+                  <img src="images/whatsapp_icon.svg" alt="Instagram">
+                  </a>
 
                   <a href="#" rel="noopener nofollow" target="_blank" class="soc-btn">
                   <img src="images/twitter.png" alt="Twitter">
