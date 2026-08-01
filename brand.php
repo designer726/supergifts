@@ -24,12 +24,31 @@ if ($result->num_rows > 0) {
     }
 }
 
+function resolveBrandLogoPath($imageno) {
+    $imageNo = intval($imageno);
+    if ($imageNo <= 0) {
+        return 'images/brandlogo/image1.jpg';
+    }
+
+    $baseDir = __DIR__ . '/images/brandlogo/';
+    $extensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp'];
+
+    foreach ($extensions as $ext) {
+        $filePath = $baseDir . 'image' . $imageNo . $ext;
+        if (file_exists($filePath)) {
+            return 'images/brandlogo/image' . $imageNo . $ext;
+        }
+    }
+
+    return 'images/brandlogo/image' . $imageNo . '.jpg';
+}
+
 // Get brand logo path (assuming logos are stored in images/brandlogo/)
-$brand_logo = 'images/brandlogo/' . strtolower(str_replace(' ', '-', $brand)) . '.png';
+$brand_logo = resolveBrandLogoPath($brand ?? null);
 $brand_logo_default = 'images/brandlogo/default.png';
 
 // Check if brand logo exists, otherwise use default
-if (!file_exists($brand_logo)) {
+if (!file_exists(__DIR__ . '/' . $brand_logo)) {
     $brand_logo = $brand_logo_default;
 }
 
@@ -42,219 +61,342 @@ $pagename = "brand.php";
 <html lang="en">
 <head>
     <?php include 'common/head.php'; ?>
-    <link rel="stylesheet" href="css/brand-products.css">
     <style>
-        .brand-header {
-            display: flex;
-            justify-content: space-between;
+        .brand-hero-section {
+            background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.35), transparent 28%),
+                        linear-gradient(180deg, #08111e 0%, #0d203f 55%, #081523 100%);
+            color: #fff;
+            padding: 70px 0 56px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .brand-hero-section::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.18), transparent 26%),
+                        radial-gradient(circle at 85% 10%, rgba(34, 197, 94, 0.12), transparent 20%);
+            pointer-events: none;
+        }
+
+        .brand-hero-inner {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: minmax(320px, 1.2fr) minmax(320px, 0.8fr);
+            gap: 30px;
             align-items: center;
-            padding: 30px 0;
-            margin-bottom: 40px;
-            border-bottom: 2px solid #f0f0f0;
         }
 
-        .brand-logo-container {
-            text-align: center;
-            flex: 1;
+        .hero-copy {
+            max-width: 720px;
         }
 
-        .brand-logo-container img {
-            max-width: 150px;
-            height: auto;
+        .hero-copy h1 {
+            font-size: clamp(40px, 5vw, 68px);
+            line-height: 1.02;
+            margin: 0 0 18px;
+            letter-spacing: -0.04em;
+            max-width: 780px;
+        }
+
+        .hero-copy p {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.86);
+            margin: 0 0 28px;
+            max-width: 680px;
+        }
+
+        .hero-meta {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .hero-badge,
+        .catalog-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+        }
+
+        .hero-badge {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 999px;
+            padding: 12px 20px;
+            color: #e2e8f0;
+            font-size: 14px;
+        }
+
+        .catalog-btn {
+            background: linear-gradient(135deg, #34d399 0%, #0ea5e9 100%);
+            color: #0f172a;
+            padding: 14px 26px;
+            border-radius: 999px;
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .catalog-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(56, 189, 248, 0.2);
+        }
+
+        .hero-panel {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: 30px;
+            padding: 24px;
+            display: grid;
+            gap: 20px;
+            box-shadow: 0 28px 70px rgba(0, 0, 0, 0.18);
+        }
+
+        .hero-logo-block {
+            background: #fff;
+            border-radius: 20px;
+            padding: 16px 20px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            min-width: 180px;
+        }
+
+        .hero-logo-block img {
+            max-height: 68px;
+            max-width: 220px;
             object-fit: contain;
         }
 
-        .brand-title {
-            font-size: 32px;
-            font-weight: 700;
-            color: #222;
-            margin: 15px 0 0 0;
-        }
-
-        .brand-actions {
+        .hero-feature {
+            background: #071127;
+            min-height: 280px;
+            border-radius: 28px;
+            overflow: hidden;
             display: flex;
-            gap: 15px;
-            justify-content: flex-end;
             align-items: center;
+            justify-content: center;
+            padding: 24px;
         }
 
-        .download-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 5px;
-            font-size: 14px;
+        .hero-feature img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .hero-price-box {
+            background: rgba(15, 23, 42, 0.96);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 26px;
+            padding: 24px;
+            display: grid;
+            gap: 12px;
+        }
+
+        .hero-price-label {
+            font-size: 13px;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: #93c5fd;
+            font-weight: 700;
+        }
+
+        .hero-price-value {
+            font-size: clamp(34px, 4vw, 46px);
+            font-weight: 800;
+            color: #fff;
+            margin: 0;
+        }
+
+        .hero-price-subtitle {
+            font-size: 15px;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.78);
+            margin: 0;
+        }
+
+        .hero-price-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .hero-price-feature {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 999px;
+            color: #e2e8f0;
+            padding: 10px 14px;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+    </style>
+
+        .products-section {
+            padding: 50px 0 70px;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+        }
+
+        .back-link {
+            color: #1e3a8a;
+            text-decoration: none;
             font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .download-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
-            text-decoration: none;
-            color: white;
-        }
-
-        .download-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
+            font-size: 14px;
         }
 
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 25px;
-            margin-bottom: 60px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
         }
 
         .product-card {
-            background: white;
-            border: 1px solid #e8e8e8;
-            border-radius: 8px;
+            background: #fff;
+            border-radius: 20px;
+            border: 1px solid #e6e8f0;
             overflow: hidden;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
+            min-height: 100%;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
         }
 
         .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
         }
 
-        .product-image {
-            width: 100%;
-            height: 250px;
-            object-fit: cover;
-            background: #f5f5f5;
+        .product-img-wrap {
+            background: #f8fafc;
+            min-height: 240px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-bottom: 1px solid #eef2ff;
+        }
+
+        .product-img-wrap img {
+            width: auto;
+            height: 100%;
+            max-width: 100%;
+            object-fit: contain;
         }
 
         .product-info {
-            padding: 20px;
-            flex-grow: 1;
+            padding: 22px;
             display: flex;
             flex-direction: column;
+            gap: 12px;
+            flex: 1;
         }
 
         .product-name {
             font-size: 16px;
-            font-weight: 600;
-            color: #222;
-            margin-bottom: 8px;
-            line-height: 1.4;
+            font-weight: 700;
+            color: #111827;
+            line-height: 1.35;
+            margin: 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
         .product-price {
             font-size: 18px;
             font-weight: 700;
-            color: #667eea;
-            margin-bottom: 15px;
+            color: #16a34a;
+        }
+
+        .product-price em {
+            font-style: normal;
+            color: #6b7280;
+            font-size: 14px;
+            font-weight: 500;
         }
 
         .view-details-btn {
-            background: #667eea;
-            color: white;
-            padding: 10px 16px;
-            border: none;
-            border-radius: 5px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.3s ease;
-            text-decoration: none;
-            text-align: center;
-            display: inline-block;
             margin-top: auto;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 18px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
+            color: #fff;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 700;
+            transition: background 0.2s ease;
         }
 
         .view-details-btn:hover {
-            background: #5568d3;
-            text-decoration: none;
-            color: white;
+            background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
         }
 
         .no-products {
             text-align: center;
-            padding: 60px 20px;
-            color: #666;
+            padding: 70px 20px;
+            color: #4b5563;
         }
 
         .no-products h3 {
-            font-size: 24px;
-            margin-bottom: 10px;
-            color: #222;
+            margin-bottom: 14px;
+            font-size: 28px;
+            color: #111827;
         }
 
-        /* Responsive Grid */
-        @media (max-width: 1200px) {
-            .products-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
+        .no-products p {
+            margin: 0 0 14px;
+            color: #6b7280;
         }
 
         @media (max-width: 768px) {
-            .products-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 15px;
+            .brand-hero-section {
+                padding: 40px 0 30px;
             }
 
-            .brand-header {
+            .brand-hero-card {
+                padding: 24px;
+            }
+
+            .brand-hero-copy h1 {
+                font-size: 32px;
+            }
+
+            .products-section {
+                padding: 40px 0 50px;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .brand-hero-card {
                 flex-direction: column;
-                padding: 20px 0;
+                align-items: stretch;
             }
 
-            .brand-actions {
+            .brand-hero-meta {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .brand-logo-hero {
                 width: 100%;
-                margin-top: 20px;
-                justify-content: center;
             }
-
-            .download-btn {
-                width: 100%;
-            }
-
-            .product-image {
-                height: 200px;
-            }
-
-            .brand-title {
-                font-size: 24px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .products-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .brand-title {
-                font-size: 20px;
-            }
-
-            .download-btn {
-                font-size: 12px;
-                padding: 10px 18px;
-            }
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 50px;
-            color: #222;
         }
     </style>
 </head>
@@ -270,56 +412,81 @@ $pagename = "brand.php";
         </div>
     </section>
 
-    <!-- Brand Products Section -->
-    <section class="section">
+    <!-- Brand Hero Section -->
+    <section class="brand-hero-section">
         <div class="container">
-            
-            <!-- Brand Header with Logo and Download Button -->
-            <div class="brand-header">
-                <div class="brand-logo-container">
-                    <img src="<?php echo htmlspecialchars($brand_logo); ?>" alt="<?php echo htmlspecialchars($brand); ?> Logo">
-                    <h2 class="brand-title"><?php echo htmlspecialchars($brand); ?></h2>
+            <div class="brand-hero-inner">
+                <div class="hero-copy">
+                    <div class="hero-meta">
+                        <div class="hero-badge">Recommended Online Shop</div>
+                    </div>
+                    <h1>Bring Home The Luxury Of The Ultimate Audio Technology</h1>
+                    <p>Shop the latest premium sound systems from <?php echo htmlspecialchars($brand); ?> with exclusive deals, catalog downloads, and brand-certified support.</p>
+                    <div class="hero-meta">
+                        <div class="hero-badge"><?php echo count($products); ?> Products Available</div>
+                        <?php if (file_exists($pdf_catalog)): ?>
+                            <a href="<?php echo htmlspecialchars($pdf_catalog); ?>" class="catalog-btn" download>
+                                <i class="fa fa-download"></i> Download Catalog
+                            </a>
+                        <?php endif; ?>
+                    </div>
                 </div>
-                <div class="brand-actions">
-                    <?php if (file_exists($pdf_catalog)): ?>
-                        <a href="<?php echo htmlspecialchars($pdf_catalog); ?>" class="download-btn" download>
-                            <i class="fa fa-download"></i> Download Catalog
-                        </a>
-                    <?php else: ?>
-                        <button class="download-btn" disabled title="Catalog not available">
-                            <i class="fa fa-download"></i> Download Catalog
-                        </button>
-                    <?php endif; ?>
+                <div class="hero-panel">
+                    <div class="hero-logo-block">
+                        <img src="<?php echo htmlspecialchars($brand_logo); ?>" alt="<?php echo htmlspecialchars($brand); ?> Logo">
+                    </div>
+                    <div class="hero-feature">
+                        <img src="images/banners/hero-product.png" alt="Featured Product">
+                    </div>
+                    <div class="hero-price-box">
+                        <div class="hero-price-label">Launch Price</div>
+                        <p class="hero-price-value">Rs 69,990</p>
+                        <p class="hero-price-subtitle">Complimentary 3 Year Extended Warranty • Free Installation</p>
+                        <div class="hero-price-features">
+                            <span class="hero-price-feature">Dolby Atmos</span>
+                            <span class="hero-price-feature">SBW600 Emperor</span>
+                            <span class="hero-price-feature">12.1.4 Home Theatre</span>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <!-- Products Grid -->
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="products-section">
+        <div class="container">
+            <div class="top-bar">
+                <a href="index.php" class="back-link">← Back to Home</a>
+                <?php if (file_exists($pdf_catalog)): ?>
+                    <a href="<?php echo htmlspecialchars($pdf_catalog); ?>" class="catalog-btn" download>
+                        <i class="fa fa-download"></i> Download Catalog
+                    </a>
+                <?php endif; ?>
+            </div>
+
             <?php if (!empty($products)): ?>
                 <div class="products-grid">
                     <?php foreach ($products as $product): ?>
-                        <div class="product-card">
-                            <img 
-                                src="<?php echo htmlspecialchars($product['image']); ?>" 
-                                alt="<?php echo htmlspecialchars($product['name']); ?>" 
-                                class="product-image"
-                            >
+                        <a href="product-details.php?id=<?php echo urlencode($product['id']); ?>" class="product-card">
+                            <div class="product-img-wrap">
+                                <img src="<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>">
+                            </div>
                             <div class="product-info">
                                 <h3 class="product-name"><?php echo htmlspecialchars($product['name']); ?></h3>
                                 <div class="product-price">₹<?php echo htmlspecialchars(number_format($product['price'], 2)); ?></div>
-                                <a href="product-details.php?id=<?php echo urlencode($product['id']); ?>" class="view-details-btn">
-                                    View Details
-                                </a>
+                                <span class="view-details-btn">View Details</span>
                             </div>
-                        </div>
+                        </a>
                     <?php endforeach; ?>
                 </div>
             <?php else: ?>
                 <div class="no-products">
                     <h3>No Products Found</h3>
                     <p>There are currently no products available for the <strong><?php echo htmlspecialchars($brand); ?></strong> brand.</p>
-                    <p><a href="index.php" style="color: #667eea; text-decoration: none; font-weight: 600;">← Back to Home</a></p>
+                    <p><a href="index.php" style="color: #1e3a8a; text-decoration: none; font-weight: 600;">← Back to Home</a></p>
                 </div>
             <?php endif; ?>
-
         </div>
     </section>
 

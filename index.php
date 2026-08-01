@@ -1,967 +1,706 @@
 <?php
 $pagename = basename($_SERVER['PHP_SELF']);
 
-$brandPartners = [];
-$alsoDealWith = [];
-
-function findBrandLogoPath($imageno)
-{
+/* ── helpers ── */
+function findBrandLogoPath($imageno) {
     $root = rtrim($_SERVER['DOCUMENT_ROOT'], '/\\') . '/supergifts/';
-    foreach (['.jpg', '.jpeg', '.png', '.webp'] as $ext) {
+    foreach (['.jpg','.jpeg','.png','.webp'] as $ext) {
         $file = $root . 'images/brandlogo/image' . intval($imageno) . $ext;
-        if (file_exists($file)) {
-            return 'images/brandlogo/image' . intval($imageno) . $ext;
-        }
+        if (file_exists($file)) return 'images/brandlogo/image' . intval($imageno) . $ext;
     }
     return 'images/brandlogo/image' . intval($imageno) . '.jpg';
 }
 
-$brandDb = new mysqli("localhost", "superehc_aiir", "Aiir@8097000970", "superehc_sgipl");
-$carouselProducts = [];
-$blogPosts = [];
+function starRating($rating) {
+    $full  = intval($rating);
+    $empty = 5 - $full;
+    return str_repeat('★', $full) . str_repeat('☆', $empty);
+}
 
-if (!$brandDb->connect_error) {
-    $sql = "SELECT id, brandname, imageno, flag FROM brandlogo ORDER BY flag DESC, seqence ASC, brandname ASC";
-    if ($result = $brandDb->query($sql)) {
-        while ($row = $result->fetch_assoc()) {
-            $logo = findBrandLogoPath($row['imageno']);
-            $item = ['id' => $row['id'], 'brandname' => $row['brandname'], 'logoUrl' => $logo];
-            if (intval($row['flag']) === 1) {
-                $brandPartners[] = $item;
-            } else {
-                $alsoDealWith[] = $item;
-            }
+/* ── DB queries ── */
+$brandPartners   = [];
+$premiumProducts = [];
+$selProducts     = [];
+$blogPosts       = [];
+$testimonials    = [];
+$budgetLow = $budgetMid = $budgetHigh = $budgetPremium = [];
+$applianceBrands = [];
+$dbBanners       = [];   // banners from DB (up to 4)
+$dbVouchers      = [];
+
+/* Static fallback banners shown when no file is uploaded */
+$staticBanners = [
+    ['title' => 'Gifts That <span>Inspire</span> &amp; Build Bonds',
+     'subtitle' => 'Premium branded products · Custom branding · Pan-India delivery.<br>Trusted by 500+ corporates across India.',
+     'btn_text' => 'Get a Quote', 'btn_link' => 'contact',
+     'badge' => "India's #1 B2B Corporate Gifting"],
+    ['title' => 'Your Brand, <span>Our Expertise</span>',
+     'subtitle' => 'In-house branding, embossing &amp; engraving — concept to delivery.<br>8 core services. 24×7 support.',
+     'btn_text' => 'Our Services', 'btn_link' => 'services',
+     'badge' => 'Customization Excellence'],
+    ['title' => 'Bulk Orders <span>Made Easy</span>',
+     'subtitle' => '5000+ products in stock. Quick co-branding.<br>Express 48-hr delivery across India.',
+     'btn_text' => 'View Products', 'btn_link' => 'brand-products',
+     'badge' => 'Bulk Promotional Swag'],
+    ['title' => 'Pan-India <span>Logistics</span> At Your Service',
+     'subtitle' => 'Nationwide delivery · Real-time tracking · Rush orders.<br>Trusted by 500+ brands.',
+     'btn_text' => 'Contact Us', 'btn_link' => 'contact',
+     'badge' => 'Fast & Reliable Delivery'],
+];
+
+$db = new mysqli("localhost","superehc_aiir","Aiir@8097000970","superehc_sgipl");
+
+if (!$db->connect_error) {
+    $db->set_charset("utf8mb4");
+
+    /* Homepage banners */
+    $r = $db->query("SELECT * FROM banners WHERE status=1 ORDER BY slot ASC LIMIT 4");
+    if ($r) while ($row = $r->fetch_assoc()) $dbBanners[$row['slot']] = $row;
+
+    /* Authorised brand partners */
+    // $r = $db->query("SELECT id, brandname, imageno FROM brandlogo WHERE flag=1 ORDER BY seqence ASC, brandname ASC");
+    $r = $db->query("SELECT id, brandname, imageno FROM brandlogo WHERE flag=1 ORDER BY seqence ASC, brandname ASC");
+    if ($r) while ($row = $r->fetch_assoc())
+        $brandPartners[] = array_merge($row, ['logoUrl' => findBrandLogoPath($row['imageno'])]);
+
+    /* Premium products for carousel */
+    $r = $db->query("SELECT p.id, p.name, p.image, p.mrp, p.offer_price, b.brandname AS category, b.imageno
+                     FROM products p JOIN brandlogo b ON p.brand_id=b.id
+                     WHERE p.status=1 AND p.is_premium=1 ORDER BY p.sequence ASC, p.id DESC LIMIT 20");
+    if ($r) while ($row = $r->fetch_assoc())
+        $premiumProducts[] = array_merge($row, ['brandLogoUrl' => findBrandLogoPath($row['imageno'])]);
+
+    /* Product selection — round-robin across brands: one product per brand per pass
+       (brand A, brand B, brand C, ... then back to brand A's 2nd product, etc.)
+       so a single brand never dominates consecutive cards. Includes qty=1 items. */
+    $r = $db->query("SELECT p.id, p.name, p.image, p.mrp, p.offer_price, p.quantity, p.brand_id, b.brandname AS category, b.imageno
+                     FROM products p JOIN brandlogo b ON p.brand_id=b.id
+                     WHERE p.status=1 AND p.quantity>=1 ORDER BY p.brand_id ASC, p.id DESC");
+    $selByBrand = [];
+    if ($r) while ($row = $r->fetch_assoc())
+        $selByBrand[$row['brand_id']][] = array_merge($row, ['brandLogoUrl' => findBrandLogoPath($row['imageno'])]);
+    while (!empty($selByBrand)) {
+        foreach ($selByBrand as $bId => &$queue) {
+            $selProducts[] = array_shift($queue);
+            if (empty($queue)) unset($selByBrand[$bId]);
         }
-        $result->free();
+        unset($queue);
     }
+
     
-    // Load carousel products (limit to 6 products)
-    $productSql = "SELECT id, name, image, mrp FROM products WHERE status = 1 ORDER BY sequence ASC, id DESC LIMIT 6";
-    if ($productResult = $brandDb->query($productSql)) {
-        while ($row = $productResult->fetch_assoc()) {
-            $carouselProducts[] = $row;
-        }
-        $productResult->free();
-    }
-    
-    // Load blog posts (limit to 3 published posts)
-    $blogSql = "SELECT id, title, slug, excerpt, image, category, created_at FROM blogs WHERE status = 'published' ORDER BY created_at DESC LIMIT 3";
-    if ($blogResult = $brandDb->query($blogSql)) {
-        while ($row = $blogResult->fetch_assoc()) {
-            $blogPosts[] = $row;
-        }
-        $blogResult->free();
-    }
-    
-    $brandDb->close();
+    /* Blog posts */
+    $r = $db->query("SELECT id, title, slug, excerpt, image, category, created_at
+                     FROM blogs WHERE status='published' ORDER BY created_at DESC LIMIT 6");
+    if ($r) while ($row = $r->fetch_assoc()) $blogPosts[] = $row;
+
+    /* Testimonials */
+    $r = $db->query("SELECT client_name, company_name, rating, review_text
+                     FROM reviews WHERE status='approved' AND is_hidden = 0 ORDER BY created_at DESC LIMIT 3");
+    if ($r) while ($row = $r->fetch_assoc()) $testimonials[] = $row;
+
+    /* Budget products by price range */
+    $r = $db->query("SELECT p.id,p.name,p.image,p.mrp,p.offer_price FROM products p WHERE p.status=1 AND p.offer_price>=10 AND p.offer_price<=100 ORDER BY p.sequence ASC LIMIT 6");
+    if ($r) while ($row=$r->fetch_assoc()) $budgetLow[]=$row;
+    $r = $db->query("SELECT p.id,p.name,p.image,p.mrp,p.offer_price FROM products p WHERE p.status=1 AND p.offer_price>100 AND p.offer_price<=500 ORDER BY p.sequence ASC LIMIT 6");
+    if ($r) while ($row=$r->fetch_assoc()) $budgetMid[]=$row;
+    $r = $db->query("SELECT p.id,p.name,p.image,p.mrp,p.offer_price FROM products p WHERE p.status=1 AND p.offer_price>500 AND p.offer_price<=1000 ORDER BY p.sequence ASC LIMIT 6");
+    if ($r) while ($row=$r->fetch_assoc()) $budgetHigh[]=$row;
+    $r = $db->query("SELECT p.id,p.name,p.image,p.mrp,p.offer_price FROM products p WHERE p.status=1 AND p.offer_price>1000 ORDER BY p.sequence ASC LIMIT 6");
+    if ($r) while ($row=$r->fetch_assoc()) $budgetPremium[]=$row;
+
+    /* Brands for appliances section */
+    $r = $db->query("SELECT id, brandname, imageno FROM brandlogo WHERE flag=0 ORDER BY seqence ASC, id ASC LIMIT 8");
+    if ($r) while ($row = $r->fetch_assoc())
+        $applianceBrands[] = array_merge($row, ['logoUrl' => findBrandLogoPath($row['imageno'])]);
+
+    /* Gift vouchers */
+    $r = $db->query("SELECT id, title, image FROM vouchers WHERE status=1 ORDER BY seqence ASC, id ASC LIMIT 8");
+    if ($r) while ($row = $r->fetch_assoc()) $dbVouchers[] = $row;
+
+    $db->close();
 }
 ?>
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
     <?php include('common/head.php'); ?>
+    <link rel="stylesheet" href="css/homepage.css?v=<?= @filemtime(__DIR__.'/css/homepage.css') ?: time() ?>">
 </head>
-
-<body class="appear-animate">
+<body class="hp-body appear-animate">
 
     <!-- Page Loader -->
-    <div class="page-loader">
-        <div class="loader">Loading...</div>
-    </div>
-    <!-- End Page Loader -->
-    <!-- Page Wrap -->
+    <div class="page-loader"><div class="loader">Loading...</div></div>
+
     <div class="page" id="top">
 
         <?php include('common/nav.php'); ?>
 
         <main id="main">
 
-            <!-- Dynamic Hero Carousel Section -->
-            <section class="hero-carousel-wrapper" id="home">
-                <div class="hero-carousel-container">
-                    <!-- Hero Slide 1 -->
-                    <section class="hero-slide active" data-slide="0" style="background:none;padding:0;">
-                        <svg width="100%" viewBox="0 0 1200 480" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;">
-                            <rect width="1200" height="480" fill="#1B4B7C" />
-                            <circle cx="1050" cy="240" r="340" fill="#254668" opacity="0.5" />
-                            <circle cx="1100" cy="200" r="220" fill="#2D6A9F" opacity="0.35" />
-                            <ellipse cx="600" cy="520" rx="700" ry="180" fill="#0F2A3E" opacity="0.4" />
-                            <circle cx="80" cy="80" r="120" fill="#FFFFFF" opacity="0.08" />
-                            <circle cx="80" cy="80" r="70" fill="#FFFFFF" opacity="0.06" />
-                            <circle cx="420" cy="60" r="18" fill="#FFFFFF" opacity="0.15" />
-                            <circle cx="580" cy="400" r="30" fill="#FFFFFF" opacity="0.08" />
-                            <circle cx="200" cy="380" r="12" fill="#FFFFFF" opacity="0.12" />
-                            <circle cx="700" cy="30" r="10" fill="#FFFFFF" opacity="0.14" />
-                            <polygon points="860,0 1200,0 1200,130 860,130" fill="#D4AF37" opacity="0.15" />
-                            <polygon points="0,380 340,480 0,480" fill="#D4AF37" opacity="0.12" />
-                            <rect x="820" y="100" width="240" height="200" rx="12" fill="#FFFFFF" opacity="0.12" />
-                            <rect x="810" y="88" width="260" height="32" rx="8" fill="#FFFFFF" opacity="0.15" />
-                            <line x1="940" y1="88" x2="940" y2="300" stroke="#D4AF37" stroke-width="5" opacity="0.25" />
-                            <line x1="810" y1="190" x2="1070" y2="190" stroke="#D4AF37" stroke-width="5" opacity="0.25" />
-                            <ellipse cx="910" cy="86" rx="28" ry="16" fill="#D4AF37" opacity="0.3" />
-                            <ellipse cx="970" cy="86" rx="28" ry="16" fill="#D4AF37" opacity="0.3" />
-                            <circle cx="940" cy="86" r="10" fill="#D4AF37" opacity="0.35" />
-                            <rect x="820" y="340" width="110" height="52" rx="10" fill="#D4AF37" opacity="0.15" />
-                            <text x="875" y="360" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-weight="700" fill="#D4AF37">500+</text>
-                            <text x="875" y="381" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#FFFFFF" opacity="0.9">Brand Partners</text>
-                            <rect x="950" y="340" width="110" height="52" rx="10" fill="#D4AF37" opacity="0.15" />
-                            <text x="1005" y="360" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-weight="700" fill="#D4AF37">10K+</text>
-                            <text x="1005" y="381" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#FFFFFF" opacity="0.9">Orders Delivered</text>
-                            <rect x="1080" y="340" width="100" height="52" rx="10" fill="#D4AF37" opacity="0.15" />
-                            <text x="1130" y="360" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-weight="700" fill="#D4AF37">98%</text>
-                            <text x="1130" y="381" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#FFFFFF" opacity="0.9">Satisfaction</text>
-                            <rect x="56" y="68" width="234" height="26" rx="13" fill="#1A1A1A" opacity="0.25" />
-                            <text x="173" y="85" text-anchor="middle" font-family="Arial, sans-serif" font-size="10.5" font-weight="700" fill="#D4AF37" letter-spacing="1.2">&#x2726; INDIA'S #1 B2B GIFTING</text>
-                            <text x="56" y="168" font-family="Georgia, serif" font-size="66" font-weight="700" fill="#FFFFFF">Gifts That</text>
-                            <text x="56" y="248" font-family="Georgia, serif" font-size="66" font-weight="700" fill="#D4AF37" font-style="italic">Inspire</text>
-                            <text x="56" y="318" font-family="Georgia, serif" font-size="54" font-weight="700" fill="#FFFFFF">&amp; Build Bonds</text>
-                            <text x="56" y="360" font-family="Arial, sans-serif" font-size="15" fill="#FFFFFF" opacity="0.85">Premium B2B gifting solutions — branding to last-mile delivery.</text>
-                            <circle cx="1130" cy="100" r="52" fill="#1A1A1A" opacity="0.15" />
-                            <circle cx="1130" cy="100" r="52" fill="none" stroke="#FFFFFF" stroke-width="1.2" opacity="0.3" />
-                            <text x="1130" y="90" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-weight="700" fill="#FFFFFF">20+</text>
-                            <text x="1130" y="107" text-anchor="middle" font-family="Arial, sans-serif" font-size="9.5" fill="#FFFFFF" opacity="0.7">YRS EXP</text>
-                            <text x="56" y="462" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#FFFFFF" opacity="0.6" letter-spacing="2">SUPERGIFTS.IN</text>
-                        </svg>
-                    </section>
-
-                    <!-- Hero Slide 2 -->
-                    <section class="hero-slide" data-slide="1" style="background:none;padding:0;">
-                        <svg width="100%" viewBox="0 0 1200 480" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;">
-                            <rect width="1200" height="480" fill="#1B4B7C" />
-                            <polygon points="620,0 1200,0 1200,480 700,480" fill="#254668" />
-                            <ellipse cx="1080" cy="100" rx="260" ry="180" fill="#2D6A9F" opacity="0.4" />
-                            <ellipse cx="1120" cy="80" rx="160" ry="100" fill="#3D7FAF" opacity="0.25" />
-                            <ellipse cx="120" cy="430" rx="200" ry="120" fill="#D4AF37" opacity="0.08" />
-                            <circle cx="640" cy="240" r="200" fill="#D4AF37" opacity="0.03" />
-                            <circle cx="640" cy="240" r="150" fill="#D4AF37" opacity="0.02" />
-                            <polygon points="300,0 360,52 300,104 240,52" fill="#D4AF37" opacity="0.08" />
-                            <polygon points="360,52 420,0 480,52 420,104" fill="#D4AF37" opacity="0.06" />
-                            <polygon points="500,10 560,62 500,114 440,62" fill="#D4AF37" opacity="0.04" />
-                            <circle cx="980" cy="260" r="110" fill="none" stroke="#D4AF37" stroke-width="2" opacity="0.15" />
-                            <circle cx="980" cy="260" r="88" fill="none" stroke="#D4AF37" stroke-width="1" opacity="0.08" />
-                            <text x="980" y="250" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#D4AF37" opacity="0.4" letter-spacing="2">CO-BRANDING</text>
-                            <text x="980" y="270" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#D4AF37" opacity="0.25">ENGRAVING</text>
-                            <text x="980" y="290" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#D4AF37" opacity="0.15">EMBOSSING</text>
-                            <circle cx="750" cy="420" r="6" fill="#D4AF37" opacity="0.2" />
-                            <circle cx="800" cy="400" r="4" fill="#D4AF37" opacity="0.15" />
-                            <circle cx="850" cy="430" r="8" fill="#D4AF37" opacity="0.1" />
-                            <circle cx="1100" cy="380" r="10" fill="#D4AF37" opacity="0.1" />
-                            <circle cx="1150" cy="330" r="5" fill="#D4AF37" opacity="0.15" />
-                            <rect x="56" y="68" width="242" height="26" rx="13" fill="#FFFFFF" opacity="0.12" />
-                            <text x="177" y="85" text-anchor="middle" font-family="Arial, sans-serif" font-size="10.5" font-weight="700" fill="#D4AF37" letter-spacing="1.2">&#x2726; CUSTOMIZATION EXCELLENCE</text>
-                            <text x="56" y="170" font-family="Georgia, serif" font-size="64" font-weight="700" fill="#FFFFFF">Your Brand,</text>
-                            <text x="56" y="244" font-family="Georgia, serif" font-size="64" font-weight="700" fill="#FFFFFF">Our</text>
-                            <text x="56" y="318" font-family="Georgia, serif" font-size="64" font-weight="700" fill="#D4AF37" font-style="italic">Expertise</text>
-                            <text x="56" y="358" font-family="Arial, sans-serif" font-size="15" fill="#FFFFFF" opacity="0.85">In-house branding, embossing &amp; engraving — concept to delivery.</text>
-                            <rect x="56" y="390" width="106" height="54" rx="10" fill="#D4AF37" opacity="0.12" />
-                            <text x="109" y="413" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-weight="700" fill="#D4AF37">100%</text>
-                            <text x="109" y="433" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#FFFFFF" opacity="0.85">Customizable</text>
-                            <rect x="176" y="390" width="90" height="54" rx="10" fill="#D4AF37" opacity="0.12" />
-                            <text x="221" y="413" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-weight="700" fill="#D4AF37">8</text>
-                            <text x="221" y="433" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#FFFFFF" opacity="0.85">Core Services</text>
-                            <rect x="280" y="390" width="90" height="54" rx="10" fill="#D4AF37" opacity="0.12" />
-                            <text x="325" y="413" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-weight="700" fill="#D4AF37">24x7</text>
-                            <text x="325" y="433" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#FFFFFF" opacity="0.85">Support</text>
-                            <text x="56" y="466" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#FFFFFF" opacity="0.7" letter-spacing="2">SUPERGIFTS.IN</text>
-                        </svg>
-                    </section>
-
-                    <!-- Hero Slide 3 -->
-                    <section class="hero-slide" data-slide="2" style="background:none;padding:0;">
-                        <svg width="100%" viewBox="0 0 1200 480" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;">
-                            <rect width="1200" height="480" fill="#1B4B7C" />
-                            <polygon points="550,0 1200,0 1200,480 650,480" fill="#254668" opacity="0.8" />
-                            <circle cx="1050" cy="140" r="200" fill="#D4AF37" opacity="0.12" />
-                            <circle cx="1050" cy="140" r="130" fill="#D4AF37" opacity="0.1" />
-                            <circle cx="1050" cy="140" r="70" fill="#D4AF37" opacity="0.12" />
-                            <ellipse cx="600" cy="560" rx="700" ry="200" fill="#0F2A3E" opacity="0.35" />
-                            <circle cx="0" cy="0" r="180" fill="none" stroke="#D4AF37" stroke-width="1" opacity="0.1" />
-                            <circle cx="0" cy="0" r="130" fill="none" stroke="#D4AF37" stroke-width="0.8" opacity="0.06" />
-                            <path d="M 700 360 Q 790 310 860 260 Q 940 200 1010 150 Q 1070 110 1110 70" stroke="#D4AF37" stroke-width="2" fill="none" opacity="0.3" stroke-dasharray="8,5" />
-                            <path d="M 680 380 Q 760 320 840 270 Q 920 210 990 160 Q 1060 120 1100 90" stroke="#254668" stroke-width="1.2" fill="none" opacity="0.15" stroke-dasharray="5,7" />
-                            <circle cx="710" cy="360" r="8" fill="#D4AF37" opacity="0.8" />
-                            <circle cx="710" cy="360" r="18" fill="#D4AF37" opacity="0.12" />
-                            <text x="730" y="358" font-family="Arial, sans-serif" font-size="11" fill="#D4AF37" opacity="0.7">Mumbai</text>
-                            <circle cx="870" cy="255" r="8" fill="#D4AF37" opacity="0.8" />
-                            <circle cx="870" cy="255" r="18" fill="#D4AF37" opacity="0.12" />
-                            <text x="892" y="253" font-family="Arial, sans-serif" font-size="11" fill="#D4AF37" opacity="0.7">Hyderabad</text>
-                            <circle cx="1000" cy="160" r="8" fill="#D4AF37" opacity="0.8" />
-                            <circle cx="1000" cy="160" r="18" fill="#D4AF37" opacity="0.12" />
-                            <text x="1020" y="158" font-family="Arial, sans-serif" font-size="11" fill="#D4AF37" opacity="0.7">Bangalore</text>
-                            <circle cx="1100" cy="80" r="8" fill="#D4AF37" opacity="0.8" />
-                            <circle cx="1100" cy="80" r="18" fill="#D4AF37" opacity="0.12" />
-                            <text x="1118" y="78" font-family="Arial, sans-serif" font-size="11" fill="#D4AF37" opacity="0.7">Delhi</text>
-                            <circle cx="640" cy="50" r="5" fill="#254668" opacity="0.25" />
-                            <circle cx="580" cy="90" r="3" fill="#D4AF37" opacity="0.2" />
-                            <circle cx="400" cy="400" r="6" fill="#254668" opacity="0.15" />
-                            <rect x="0" y="0" width="6" height="480" fill="#254668" opacity="0.4" />
-                            <rect x="0" y="0" width="3" height="480" fill="#D4AF37" opacity="0.3" />
-                            <rect x="60" y="68" width="248" height="26" rx="13" fill="#FFFFFF" opacity="0.12" />
-                            <text x="184" y="85" text-anchor="middle" font-family="Arial, sans-serif" font-size="10.5" font-weight="700" fill="#D4AF37" letter-spacing="1.2">&#x2726; FAST &amp; RELIABLE DELIVERY</text>
-                            <text x="60" y="170" font-family="Georgia, serif" font-size="58" font-weight="700" fill="#FFFFFF">Pan-India Logistics</text>
-                            <text x="60" y="240" font-family="Georgia, serif" font-size="58" font-weight="700" fill="#D4AF37" font-style="italic">At Your Service</text>
-                            <text x="60" y="280" font-family="Arial, sans-serif" font-size="15" fill="#FFFFFF" opacity="0.9">Nationwide delivery · Real-time tracking · Rush orders.</text>
-                            <text x="60" y="302" font-family="Arial, sans-serif" font-size="15" fill="#FFFFFF" opacity="0.85">Trusted by 500+ brands across India.</text>
-                            <rect x="60" y="330" width="106" height="54" rx="10" fill="#D4AF37" opacity="0.12" />
-                            <text x="113" y="353" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-weight="700" fill="#D4AF37">20+</text>
-                            <text x="113" y="374" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#FFFFFF" opacity="0.85">Yrs Experience</text>
-                            <rect x="180" y="330" width="106" height="54" rx="10" fill="#D4AF37" opacity="0.12" />
-                            <text x="233" y="353" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-weight="700" fill="#D4AF37">98%</text>
-                            <text x="233" y="374" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#FFFFFF" opacity="0.85">On-Time Delivery</text>
-                            <rect x="300" y="330" width="122" height="54" rx="10" fill="#D4AF37" opacity="0.12" />
-                            <text x="361" y="353" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-weight="700" fill="#D4AF37">25K SFT</text>
-                            <text x="361" y="374" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#FFFFFF" opacity="0.85">Warehouse</text>
-                            <text x="60" y="464" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#FFFFFF" opacity="0.7" letter-spacing="2">SUPERGIFTS.IN</text>
-                        </svg>
-                    </section>
+            <!-- ═══════════ HERO BANNER CAROUSEL (Dynamic) ═══════════ -->
+            <?php
+            /* Build the 4 slides — use DB banner if file uploaded, else static fallback */
+            $slides = [];
+            for ($s = 1; $s <= 4; $s++) {
+                $db_b = $dbBanners[$s] ?? null;
+                $st   = $staticBanners[$s - 1];
+                $slides[] = [
+                    'slot'      => $s,
+                    'title'     => !empty($db_b['title'])    ? htmlspecialchars($db_b['title'])    : $st['title'],
+                    'subtitle'  => !empty($db_b['subtitle']) ? htmlspecialchars($db_b['subtitle']) : $st['subtitle'],
+                    'btn_text'  => !empty($db_b['btn_text']) ? htmlspecialchars($db_b['btn_text']) : $st['btn_text'],
+                    'btn_link'  => !empty($db_b['btn_link']) ? htmlspecialchars($db_b['btn_link']) : $st['btn_link'],
+                    'badge'     => $st['badge'],
+                    'file_path' => $db_b['file_path'] ?? '',
+                    'file_type' => $db_b['file_type'] ?? 'image',
+                ];
+            }
+            $totalSlides = count($slides);
+            ?>
+            <div class="hp-banner-wrap" id="hpBannerWrap">
+                <!-- Slides -->
+                <div class="hp-banner-slides" id="hpBannerSlides">
+                <?php foreach ($slides as $idx => $sl): $active = ($idx === 0); $isVideo = !empty($sl['file_path']) && $sl['file_type'] === 'video'; ?>
+                <div class="hp-banner-slide <?= $active ? 'active' : '' ?>" data-slide="<?= $idx ?>" data-type="<?= $isVideo ? 'video' : 'image' ?>">
+                    <!-- Background: uploaded image / video / gradient fallback -->
+                    <?php if (!empty($sl['file_path'])): ?>
+                        <?php if ($isVideo): ?>
+                        <video class="hp-banner-bg-video" muted playsinline preload="auto">
+                            <source src="<?= htmlspecialchars($sl['file_path']) ?>">
+                        </video>
+                        <?php else: ?>
+                        <div class="hp-banner-bg-img" style="background-image:url('<?= htmlspecialchars($sl['file_path']) ?>')"></div>
+                        <?php endif; ?>
+                    <?php else: ?>
+                        <div class="hp-banner-bg-gradient"></div>
+                    <?php endif; ?>
+                </div>
+                <?php endforeach; ?>
                 </div>
 
-                <!-- Navigation Arrows -->
-                <button class="hero-nav-btn prev" onclick="changeHeroSlide(-1)">❮</button>
-                <button class="hero-nav-btn next" onclick="changeHeroSlide(1)">❯</button>
+                <!-- Nav arrows -->
+                <button class="hp-banner-arrow prev" onclick="hpBannerNav(-1)" aria-label="Previous">&#8249;</button>
+                <button class="hp-banner-arrow next" onclick="hpBannerNav(1)"  aria-label="Next">&#8250;</button>
 
-                <!-- Slider Dots -->
-                <div class="slider-dots" id="heroDots">
-                    <div class="dot active" onclick="goToHeroSlide(0)"></div>
-                    <div class="dot" onclick="goToHeroSlide(1)"></div>
-                    <div class="dot" onclick="goToHeroSlide(2)"></div>
-                </div>
-            </section>
-
-
-            <!-- Brand Partners & Add-on Services Section -->
-            <div class="two-col">
-                <div class="col-panel">
-                    <div class="section-title">Brand Partners <span class="pill"><?= count($brandPartners) + count($alsoDealWith) ?> Brands</span></div>
-                    <div class="brand-section">
-                        <div class="mb-4">
-                            <div class="section-subtitle" style="font-size:14px;font-weight:700;margin-bottom:12px;color:#333;">Authorised</div>
-                            <?php if (!empty($brandPartners)): ?>
-                                <div class="brand-grid">
-                                    <?php foreach ($brandPartners as $brand): ?>
-                                        <a class="brand-chip" href="brand-products.php?brand=<?= intval($brand['id']) ?>" style="padding:12px;min-height:80px;text-decoration:none;display:flex;align-items:center;justify-content:center;">
-                                            <img src="<?= htmlspecialchars($brand['logoUrl']) ?>" alt="<?= htmlspecialchars($brand['brandname']) ?>" style="max-width:100%;max-height:50px;object-fit:contain;" />
-                                        </a>
-                                    <?php endforeach; ?>
-                                </div>
-                            <?php else: ?>
-                                <p class="text-center" style="margin:0;color:#666;">No authorised brand partners are available.</p>
-                            <?php endif; ?>
-                        </div>
-                        <div>
-                            <div class="section-subtitle" style="font-size:14px;font-weight:700;margin-bottom:12px;color:#333;">Also Deal With</div>
-                            <?php if (!empty($alsoDealWith)): ?>
-                                <div class="brand-grid">
-                                    <?php foreach ($alsoDealWith as $brand): ?>
-                                        <a class="brand-chip" href="brand-products.php?brand=<?= intval($brand['id']) ?>" style="padding:12px;min-height:80px;text-decoration:none;display:flex;align-items:center;justify-content:center;">
-                                            <img src="<?= htmlspecialchars($brand['logoUrl']) ?>" alt="<?= htmlspecialchars($brand['brandname']) ?>" style="max-width:100%;max-height:50px;object-fit:contain;" />
-                                        </a>
-                                    <?php endforeach; ?>
-                                </div>
-                            <?php else: ?>
-                                <p class="text-center" style="margin:0;color:#666;">No "Also Deal With" brands are available.</p>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-panel">
-                    <div class="section-title">Add-on Services <span class="pill">8 Services</span></div>
-                    <div class="service-list">
-                        <a href="service-branding-customization.php" class="service-row" style="text-decoration: none; color: inherit; display: block; cursor: pointer; transition: all 0.3s ease;"><span class="service-num">1</span> Branding & Customization</a>
-                        <a href="service-logistic.php" class="service-row" style="text-decoration: none; color: inherit; display: block; cursor: pointer; transition: all 0.3s ease;"><span class="service-num">2</span> Logistic Services</a>
-                        <a href="service-premium-packing.php" class="service-row" style="text-decoration: none; color: inherit; display: block; cursor: pointer; transition: all 0.3s ease;"><span class="service-num">3</span> Premium Packing</a>
-                        <a href="service-after-sale.php" class="service-row" style="text-decoration: none; color: inherit; display: block; cursor: pointer; transition: all 0.3s ease;"><span class="service-num">4</span> After Sale Services</a>
-                        <a href="service-original-products.php" class="service-row" style="text-decoration: none; color: inherit; display: block; cursor: pointer; transition: all 0.3s ease;"><span class="service-num">5</span> 100% Original Products</a>
-                        <a href="service-inventory.php" class="service-row" style="text-decoration: none; color: inherit; display: block; cursor: pointer; transition: all 0.3s ease;"><span class="service-num">6</span> Ready to go Inventory</a>
-                        <a href="service-pan-india.php" class="service-row" style="text-decoration: none; color: inherit; display: block; cursor: pointer; transition: all 0.3s ease;"><span class="service-num">7</span> Pan-India Reach</a>
-                        <a href="service-support.php" class="service-row" style="text-decoration: none; color: inherit; display: block; cursor: pointer; transition: all 0.3s ease;"><span class="service-num">8</span> 24x7 Support</a>
-                    </div>
+                <!-- Dots -->
+                <div class="hp-hero-dots" id="hpBannerDots">
+                    <?php for ($d = 0; $d < $totalSlides; $d++): ?>
+                    <div class="hp-hero-dot <?= $d === 0 ? 'active' : '' ?>" onclick="hpBannerGo(<?= $d ?>)"></div>
+                    <?php endfor; ?>
                 </div>
             </div>
 
-            <!-- New Brand Products Carousel Section -->
-            <!-- <section class="products-carousel-section">
-                <div class="carousel-header">
-                    <div class="section-title">New Brand Products <span class="pill">Premium Collection</span></div>
-                    <a href="products.php" class="see-all">Browse All →</a>
+            <!-- ═══════════ AUTHORISED BRAND PARTNER ═══════════ -->
+            <section class="brand-partner-sec">
+                <div class="hp-sec-title">Authorised Brand Partner</div>
+                <?php if (!empty($brandPartners)): ?>
+                <div class="brand-logo-grid">
+                    <?php foreach ($brandPartners as $brand): ?>
+                    <a class="brand-logo-box" href="brand-products.php?brand=<?= intval($brand['id']) ?>" title="<?= htmlspecialchars($brand['brandname']) ?>">
+                        <img src="<?= htmlspecialchars($brand['logoUrl']) ?>" alt="<?= htmlspecialchars($brand['brandname']) ?>">
+                    </a>
+                    <?php endforeach; ?>
                 </div>
+                <p style="color:#6B7280;font-size:13px;text-align:right;margin-top:14px;">&amp; many more...</p>
+                <?php else: ?>
+                <p style="color:#9CA3AF;font-size:14px;">Brand partners coming soon.</p>
+                <?php endif; ?>
+            </section>
 
-                <div class="carousel-container">
-                    <button class="carousel-btn prev" onclick="scrollCarousel(-1)">❮</button>
-
-                    <div class="carousel-track" id="productCarousel">
-                        <?php foreach ($carouselProducts as $product): ?>
-                            <a href="product-detail.php?id=<?= intval($product['id']) ?>" style="text-decoration: none; color: inherit;">
-                                <div class="carousel-slide product-card">
-                                    <div class="product-image">
-                                        <?php if (!empty($product['image'])): ?>
-                                            <img src="<?= htmlspecialchars($product['image']) ?>" alt="<?= htmlspecialchars($product['name']) ?>">
-                                        <?php else: ?>
-                                            <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#ccc;">
-                                                <svg width="48" height="48" fill="currentColor" viewBox="0 0 16 16">
-                                                    <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" />
-                                                    <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z" />
-                                                </svg>
-                                            </div>
-                                        <?php endif; ?>
+            <!-- ═══════════ PREMIUM BRANDED PRODUCT ═══════════ -->
+            <section class="hp-carousel-sec">
+                <div class="hp-carousel-header">
+                    <h2>Premium Branded Product</h2>
+                    <div class="hp-carousel-nav">
+                        <button class="hp-c-btn" onclick="scrollProd(-1)" aria-label="Previous">&#8249;</button>
+                        <button class="hp-c-btn" onclick="scrollProd(1)" aria-label="Next">&#8250;</button>
+                    </div>
+                </div>
+                <div class="hp-carousel-outer">
+                    <div class="hp-carousel-track" id="prodTrack">
+                        <?php if (!empty($premiumProducts)): ?>
+                            <?php foreach ($premiumProducts as $p): ?>
+                            <a href="product-detail.php?id=<?= intval($p['id']) ?>" class="hp-prod-card" style="text-decoration:none;color:inherit;">
+                                <div class="hp-prod-card-image">
+                                    <?php if (!empty($p['image'])): ?>
+                                    <img src="<?= htmlspecialchars($p['image']) ?>" alt="<?= htmlspecialchars($p['name']) ?>" loading="lazy">
+                                    <?php else: ?>
+                                    <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#9CA3AF;font-size:36px;">🎁</div>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="hp-prod-card-body">
+                                    <div class="hp-prod-brand-logo">
+                                        <img src="<?= htmlspecialchars($p['brandLogoUrl']) ?>" alt="<?= htmlspecialchars($p['category']) ?>" loading="lazy" onerror="this.parentElement.style.display='none'">
                                     </div>
-                                    <div class="product-body">
-                                        <h4 class="product-name"><?= htmlspecialchars($product['name']) ?></h4>
-                                        <?php if ($product['mrp'] > 0): ?>
-                                            <div class="product-price">₹<?= number_format($product['mrp'], 2) ?></div>
-                                        <?php endif; ?>
+                                    <div class="hp-prod-name"><?= htmlspecialchars($p['name']) ?></div>
+                                    <?php if (!empty($p['offer_price']) && $p['offer_price'] > 0 && $p['offer_price'] < $p['mrp']): ?>
+                                    <div class="hp-prod-price-row">
+                                        <div class="hp-prod-price">₹<?= number_format($p['offer_price'], 0) ?>/-</div>
+                                        <!-- <div class="hp-prod-mrp">₹<?= number_format($p['mrp'], 0) ?>/-</div> -->
                                     </div>
+                                    <?php elseif ($p['offer_price'] > 0): ?>
+                                    <div class="hp-prod-price">₹<?= number_format($p['offer_price'], 0) ?>/-</div>
+                                    <?php else: ?>
+                                    <div class="hp-prod-price">Price on Request</div>
+                                    <?php endif; ?>
+                                    <div class="hp-prod-mrp">₹<?= number_format($p['mrp'], 0) ?>/-</div>
                                 </div>
                             </a>
-                        <?php endforeach; ?>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <div style="padding:40px;color:#9CA3AF;font-size:14px;">Products coming soon.</div>
+                        <?php endif; ?>
                     </div>
-                    </div>
-
-                    <button class="carousel-btn next" onclick="scrollCarousel(1)">❯</button>
                 </div>
-
-                <div class="carousel-dots" id="carouselDots">
-                    <?php for ($i = 0; $i < count($carouselProducts); $i++): ?>
-                        <span class="dot <?= $i === 0 ? 'active' : '' ?>" onclick="goToSlide(<?= $i ?>)"></span>
+                <?php $pages = max(1, ceil(count($premiumProducts) / 4)); ?>
+                <div class="hp-carousel-dots" id="prodDots">
+                    <?php for ($i = 0; $i < $pages; $i++): ?>
+                    <div class="hp-carousel-dot <?= $i === 0 ? 'active' : '' ?>" onclick="goToProdPage(<?= $i ?>)"></div>
                     <?php endfor; ?>
                 </div>
-            </section> -->
-            <!-- New Brand Products Carousel Section -->
-            <section class="products-carousel-section">
-                <div class="carousel-header">
-                    <div class="section-title">New Brand Products <span class="pill">Premium Collection</span></div>
-                    <a href="products.php" class="see-all">Browse All →</a>
-                </div>
-
-                <div class="carousel-container">
-                    <button class="carousel-btn prev" onclick="scrollCarousel(-1)">❮</button>
-
-                    <div class="carousel-track" id="productCarousel">
-                        <!-- Product 1 -->
-                        <!-- <div class="carousel-slide product-card">
-                            <div class="product-image" style="background: linear-gradient(135deg, #0D2B55, #1A4080);">
-                                <span class="product-icon">🎁</span>
-                            </div>
-                            <div class="product-body">
-                                <div class="product-tag">Premium</div>
-                                <h4 class="product-name">Leather Portfolio</h4>
-                                <p class="product-desc">Premium leather portfolio with custom branding</p>
-                                <div class="product-price">₹2,499</div>
-                            </div>
-                        </div> -->
-
-                        <!-- Product 2 -->
-                        <!-- <div class="carousel-slide product-card">
-                            <div class="product-image" style="background: linear-gradient(135deg, #1A4080, #0D2B55);">
-                                <span class="product-icon">💼</span>
-                            </div>
-                            <div class="product-body">
-                                <div class="product-tag">Corporate</div>
-                                <h4 class="product-name">Executive Pen Set</h4>
-                                <p class="product-desc">Luxury pen set with engraving options</p>
-                                <div class="product-price">₹1,299</div>
-                            </div>
-                        </div> -->
-
-                        <!-- Product 3 -->
-                        <!-- <div class="carousel-slide product-card">
-                            <div class="product-image" style="background: linear-gradient(135deg, #D4AF37, #B8962E);">
-                                <span class="product-icon">🏆</span>
-                            </div>
-                            <div class="product-body">
-                                <div class="product-tag">Best Seller</div>
-                                <h4 class="product-name">Crystal Trophy</h4>
-                                <p class="product-desc">Elegant crystal trophy for awards</p>
-                                <div class="product-price">₹3,999</div>
-                            </div>
-                        </div> -->
-
-                        <!-- Product 1 -->
-                        <div class="carousel-slide product-card">
-                            <div class="product-image">
-                                <img src="images/products/prod-1-1780729143-6a23c53748655.png" alt="Leather Portfolio">
-                            </div>
-                            <div class="product-body">
-                                <div class="product-tag">Premium</div>
-                                <h4 class="product-name">EM10N</h4>
-                                <p class="product-desc">Earbuds</p>
-                                <div class="product-price">₹2,49</div>
-                            </div>
-                        </div>
-
-                        <!-- Product 2 -->
-                        <div class="carousel-slide product-card">
-                            <div class="product-image">
-                                <img src="images/products/prod-1-1780728957-6a23c47d17722.png" alt="Executive Pen Set">
-                            </div>
-                            <div class="product-body">
-                                <div class="product-tag">Premium</div>
-                                <h4 class="product-name">BH31 AudioX </h4>
-                                <p class="product-desc">Over Ear Headphones</p>
-                                <div class="product-price">₹1,299</div>
-                            </div>
-                        </div>
-
-                        <!-- Product 3 -->
-                        <div class="carousel-slide product-card">
-                            <div class="product-image">
-                                <img src="images/products/prod-1-1777288384-69ef44c0692a4.jpg" alt="Crystal Trophy">
-                            </div>
-                            <div class="product-body">
-                                <div class="product-tag">Best Seller</div>
-                                <h4 class="product-name">SBA15</h4>
-                                <p class="product-desc">Standalone Soundbar</p>
-                                <div class="product-price">₹2,999</div>
-                            </div>
-                        </div>
-
-                        <!-- Product 4 -->
-                        <div class="carousel-slide product-card">
-                            <!-- <div class="product-image" style="background: linear-gradient(135deg, #071624, #0D2B55);">
-                                <span class="product-icon">☕</span>
-                            </div> -->
-                            <div class="product-image">
-                                <img src="images/products/prod-1-1780729281-6a23c5c1342c6.png" alt="Crystal Trophy">
-                            </div>
-                            <div class="product-body">
-                                <div class="product-tag">Popular</div>
-                                <h4 class="product-name">BT03 Live</h4>
-                                <p class="product-desc">Bluetooth Speaker</p>
-                                <div class="product-price">₹349</div>
-                            </div>
-                        </div>
-
-                        <!-- Product 5 -->
-                        <div class="carousel-slide product-card">
-                            <!-- <div class="product-image" style="background: linear-gradient(135deg, #B8962E, #D4AF37);">
-                                <span class="product-icon">🎯</span>
-                            </div> -->
-                            <div class="product-image">
-                                <img src="images/products/prod-1-1780729442-6a23c662b5ac3.png" alt="Crystal Trophy">
-                            </div>
-                            <div class="product-body">
-                                <div class="product-tag">Trending</div>
-                                <h4 class="product-name">SBA10 Kolors</h4>
-                                <p class="product-desc">Standalone Soundbar</p>
-                                <div class="product-price">₹3,499</div>
-                            </div>
-                        </div>
-
-                        <!-- Product 6 -->
-                        <div class="carousel-slide product-card">
-                            <!-- <div class="product-image" style="background: linear-gradient(135deg, #0D2B55, #071624);">
-                                <span class="product-icon">📱</span>
-                            </div> -->
-                            <div class="product-image">
-                                <img src="images/products/prod-1-1777288606-69ef459e41f94.jpg" alt="Crystal Trophy">
-                            </div>
-                            <div class="product-body">
-                                <div class="product-tag">Tech Gift</div>
-                                <h4 class="product-name">Atomik Grab</h4>
-                                <p class="product-desc">Boombox</p>
-                                <div class="product-price">₹4,999</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <button class="carousel-btn next" onclick="scrollCarousel(1)">❯</button>
-                </div>
-
-                <div class="carousel-dots" id="carouselDots">
-                    <span class="dot active" onclick="goToSlide(0)"></span>
-                    <span class="dot" onclick="goToSlide(1)"></span>
-                    <span class="dot" onclick="goToSlide(2)"></span>
-                </div>
             </section>
 
-            <!-- Modern Current Updates Section -->
-            <section class="updates-section">
-                <div class="updates-header">
-                    <div class="section-title">Current Updates <span class="pill">Latest News</span></div>
-                    <a href="events.php" class="see-all">See all articles →</a>
+            <!-- ═══════════ CURRENT UPDATES ═══════════ -->
+            <section class="hp-updates-sec">
+                <div class="hp-updates-header">
+                    <h2>Current Updates</h2>
+                    <a href="blog" class="hp-see-all">See all →</a>
                 </div>
-                <div class="cards-row">
-                    <div class="nav-arrow" onclick="document.querySelectorAll('.blog-cards')[0].scrollLeft -= 300">‹</div>
-                    <div class="blog-cards">
-                        <?php foreach ($blogPosts as $blog): ?>
-                            <a href="blog_details.php?slug=<?= htmlspecialchars($blog['slug']) ?>" style="text-decoration: none; color: inherit;">
-                                <div class="blog-card">
-                                    <div class="product-image">
+                <div class="hp-updates-slider">
+                    <div class="hp-updates-arrow" onclick="var s=document.getElementById('updatesScroll');s.scrollLeft -= s.clientWidth">&#8249;</div>
+                    <div style="overflow:hidden;flex:1;">
+                        <div id="updatesScroll" style="display:flex;gap:16px;overflow-x:auto;scroll-behavior:smooth;scrollbar-width:none;">
+                            <?php if (!empty($blogPosts)): ?>
+                                <?php foreach ($blogPosts as $blog): ?>
+                                <!--<a href="blog_details?BlogDetails=<?= htmlspecialchars($blog['slug']) ?>" class="hp-blog-card" style="min-width:calc(33.333% - 11px);max-width:calc(33.333% - 11px);flex-shrink:0;">-->
+                                <a href="blog_details?BlogDetails=<?= htmlspecialchars($blog['slug']) ?>" class="hp-blog-card">
+                                    <div class="hp-blog-img">
                                         <?php if (!empty($blog['image'])): ?>
-                                            <img src="<?= htmlspecialchars($blog['image']) ?>" alt="<?= htmlspecialchars($blog['title']) ?>">
+                                        <img src="<?= htmlspecialchars($blog['image']) ?>" alt="<?= htmlspecialchars($blog['title']) ?>" loading="lazy">
                                         <?php else: ?>
-                                            <div style="display:flex;align-items:center;justify-content:center;height:100%;background:#f0f0f0;color:#ccc;">
-                                                <svg width="48" height="48" fill="currentColor" viewBox="0 0 16 16">
-                                                    <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" />
-                                                    <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z" />
-                                                </svg>
-                                            </div>
+                                        <div style="display:flex;align-items:center;justify-content:center;height:100%;background:#F4F3F8;color:#9CA3AF;font-size:32px;">📰</div>
                                         <?php endif; ?>
                                     </div>
-                                    <div class="blog-body">
-                                        <div class="blog-tag"><?= htmlspecialchars($blog['category']) ?></div>
-                                        <div class="blog-heading"><?= htmlspecialchars($blog['title']) ?></div>
-                                        <div class="blog-excerpt"><?= htmlspecialchars($blog['excerpt']) ?></div>
+                                    <div class="hp-blog-body">
+                                        <div class="hp-blog-cat"><?= htmlspecialchars($blog['category']) ?></div>
+                                        <div class="hp-blog-title"><?= htmlspecialchars($blog['title']) ?></div>
+                                        <!-- <div class="hp-blog-excerpt"><?= htmlspecialchars($blog['excerpt']) ?></div> -->
                                     </div>
+                                </a>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <div style="padding:40px;color:#9CA3AF;font-size:14px;">No updates available yet.</div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                    <div class="hp-updates-arrow" onclick="var s=document.getElementById('updatesScroll');s.scrollLeft += s.clientWidth">&#8250;</div>
+                </div>
+            </section>
+
+            <!-- ═══════════ LARGE HOME & COMMERCIAL APPLIANCES ═══════════ -->
+            <section class="hp-appliances-sec">
+                <div class="hp-sec-title">Large Home &amp; Commercial Appliances</div>
+                <?php if (!empty($applianceBrands)): ?>
+                <div class="hp-appliances-grid">
+                    <?php foreach ($applianceBrands as $brand): ?>
+                    <a href="brand-products.php?brand=<?= intval($brand['id']) ?>" class="hp-appliance-box" title="<?= htmlspecialchars($brand['brandname']) ?>">
+                        <img src="<?= htmlspecialchars($brand['logoUrl']) ?>" alt="<?= htmlspecialchars($brand['brandname']) ?>">
+                        <!-- <div class="hp-appliance-name"><?= htmlspecialchars($brand['brandname']) ?></div> -->
+                    </a>
+                    <?php endforeach; ?>
+                </div>
+                <?php else: ?>
+                <div style="color:#9CA3AF;font-size:14px;padding:20px 0;">Brands coming soon.</div>
+                <?php endif; ?>
+            </section>
+
+            <!-- ═══════════ PAN INDIA INDIVIDUAL DELIVERY ═══════════ -->
+            <div class="hp-pan-india">
+                <h3>PAN India Individual Delivery Available</h3>
+                <p>Delivering to 500+ cities across India — fast, reliable, and trackable</p>
+            </div>
+
+            <!-- ═══════════ BULK PROMOTIONAL SWAG ═══════════ -->
+            <section class="hp-bulk-sec">
+                <div class="hp-bulk-title">Bulk <span>Promotional Swag</span></div>
+
+                <div class="hp-bulk-steps">
+                    <div class="hp-bulk-step-wrap">
+                        <div class="hp-bulk-step" style="background-image:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 100%), url('images/warehouse.jpg');">
+                            <div class="hp-bulk-step-val">5000+</div>
+                        </div>
+                        <div class="hp-bulk-step-label">Ready to Go Inventory</div>
+                        <div class="hp-bulk-step-sub">Units available in stock, ready for immediate co-branding</div>
+                    </div>
+                    <div class="hp-bulk-arrow">→</div>
+                    <div class="hp-bulk-step-wrap">
+                        <div class="hp-bulk-step" style="background-image:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 100%), url('images/printing.jpg');">
+                            <div class="hp-bulk-step-val">Quick</div>
+                        </div>
+                        <div class="hp-bulk-step-label">Co-Branding Option</div>
+                        <div class="hp-bulk-step-sub">Your logo printed or embossed on any product within hours</div>
+                    </div>
+                    <div class="hp-bulk-arrow">→</div>
+                    <div class="hp-bulk-step-wrap">
+                        <div class="hp-bulk-step" style="background-image:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 100%), url('images/logestic.jpg');">
+                            <div class="hp-bulk-step-val">Express</div>
+                        </div>
+                        <div class="hp-bulk-step-label">Pan India Delivery</div>
+                        <div class="hp-bulk-step-sub">Through India Post, Blue Dart, Delhivery, & Express Bees</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══════════ PRODUCT SELECTION ═══════════ -->
+            <section class="hp-sel-sec">
+                <div class="hp-sel-header">
+                    <h3>Product Selection</h3>
+                    <a href="all-products.php" class="hp-see-all">View All →</a>
+                </div>
+                <?php if (!empty($selProducts)): ?>
+                <div class="hp-sel-track-wrapper">
+                    <div class="hp-sel-track">
+                        <?php
+                        /* Duplicate the set so the auto-scroll loops seamlessly */
+                        foreach (array_merge($selProducts, $selProducts) as $p): ?>
+                        <a href="product-detail.php?id=<?= intval($p['id']) ?>" class="hp-sel-card">
+                            <div class="hp-sel-img-wrap">
+                                <?php if (!empty($p['image'])): ?>
+                                <img src="<?= htmlspecialchars($p['image']) ?>" alt="<?= htmlspecialchars($p['name']) ?>" loading="lazy">
+                                <?php else: ?>
+                                <div style="display:flex;align-items:center;justify-content:center;height:100%;background:#F4F3F8;font-size:32px;color:#9CA3AF;">🎁</div>
+                                <?php endif; ?>
+                                <!--<div class="hp-qty-badge">-->
+                                    <!-- <strong>500+</strong> -->
+                                <!--     <div><?= htmlspecialchars($p['quantity']) ?></div>-->
+                                <!--    Available Qty.-->
+                                <!--</div>-->
+                            </div>
+                            <div class="hp-sel-info">
+                                <div class="hp-prod-brand-logo">
+                                    <img src="<?= htmlspecialchars($p['brandLogoUrl']) ?>" alt="<?= htmlspecialchars($p['category']) ?>" loading="lazy" onerror="this.parentElement.style.display='none'">
                                 </div>
-                            </a>
+                                <div class="hp-sel-name"><?= htmlspecialchars($p['name']) ?></div>
+                                <!-- <div class="hp-sel-cat"><?= htmlspecialchars($p['category']) ?></div> -->
+                                <?php if (!empty($p['offer_price']) && $p['offer_price'] > 0 && $p['offer_price'] < $p['mrp']): ?>
+                                <div class="hp-sel-price-row">
+                                    <div class="hp-sel-price">₹<?= number_format($p['offer_price'], 0) ?>/-</div>
+                                    <!-- <div class="hp-sel-mrp">₹<?= number_format($p['mrp'], 0) ?>/-</div> -->
+                                </div>
+                                <?php elseif ($p['offer_price'] > 0): ?>
+                                <div class="hp-sel-price">₹<?= number_format($p['offer_price'], 0) ?>/-</div>
+                                <?php else: ?>
+                                <div class="hp-sel-price">Price on Request</div>
+                                <?php endif; ?>
+                                <div class="hp-sel-mrp">₹<?= number_format($p['mrp'], 0) ?>/-</div>
+                            </div>
+                        </a>
                         <?php endforeach; ?>
                     </div>
-                    <div class="nav-arrow" onclick="document.querySelectorAll('.blog-cards')[0].scrollLeft += 300">›</div>
                 </div>
+                <?php else: ?>
+                <p style="color:#9CA3AF;font-size:14px;padding:20px 0;">Products coming soon.</p>
+                <?php endif; ?>
             </section>
 
-            <!-- Modern Our Clients Section -->
-            <section class="clients-section">
-                <div class="section-title" style="justify-content:center">Our Clients <span class="pill">Trusted by 200+</span></div>
-                <div class="clients-row">
-                    <div class="client-chip">🏢 Tata Group</div>
-                    <div class="client-chip">💼 Infosys</div>
-                    <div class="client-chip">🏦 HDFC Bank</div>
-                    <div class="client-chip">📱 Reliance</div>
-                    <div class="client-chip">✈️ Air India</div>
-                    <div class="client-chip">🏗️ L&T</div>
-                    <div class="client-chip">💊 Sun Pharma</div>
-                    <div class="client-chip">🔧 Mahindra</div>
-                    <div class="client-chip">+ 192 more</div>
-                </div>
-            </section>
+            <!-- ═══════════ MADE TO ORDER – BUDGET FRIENDLY ═══════════ -->
+            <section class="hp-budget-sec">
+                <div class="hp-budget-title">Made to Order <span>Budget Friendly</span> Gift Options</div>
 
-            <!-- Modern Reviews Section -->
-            <section class="reviews-section">
-                <div class="section-title">What Clients Say <span class="pill">★ 4.9 / 5</span></div>
-                <div class="reviews-grid">
-                    <div class="review-card">
-                        <div class="stars">★★★★★</div>
-                        <div class="review-text">"Super Gifts delivered 5,000 custom gift boxes flawlessly. Every pack was perfectly branded and arrived on time. Exceptional service!"</div>
-                        <div class="reviewer">
-                            <div class="avatar" style="background:linear-gradient(135deg,#FF5E1A,#FFB800)">R</div>
-                            <div>
-                                <div class="reviewer-name">Rahul Mehta</div>
-                                <div class="reviewer-role">Procurement Head, TCS</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="review-card">
-                        <div class="stars">★★★★★</div>
-                        <div class="review-text">"We've been ordering quarterly for 2 years. Product quality is consistently excellent and the after-sales support is second to none."</div>
-                        <div class="reviewer">
-                            <div class="avatar" style="background:linear-gradient(135deg,#00C4A0,#0F1D3A)">P</div>
-                            <div>
-                                <div class="reviewer-name">Priya Sharma</div>
-                                <div class="reviewer-role">HR Manager, Infosys</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="review-card">
-                        <div class="stars">★★★★☆</div>
-                        <div class="review-text">"The bulk order facility and inventory management saved us weeks of effort. Highly recommend for large enterprise gifting needs."</div>
-                        <div class="reviewer">
-                            <div class="avatar" style="background:linear-gradient(135deg,#FFB800,#FF5E1A)">A</div>
-                            <div>
-                                <div class="reviewer-name">Arjun Nair</div>
-                                <div class="reviewer-role">Operations Lead, HDFC</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+                <?php
+                $budgetRanges = [
+                    ['label' => '₹10 – ₹100',    'data' => $budgetLow],
+                    ['label' => '₹100 – ₹500',   'data' => $budgetMid],
+                    ['label' => '₹500 – ₹1000',  'data' => $budgetHigh],
+                    ['label' => '₹1000 & Above', 'data' => $budgetPremium],
+                ];
+                ?>
 
-            <!-- Modern Trust Section -->
-            <section class="trust-section">
-                <div class="trust-card">
-                    <div class="trust-icon" style="background:#FFF0E0">🏆</div>
-                    <h4>500+</h4>
-                    <p>Brand Partners across categories and price ranges</p>
+                <!-- Tabs -->
+                <div class="hp-budget-tabs">
+                    <?php foreach ($budgetRanges as $idx => $range): ?>
+                    <button type="button" class="hp-budget-tab<?= $idx === 0 ? ' active' : '' ?>" onclick="hpBudgetSwitch(this, <?= $idx ?>)">
+                        <?= $range['label'] ?>
+                    </button>
+                    <?php endforeach; ?>
                 </div>
-                <div class="trust-card">
-                    <div class="trust-icon" style="background:#E0FFF8">🚚</div>
-                    <h4>48hr</h4>
-                    <p>Express delivery across 500+ cities in India</p>
-                </div>
-                <div class="trust-card">
-                    <div class="trust-icon" style="background:#FFF8E0">⭐</div>
-                    <h4>10K+</h4>
-                    <p>Successful corporate gift orders delivered</p>
-                </div>
-                <div class="trust-card">
-                    <div class="trust-icon" style="background:#E0EAFF">🔒</div>
-                    <h4>100%</h4>
-                    <p>Secure payments and quality assurance guarantee</p>
-                </div>
-            </section>
 
-            <!-- Modern Contact Section - Professional -->
-            <section class="contact-section-home" id="contact">
-                <div class="container">
-                    <div class="contact-header">
-                        <h2 class="section-title">Get In Touch <span class="pill">Quick Contact</span></h2>
-                        <p class="contact-sub">Ready for corporate gifting? Connect instantly. Multiple offices nationwide.</p>
-                    </div>
-
-                    <div class="contact-content">
-                        <div class="contact-info">
-                            <h4>Contact Information</h4>
-
-                            <div class="info-item">
-                                <div class="info-icon">📍</div>
-                                <div>
-                                    <div class="info-label">Address</div>
-                                    <div class="info-value">Hyderabad, India</div>
+                <!-- Panels -->
+                <?php foreach ($budgetRanges as $idx => $range): ?>
+                <div class="hp-budget-panel<?= $idx === 0 ? ' active' : '' ?>" data-budget-panel="<?= $idx ?>">
+                    <?php $items = $range['data']; if (!empty($items)): ?>
+                    <div class="hp-budget-track-wrapper">
+                        <div class="hp-budget-track">
+                            <?php
+                            /* Duplicate the set so the auto-scroll loops seamlessly */
+                            foreach (array_merge($items, $items) as $item):
+                            ?>
+                            <a href="product-detail.php?id=<?= intval($item['id']) ?>" class="hp-budget-card" title="<?= htmlspecialchars($item['name']) ?>">
+                                <div class="hp-budget-card-img">
+                                    <?php if (!empty($item['image'])): ?>
+                                    <img src="<?= htmlspecialchars($item['image']) ?>" alt="<?= htmlspecialchars($item['name']) ?>" loading="lazy">
+                                    <?php else: ?>
+                                    <span class="hp-budget-card-ph">GIFT</span>
+                                    <?php endif; ?>
                                 </div>
-                            </div>
-
-                            <div class="info-item">
-                                <div class="info-icon">📱</div>
-                                <div>
-                                    <div class="info-label">Phone</div>
-                                    <div class="info-value"><a href="tel:+918097000970" style="color: var(--brand-orange); text-decoration: none; font-weight: 600;">+91 8097 000 970</a></div>
-                                </div>
-                            </div>
-
-                            <div class="info-item">
-                                <div class="info-icon">✉️</div>
-                                <div>
-                                    <div class="info-label">Email</div>
-                                    <div class="info-value"><a href="mailto:info@supergifts.in" style="color: var(--brand-orange); text-decoration: none; font-weight: 600;">info@supergifts.in</a></div>
-                                </div>
-                            </div>
-
-                            <div class="info-item">
-                                <div class="info-icon">🕐</div>
-                                <div>
-                                    <div class="info-label">Business Hours</div>
-                                    <div class="info-value">
-                                        <strong>Monday - Friday:</strong> 9:00 AM - 6:00 PM<br>
-                                        <strong>Saturday:</strong> 10:00 AM - 4:00 PM<br>
-                                        <strong>Sunday:</strong> Closed
+                                <div class="hp-budget-card-body">
+                                    <div class="hp-budget-card-name"><?= htmlspecialchars($item['name']) ?></div>
+                                    <?php if (!empty($item['offer_price']) && $item['offer_price'] > 0 && $item['offer_price'] < $item['mrp']): ?>
+                                    <div class="hp-budget-card-price-row">
+                                        <div class="hp-budget-card-price">₹<?= number_format($item['offer_price'], 0) ?></div>
+                                        <div class="hp-budget-card-mrp">₹<?= number_format($item['mrp'], 0) ?></div>
                                     </div>
+                                    <?php elseif ($item['offer_price'] > 0): ?>
+                                    <div class="hp-budget-card-price">₹<?= number_format($item['offer_price'], 0) ?></div>
+                                    <?php endif; ?>
                                 </div>
-                            </div>
-
-                            <div class="contact-socials">
-                                <a href="https://www.linkedin.com/company/super-gifts" target="_blank" class="social-link">🔗 LinkedIn</a>
-                                <a href="https://www.instagram.com/supergifts/" target="_blank" class="social-link">📸 Instagram</a>
-                                <a href="https://www.facebook.com/supergifts" target="_blank" class="social-link">f Facebook</a>
-                            </div>
+                            </a>
+                            <?php endforeach; ?>
                         </div>
+                    </div>
+                    <?php else: ?>
+                    <p style="text-align:center;color:#9CA3AF;font-size:14px;padding:20px 0;">No products in this range yet.</p>
+                    <?php endif; ?>
+                </div>
+                <?php endforeach; ?>
+            </section>
 
-                        <div class="contact-form-wrapper">
-                            <form class="contact-form" method="POST" action="submit-review.php">
-                                <div class="form-group">
-                                    <label for="name">Your Name</label>
-                                    <input type="text" id="name" name="name" placeholder="John Doe" required>
-                                </div>
+            <!-- ═══════════ LOOKING FOR LONGTERM GIFTING PARTNERS ═══════════ -->
+            <section class="hp-partners-sec">
+                <div class="hp-partners-title">Looking for <span>Long-term Collaboration</span></div>
+                <div class="hp-partners-boxes">
+                    <div class="hp-partner-box hp-box-1">
+                        <div class="hp-partner-content">
+                            New Hiring / On-Boarding Kits
+                        </div>
+                    </div>
 
-                                <div class="form-group">
-                                    <label for="email">Your Email</label>
-                                    <input type="email" id="email" name="email" placeholder="john@example.com" required>
-                                </div>
+                    <div class="hp-partner-box hp-box-2">
+                        <div class="hp-partner-content">
+                            Consumer, Dealer, Distributor &amp; Trade Scheme
+                        </div>
+                    </div>
 
-                                <div class="form-group">
-                                    <label for="company">Company Name</label>
-                                    <input type="text" id="company" name="company" placeholder="Your Company">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="phone">Phone Number</label>
-                                    <input type="tel" id="phone" name="phone" placeholder="+91 XXXXX XXXXX">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="message">Your Message</label>
-                                    <textarea id="message" name="message" placeholder="Tell us about your gifting needs..." rows="5" required></textarea>
-                                </div>
-
-                                <button type="submit" class="btn-primary">Send Message →</button>
-                            </form>
+                    <div class="hp-partner-box hp-box-3">
+                        <div class="hp-partner-content">
+                            Branded Logo Store for Corporate Clients
                         </div>
                     </div>
                 </div>
+                <!-- <a href="contact" class="hp-tieup-btn">TIE UP NOW</a> -->
+                <p class="hp-tieup-tagline">We store the selected product and ship globally on demand!</p>
             </section>
-            <!-- End Modern Contact Section -->
 
+            <!-- ═══════════ AVAILABLE GIFT VOUCHERS ═══════════ -->
+            <section class="hp-vouchers-sec">
+                <div class="hp-sec-title">Available Gift Vouchers</div>
+                <div class="hp-vouchers-track-wrapper">
+                    <div class="hp-vouchers-track">
+                        <?php if (!empty($dbVouchers)): ?>
+                            <?php foreach (array_merge($dbVouchers, $dbVouchers) as $v): ?>
+                            <a href="voucher-detail.php?id=<?= intval($v['id']) ?>" class="hp-voucher-card">
+                                <img src="<?= htmlspecialchars($v['image']) ?>" alt="<?= htmlspecialchars($v['title']) ?>" loading="lazy">
+                            </a>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <?php
+                            $staticVouchers = [
+                                ['icon' => '🛍️', 'label' => 'Shopping Voucher'],
+                                ['icon' => '🍽️', 'label' => 'Dining Voucher'],
+                                ['icon' => '✈️', 'label' => 'Travel Voucher'],
+                                ['icon' => '💆', 'label' => 'Wellness Voucher'],
+                                ['icon' => '🎬', 'label' => 'Entertainment'],
+                                ['icon' => '📱', 'label' => 'Tech Voucher'],
+                                ['icon' => '⚽', 'label' => 'Sports Voucher'],
+                                ['icon' => '🎓', 'label' => 'Education Voucher'],
+                            ];
+                            foreach (array_merge($staticVouchers, $staticVouchers) as $v): ?>
+                            <div class="hp-voucher-card">
+                                <div class="hp-voucher-placeholder">
+                                    <span class="icon"><?= $v['icon'] ?></span>
+                                    <span><?= $v['label'] ?></span>
+                                </div>
+                            </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══════════ WHAT CLIENTS SAY ═══════════ -->
+            <section class="hp-reviews-sec">
+                <div class="hp-sec-title">What Clients & Brand Say</div>
+                <div class="hp-reviews-grid">
+                <?php if (!empty($testimonials)):
+                    foreach ($testimonials as $rev): ?>
+                    <div class="hp-review-card">
+                        <div class="hp-review-stars"><?= starRating($rev['rating']) ?></div>
+                        <div class="hp-review-text">"<?= htmlspecialchars($rev['review_text']) ?>"</div>
+                        <div class="hp-reviewer">
+                            <div class="hp-reviewer-avatar"><?= strtoupper(mb_substr($rev['client_name'],0,1)) ?></div>
+                            <div>
+                                <div class="hp-reviewer-name"><?= htmlspecialchars($rev['client_name']) ?></div>
+                                <div class="hp-reviewer-role"><?= htmlspecialchars($rev['company_name']) ?></div>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endforeach;
+                else: ?>
+                    <div class="hp-review-card">
+                        <div class="hp-review-stars">★★★★★</div>
+                        <div class="hp-review-text">"Super Gifts delivered 5,000 custom gift boxes flawlessly. Every pack was perfectly branded and arrived on time. Exceptional service!"</div>
+                        <div class="hp-reviewer">
+                            <div class="hp-reviewer-avatar">R</div>
+                            <div><div class="hp-reviewer-name">Rahul Mehta</div><div class="hp-reviewer-role">Procurement Head, TCS</div></div>
+                        </div>
+                    </div>
+                    <div class="hp-review-card">
+                        <div class="hp-review-stars">★★★★★</div>
+                        <div class="hp-review-text">"We've been ordering quarterly for 2 years. Product quality is consistently excellent and the after-sales support is second to none."</div>
+                        <div class="hp-reviewer">
+                            <div class="hp-reviewer-avatar" style="background:#0B7A43;">P</div>
+                            <div><div class="hp-reviewer-name">Priya Sharma</div><div class="hp-reviewer-role">HR Manager, Infosys</div></div>
+                        </div>
+                    </div>
+                    <div class="hp-review-card">
+                        <div class="hp-review-stars">★★★★☆</div>
+                        <div class="hp-review-text">"The bulk order facility and inventory management saved us weeks of effort. Highly recommend for large enterprise gifting needs."</div>
+                        <div class="hp-reviewer">
+                            <div class="hp-reviewer-avatar" style="background:#FFD400;color:#241C6B;">A</div>
+                            <div><div class="hp-reviewer-name">Arjun Nair</div><div class="hp-reviewer-role">Operations Lead, HDFC</div></div>
+                        </div>
+                    </div>
+                <?php endif; ?>
+                </div>
+            </section>
         </main>
 
         <?php include('common/footer.php'); ?>
+        <!-- footer.php closes .page div and loads jQuery + all.js -->
 
-        <!-- Dynamic Hero Carousel JavaScript -->
-        <script>
-            // Hero Carousel State
-            let heroState = {
-                current: 0,
-                totalSlides: 3,
-                autoplayInterval: null,
-                autoplayDelay: 5000
-            };
+    <script>
+    /* ── Hero Banner Carousel ──
+       Images stay for 3s. Videos play fully (once) then advance. */
+    (function() {
+        var total       = <?= $totalSlides ?>;
+        var current     = 0;
+        var slides      = document.querySelectorAll('.hp-banner-slide');
+        var dots        = document.querySelectorAll('#hpBannerDots .hp-hero-dot');
+        var advanceTimer = null;
+        var IMAGE_DURATION = 3000;
+        var VIDEO_FALLBACK = 20000; // safety net if a video fails to load/play
 
-            // Change Hero Slide
-            function changeHeroSlide(direction) {
-                heroState.current += direction;
-                if (heroState.current < 0) heroState.current = heroState.totalSlides - 1;
-                if (heroState.current >= heroState.totalSlides) heroState.current = 0;
+        function stopVideo(slide) {
+            var v = slide.querySelector('.hp-banner-bg-video');
+            if (v) { v.onended = null; v.pause(); v.currentTime = 0; }
+        }
 
-                updateHeroSlide();
-                resetAutoplay();
-            }
+        function playVideo(slide) {
+            var v = slide.querySelector('.hp-banner-bg-video');
+            if (!v) return;
+            v.onended = function() { hpBannerNav(1); };
+            v.currentTime = 0;
+            v.play().catch(function() { /* autoplay blocked — fallback timer still advances */ });
+        }
 
-            // Go to specific hero slide
-            function goToHeroSlide(slideIndex) {
-                heroState.current = slideIndex;
-                updateHeroSlide();
-                resetAutoplay();
-            }
-
-            // Update hero slide display
-            function updateHeroSlide() {
-                // Update slide visibility
-                document.querySelectorAll('.hero-slide').forEach((slide, index) => {
-                    if (index === heroState.current) {
-                        slide.classList.add('active');
-                        slide.style.opacity = '1';
-                        slide.style.transform = 'translateX(0)';
-                    } else {
-                        slide.classList.remove('active');
-                        slide.style.opacity = '0';
-                        slide.style.transform = 'translateX(100px)';
-                    }
-                });
-
-                // Update dots
-                document.querySelectorAll('.slider-dots .dot').forEach((dot, index) => {
-                    if (index === heroState.current) {
-                        dot.classList.add('active');
-                    } else {
-                        dot.classList.remove('active');
-                    }
-                });
-            }
-
-            // Start autoplay
-            function startAutoplay() {
-                heroState.autoplayInterval = setInterval(() => {
-                    changeHeroSlide(1);
-                }, heroState.autoplayDelay);
-            }
-
-            // Reset autoplay timer
-            function resetAutoplay() {
-                clearInterval(heroState.autoplayInterval);
-                startAutoplay();
-            }
-
-            // Initialize carousel on page load
-            document.addEventListener('DOMContentLoaded', function() {
-                // Set initial styles
-                document.querySelectorAll('.hero-slide').forEach((slide, index) => {
-                    slide.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
-                    if (index !== 0) {
-                        slide.style.opacity = '0';
-                        slide.style.transform = 'translateX(100px)';
-                    }
-                });
-
-                // Start autoplay
-                startAutoplay();
-
-                // Pause autoplay on hover
-                document.querySelector('.hero-carousel-container').addEventListener('mouseenter', () => {
-                    clearInterval(heroState.autoplayInterval);
-                });
-
-                // Resume autoplay on mouse leave
-                document.querySelector('.hero-carousel-container').addEventListener('mouseleave', () => {
-                    startAutoplay();
-                });
+        function show(idx) {
+            clearTimeout(advanceTimer);
+            slides.forEach(function(s, i) {
+                var isActive = i === idx;
+                s.classList.toggle('active', isActive);
+                if (!isActive) stopVideo(s);
             });
+            dots.forEach(function(d, i) { d.classList.toggle('active', i === idx); });
+            current = idx;
 
-            // Touch support for mobile
-            let touchStartX = 0;
-            let touchEndX = 0;
-
-            document.querySelector('.hero-carousel-container').addEventListener('touchstart', (e) => {
-                touchStartX = e.changedTouches[0].screenX;
-            }, false);
-
-            document.querySelector('.hero-carousel-container').addEventListener('touchend', (e) => {
-                touchEndX = e.changedTouches[0].screenX;
-                if (touchStartX - touchEndX > 50) changeHeroSlide(1); // Swipe left
-                if (touchEndX - touchStartX > 50) changeHeroSlide(-1); // Swipe right
-            }, false);
-        </script>
-
-        <!-- Dynamic Hero Carousel Styles -->
-        <style>
-            .hero-carousel-wrapper {
-                position: relative;
-                width: 100%;
-                background: #1B1B1B;
-                min-height: 600px;
-                overflow: hidden;
+            var activeSlide = slides[idx];
+            if (activeSlide && activeSlide.dataset.type === 'video') {
+                playVideo(activeSlide);
+                advanceTimer = setTimeout(function() { hpBannerNav(1); }, VIDEO_FALLBACK);
+            } else {
+                advanceTimer = setTimeout(function() { hpBannerNav(1); }, IMAGE_DURATION);
             }
+        }
 
-            .hero-carousel-container {
-                position: relative;
-                width: 100%;
-                min-height: 600px;
-                display: flex;
-                align-items: center;
-            }
+        window.hpBannerNav = function(dir) {
+            show((current + dir + total) % total);
+        };
 
-            .hero-slide {
-                position: absolute;
-                width: 100%;
-                height: 100%;
-                display: flex;
-                align-items: stretch;
-                justify-content: stretch;
-                padding: 0;
-                background: none;
-                opacity: 0;
-                transform: translateX(100px);
-                transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-                z-index: 1;
-                overflow: hidden;
-            }
+        window.hpBannerGo = function(idx) {
+            show(idx);
+        };
 
-            .hero-slide svg {
-                width: 100%;
-                height: 100%;
-                min-height: 480px;
-            }
+        show(0);
 
-            .hero-slide.active {
-                opacity: 1;
-                transform: translateX(0);
-                z-index: 2;
-            }
+        /* Swipe support */
+        var touchX = 0;
+        var wrap = document.getElementById('hpBannerWrap');
+        if (wrap) {
+            wrap.addEventListener('touchstart', function(e) { touchX = e.changedTouches[0].screenX; }, {passive:true});
+            wrap.addEventListener('touchend',   function(e) {
+                var dx = e.changedTouches[0].screenX - touchX;
+                if (Math.abs(dx) > 40) hpBannerNav(dx < 0 ? 1 : -1);
+            }, {passive:true});
+        }
+    })();
 
-            .hero-nav-btn {
-                position: absolute;
-                top: 50%;
-                transform: translateY(-50%);
-                z-index: 10;
-                background: rgba(255, 255, 255, 0.2);
-                color: white;
-                border: 2px solid rgba(255, 255, 255, 0.4);
-                width: 50px;
-                height: 50px;
-                border-radius: 50%;
-                cursor: pointer;
-                font-size: 24px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                transition: all 0.3s ease;
-                backdrop-filter: blur(10px);
-            }
+    /* ── Product Carousel (vanilla JS, runs after footer scripts) ── */
+    (function() {
+        var track = document.getElementById('prodTrack');
+        if (!track) return;
 
-            .hero-nav-btn:hover {
-                background: rgba(255, 199, 0, 0.3);
-                border-color: #ffc700;
-                transform: translateY(-50%) scale(1.1);
-            }
+        var cards = Array.from(track.querySelectorAll('.hp-prod-card'));
+        var dots  = Array.from(document.querySelectorAll('#prodDots .hp-carousel-dot'));
+        var page  = 0;
+        var timer;
 
-            .hero-nav-btn.prev {
-                left: 30px;
-            }
+        function perPage() {
+            if (window.innerWidth < 540)  return 1;
+            if (window.innerWidth < 820)  return 2;
+            if (window.innerWidth < 1100) return 3;
+            return 4;
+        }
 
-            .hero-nav-btn.next {
-                right: 30px;
-            }
+        function totalPages() {
+            return Math.max(1, Math.ceil(cards.length / perPage()));
+        }
 
-            .slider-dots {
-                position: absolute;
-                bottom: 30px;
-                left: 50%;
-                transform: translateX(-50%);
-                display: flex;
-                gap: 12px;
-                z-index: 10;
-            }
+        function update() {
+            if (!cards.length) return;
+            var pp    = perPage();
+            var cardW = cards[0].getBoundingClientRect().width + 16;
+            track.style.transform = 'translateX(-' + (page * pp * cardW) + 'px)';
+            dots.forEach(function(d, i) { d.classList.toggle('active', i === page); });
+        }
 
-            .slider-dots .dot {
-                width: 14px;
-                height: 14px;
-                border-radius: 50%;
-                background: rgba(255, 255, 255, 0.4);
-                cursor: pointer;
-                transition: all 0.4s ease;
-                border: 2px solid rgba(255, 255, 255, 0.6);
-            }
+        window.scrollProd = function(dir) {
+            page = (page + dir + totalPages()) % totalPages();
+            update();
+        };
 
-            .slider-dots .dot.active {
-                background: #ffc700;
-                border-color: #ffc700;
-                width: 18px;
-                height: 18px;
-                box-shadow: 0 0 15px rgba(255, 199, 0, 0.5);
-            }
+        window.goToProdPage = function(p) {
+            page = p;
+            update();
+        };
 
-            .slider-dots .dot:hover {
-                background: rgba(255, 255, 255, 0.6);
-                transform: scale(1.2);
-            }
+        update();
+        window.addEventListener('resize', function() {
+            page = Math.min(page, totalPages() - 1);
+            update();
+        });
 
-            @media (max-width: 1024px) {
-                .hero-slide {
-                    min-height: auto;
-                }
+        timer = setInterval(function() { window.scrollProd(1); }, 5000);
+    })();
 
-                .hero-nav-btn {
-                    width: 45px;
-                    height: 45px;
-                    font-size: 20px;
-                }
-
-                .hero-nav-btn.prev {
-                    left: 15px;
-                }
-
-                .hero-nav-btn.next {
-                    right: 15px;
-                }
-            }
-
-            @media (max-width: 768px) {
-                .hero-carousel-wrapper {
-                    min-height: 260px;
-                }
-
-                .hero-slide {
-                    min-height: 260px;
-                }
-
-                .hero-slide svg {
-                    min-height: 260px;
-                }
-
-                .hero-nav-btn {
-                    display: none;
-                }
-            }
-
-            @keyframes slideIn {
-                from {
-                    opacity: 0;
-                    transform: translateX(100px);
-                }
-
-                to {
-                    opacity: 1;
-                    transform: translateX(0);
-                }
-            }
-
-            .hero-slide.active {
-                animation: slideIn 0.8s ease forwards;
-            }
-        </style>
-
+    /* ── Budget Friendly Tabs ── */
+    window.hpBudgetSwitch = function(btn, idx) {
+        document.querySelectorAll('.hp-budget-tab').forEach(function(t) { t.classList.remove('active'); });
+        document.querySelectorAll('.hp-budget-panel').forEach(function(p) {
+            p.classList.toggle('active', p.getAttribute('data-budget-panel') == idx);
+        });
+        btn.classList.add('active');
+    };
+    </script>
 
 </body>
-
 </html>

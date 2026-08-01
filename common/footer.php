@@ -6,19 +6,40 @@
                   <!-- <div class="logo-icon">🎁</div>
           <div class="logo-text" style="color:#fff">Super<span>Gifts</span></div> -->
                   <div class="mb-10">
-                      <img src="images/logo_white.png" alt="SGIPL" style="width: 158px;" />
+                      <img src="images/logo.png" alt="SGIPL" style="width: 158px; margin-bottom: 20px" />
                   </div>
               </div>
-              <p>India's leading corporate gifting platform. Premium quality, custom branding, and seamless logistics — all in one place.</p>
-              <div class="socials">
+              <!-- <p>India's leading corporate gifting platform. Premium quality, custom branding, and seamless logistics — all in one place.</p> -->
+              <!-- <div class="socials">
                   <a href="https://www.linkedin.com/in/supergifts/" rel="noopener nofollow" target="_blank" class="soc-btn">🔗</a>
                   <a href="https://www.facebook.com/people/Super-Gifts-India-Private-Limited/100090976219801/" rel="noopener nofollow" target="_blank" class="soc-btn">📘</a>
                   <a href="https://www.instagram.com/supergifts_official/" rel="noopener nofollow" target="_blank" class="soc-btn">📸</a>
                   <a href="#" rel="noopener nofollow" target="_blank" class="soc-btn">🐦</a>
+              </div> -->
+              <div class="socials">
+                  <a href="https://www.linkedin.com/in/supergifts/" rel="noopener nofollow" target="_blank" class="soc-btn">
+                  <img src="images/linkedin.png" alt="LinkedIn">
+                  </a>
+
+                  <a href="https://www.facebook.com/people/Super-Gifts-India-Private-Limited/100090976219801/" rel="noopener nofollow" target="_blank" class="soc-btn">
+                  <img src="images/facebook.png" alt="Facebook">
+                  </a>
+
+                  <a href="https://www.instagram.com/supergifts_official/" rel="noopener nofollow" target="_blank" class="soc-btn">
+                  <img src="images/instagram.png" alt="Instagram">
+                  </a>
+                  
+                  <a href="https://wa.me/919392685811" rel="noopener nofollow" target="_blank" class="soc-btn">
+                  <img src="images/whatsapp_icon.svg" alt="Instagram">
+                  </a>
+
+                  <a href="#" rel="noopener nofollow" target="_blank" class="soc-btn">
+                  <img src="images/twitter.png" alt="Twitter">
+                  </a>
               </div>
           </div>
           <div class="footer-col">
-              <h5>For Resellers</h5>
+              <h5>Partners</h5>
               <ul>
                   <li><a href="services">Services</a></li>
                   <li><a href="contact">Bulk Inquiry</a></li>
@@ -27,7 +48,7 @@
               </ul>
           </div>
           <div class="footer-col">
-              <h5>For Corporates</h5>
+              <h5>Corporate</h5>
               <ul>
                   <li><a href="services">Branding</a></li>
                   <li><a href="services">Logistics</a></li>
@@ -37,7 +58,6 @@
               </ul>
           </div>
           <div class="footer-col">
-              <h5>Company</h5>
               <ul>
                   <li><a href="about">About Us</a></li>
                   <li><a href="#">Our Team</a></li>
@@ -48,8 +68,8 @@
           </div>
       </div>
       <div class="footer-bottom">
-          <p>© 2025 <span>SuperGifts</span>. All rights reserved.</p>
-          <p>Made with ❤️ in Hyderabad, India</p>
+          <p class="footer-copyright">Copyright © 2026 <span>Super Gifts</span>. All Rights Reserved.</p>
+          <p class="footer-tagline">Your presence is the best gift we could ask for. Welcome to Super Gifts!</p>
       </div>
   </footer>
   <!-- End Modern Footer -->

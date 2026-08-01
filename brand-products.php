@@ -9,6 +9,25 @@ $dbname     = "superehc_sgipl"; // ← Change to your DB name
 $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) die("Connection failed: " . $conn->connect_error);
 
+function resolveBrandLogoPath($imageno) {
+    $imageNo = intval($imageno);
+    if ($imageNo <= 0) {
+        return 'images/brandlogo/image1.jpg';
+    }
+
+    $baseDir = __DIR__ . '/images/brandlogo/';
+    $extensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp'];
+
+    foreach ($extensions as $ext) {
+        $filePath = $baseDir . 'image' . $imageNo . $ext;
+        if (file_exists($filePath)) {
+            return 'images/brandlogo/image' . $imageNo . $ext;
+        }
+    }
+
+    return 'images/brandlogo/image' . $imageNo . '.jpg';
+}
+
 // Get brand slug from URL: brand-products.php?brand=blaupunkt
 $brand = trim($_GET['brand'] ?? '');
 if (!$brand) {
@@ -29,18 +48,29 @@ if (!$brand) {
     exit();
 }
 
-// Construct the brand logo path from imageno field
-// imageno contains just a number, so the full filename is image{imageno}.jpg
-if (!empty($brand['imageno'])) {
-    $brand['imageno'] = 'images/brandlogo/image' . intval($brand['imageno']) . '.jpg';
-} else {
-    // Fallback to first available logo if imageno is empty
-    $brand['imageno'] = 'images/brandlogo/image1.jpg';
+$brand['imageno'] = resolveBrandLogoPath($brand['imageno'] ?? null);
+
+function resolveBannerUrl($path) {
+    if (empty($path)) return '';
+    return ($_SERVER['SERVER_NAME']==='localhost') ? '/supergifts/'.$path : '/'.$path;
 }
+$brandBanners = array_values(array_filter([
+    resolveBannerUrl($brand['brand_banner']),
+    resolveBannerUrl($brand['brand_banner_2']),
+    resolveBannerUrl($brand['brand_banner_3']),
+]));
+$bannerCount = count($brandBanners);
 
 // Load products for this brand
 $products = $conn->query("SELECT * FROM products WHERE brand_id = {$brand['id']} AND status = 1 ORDER BY sequence ASC, id ASC");
 $productCount = $products->num_rows;
+
+// Distinct series for this brand, for the Series filter dropdown
+$seriesList = [];
+$seriesResult = $conn->query("SELECT DISTINCT series FROM products WHERE brand_id = {$brand['id']} AND status = 1 AND series != '' ORDER BY series ASC");
+while ($s = $seriesResult->fetch_assoc()) {
+    $seriesList[] = $s['series'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -74,10 +104,11 @@ $productCount = $products->num_rows;
         }
 
         .product-img-wrap img {
-            max-height: 180px;
-            max-width: 100%;
+            /* max-height: 180px; */
+            max-height: 100%;
+            max-width: 100%; 
             object-fit: contain;
-            padding: 10px;
+            /* padding: 10px; */
         }
 
         .product-info {
@@ -100,6 +131,25 @@ $productCount = $products->num_rows;
             font-size: 15px;
             font-weight: 700;
             color: #059669;
+        }
+
+        .product-price-row {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        .product-offer-price {
+            font-size: 16px;
+            font-weight: 800;
+            color: #059669;
+        }
+
+        .product-mrp-strike {
+            font-size: 12px;
+            font-weight: 500;
+            color: #999;
+            text-decoration: line-through;
         }
 
         .brand-logo-hero {
@@ -143,6 +193,98 @@ $productCount = $products->num_rows;
             padding: 60px 20px;
             color: #888;
         }
+
+        /* Brand banner carousel */
+        .brand-hero-carousel {
+            position: relative;
+            overflow: hidden;
+            background: #0d2b55;
+            aspect-ratio: 2.4 / 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .brand-hero-carousel.no-banner {
+            aspect-ratio: auto;
+            min-height: 0;
+            background: none;
+            overflow: visible;
+        }
+
+        .brand-hero-slides {
+            position: absolute;
+            inset: 0;
+        }
+
+        .brand-hero-slide {
+            position: absolute;
+            inset: 0;
+            display: none;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .brand-hero-slide.active {
+            display: block;
+        }
+
+        .brand-hero-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            border: 1.5px solid rgba(255, 255, 255, 0.3);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            backdrop-filter: blur(6px);
+            line-height: 1;
+        }
+
+        .brand-hero-arrow:hover {
+            background: rgba(212, 175, 55, 0.35);
+            border-color: #d4af37;
+        }
+
+        .brand-hero-arrow.prev { left: 20px; }
+        .brand-hero-arrow.next { right: 20px; }
+
+        @media (max-width: 600px) {
+            .brand-hero-arrow { display: none; }
+        }
+
+        .brand-hero-dots {
+            position: absolute;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .brand-hero-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .brand-hero-dot.active {
+            background: #d4af37;
+            width: 20px;
+            border-radius: 4px;
+        }
     </style>
 </head>
 
@@ -153,42 +295,77 @@ $productCount = $products->num_rows;
     </div>
 
     <div class="page" id="top">
-        <?php include('common/nav.php'); ?>
-
+         <?php include('common/brandnav.php'); ?>
         <main id="main">
 
-            <!-- Brand Header -->
-            <section class="page-section bg-gray-light-1 bg-light-alpha-90 parallax-5" style="background-image: url(images/full-width-images/section-bg-1.jpg)">
+            <!-- Brand Header / Banner Carousel -->
+            <section class="brand-hero-carousel<?= $bannerCount ? ' light-content' : ' no-banner' ?>" id="brandHeroCarousel">
+                <?php if ($bannerCount): ?>
+                    <div class="brand-hero-slides">
+                        <?php foreach ($brandBanners as $i => $url): ?>
+                        <div class="brand-hero-slide<?= $i === 0 ? ' active' : '' ?>"
+                             style="background-image: url('<?= htmlspecialchars($url) ?>');"
+                             data-slide="<?= $i ?>"></div>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php if ($bannerCount > 1): ?>
+                        <button class="brand-hero-arrow prev" onclick="brandHeroNav(-1)" aria-label="Previous">&#8249;</button>
+                        <button class="brand-hero-arrow next" onclick="brandHeroNav(1)" aria-label="Next">&#8250;</button>
+                        <div class="brand-hero-dots">
+                            <?php foreach ($brandBanners as $i => $url): ?>
+                            <div class="brand-hero-dot<?= $i === 0 ? ' active' : '' ?>" onclick="brandHeroGo(<?= $i ?>)"></div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                <?php endif; ?>
                 <div class="container position-relative pt-30 pt-sm-50 pb-10">
                     <div class="text-center">
 
                         <!-- Brand Logo -->
-                        <div class="mb-20">
+                        <!-- <div class="mb-20">
                             <div class="brand-logo-hero d-inline-flex">
-                                <img src="<?= $brand['imageno'] ?>" alt="<?= htmlspecialchars($brand['brandname']) ?>" style="max-height: 100px; max-width: 250px; object-fit: contain;">
+                                <img src="<?= htmlspecialchars($brand['imageno']) ?>" alt="<?= htmlspecialchars($brand['brandname']) ?>" style="max-height: 100px; max-width: 250px; object-fit: contain;">
                             </div>
-                        </div>
+                        </div> -->
 
-                        <!-- Brand Name -->
-                        <h1 class="hs-title-1 mb-10">
-                            <span class="wow charsAnimIn" data-splitting="chars"><?= htmlspecialchars($brand['brandname']) ?></span>
-                        </h1>
-
-                        <!-- Brand Type Badge -->
-                        <div class="mb-20">
-                            <?php if ($brand['flag'] == 1): ?>
-                                <span style="background:#dbeafe;color:#1d4ed8;font-size:13px;padding:5px 16px;border-radius:20px;font-weight:600;">⭐ Authorised Brand Partner</span>
-                            <?php else: ?>
-                                <span style="background:#fef9c3;color:#854d0e;font-size:13px;padding:5px 16px;border-radius:20px;font-weight:600;">🤝 We Also Deal</span>
-                            <?php endif; ?>
-                        </div>
-
-                        <p class="section-descr mb-0 wow fadeIn" data-wow-delay="0.2s">
+                        <!-- <p class="section-descr mb-0 wow fadeIn" data-wow-delay="0.2s">
                             <?= $productCount ?> Product<?= $productCount != 1 ? 's' : '' ?> Available
-                        </p>
+                        </p> -->
                     </div>
                 </div>
             </section>
+
+            <?php if ($bannerCount > 1): ?>
+            <script>
+            (function() {
+                var slides = document.querySelectorAll('#brandHeroCarousel .brand-hero-slide');
+                var dots   = document.querySelectorAll('#brandHeroCarousel .brand-hero-dot');
+                var current = 0;
+                var timer;
+
+                function show(idx) {
+                    current = (idx + slides.length) % slides.length;
+                    slides.forEach(function(s, i) { s.classList.toggle('active', i === current); });
+                    dots.forEach(function(d, i) { d.classList.toggle('active', i === current); });
+                }
+
+                window.brandHeroNav = function(dir) {
+                    show(current + dir);
+                    resetTimer();
+                };
+                window.brandHeroGo = function(idx) {
+                    show(idx);
+                    resetTimer();
+                };
+
+                function resetTimer() {
+                    clearInterval(timer);
+                    timer = setInterval(function() { show(current + 1); }, 4000);
+                }
+                resetTimer();
+            })();
+            </script>
+            <?php endif; ?>
 
             <!-- Products + Catalog Button -->
             <section class="page-section">
@@ -214,7 +391,7 @@ $productCount = $products->num_rows;
                     <?php if ($productCount > 0): ?>
                         <div class="row g-4">
                             <?php while ($product = $products->fetch_assoc()): ?>
-                                <div class="col-lg-3 col-md-4 col-sm-6">
+                                <div class="col-lg-3 col-md-4 col-sm-6 product-item" data-series="<?= htmlspecialchars($product['series'] ?? '') ?>" data-new-launch="<?= (int)($product['new_lunch'] ?? 0) ?>" data-name="<?= htmlspecialchars($product['name']) ?>">
                                     <a href="product-detail.php?id=<?= $product['id'] ?>" style="text-decoration:none;color:inherit;display:block;">
                                         <div class="product-card">
                                             <div class="product-img-wrap">
@@ -232,7 +409,12 @@ $productCount = $products->num_rows;
                                             </div>
                                             <div class="product-info">
                                                 <div class="product-name"><?= htmlspecialchars($product['name']) ?></div>
-                                                <?php if ($product['mrp'] > 0): ?>
+                                                <?php if (!empty($product['offer_price']) && $product['offer_price'] > 0 && $product['offer_price'] < $product['mrp']): ?>
+                                                    <div class="product-price-row">
+                                                        <div class="product-offer-price">₹<?= number_format($product['offer_price'], 2) ?></div>
+                                                        <div class="product-mrp-strike">₹<?= number_format($product['mrp'], 2) ?></div>
+                                                    </div>
+                                                <?php elseif ($product['mrp'] > 0): ?>
                                                     <div class="product-mrp">MRP: ₹<?= number_format($product['mrp'], 2) ?></div>
                                                 <?php endif; ?>
                                             </div>
@@ -240,6 +422,13 @@ $productCount = $products->num_rows;
                                     </a>
                                 </div>
                             <?php endwhile; ?>
+                        </div>
+                        <div class="no-products" id="noFilterResults" style="display:none;">
+                            <svg width="64" height="64" fill="#ddd" viewBox="0 0 16 16">
+                                <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4z" />
+                            </svg>
+                            <h5 class="mt-3" style="color:#aaa;">No products match this filter</h5>
+                            <p style="color:#bbb;font-size:14px;">Try a different series or clear the filter.</p>
                         </div>
 
                     <?php else: ?>

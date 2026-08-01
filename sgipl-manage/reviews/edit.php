@@ -24,16 +24,18 @@ if (!$review) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $status = $_POST['status'] ?? '';
+    $isHidden = isset($_POST['is_hidden']) ? 1 : 0;
     
     if (!in_array($status, ['approved', 'pending', 'rejected'])) {
         $error = "Invalid status.";
     } else {
-        $stmt = $conn->prepare("UPDATE reviews SET status = ?, updated_at = NOW() WHERE id = ?");
-        $stmt->bind_param('si', $status, $id);
+        $stmt = $conn->prepare("UPDATE reviews SET status = ?, is_hidden = ?, updated_at = NOW() WHERE id = ?");
+        $stmt->bind_param('sii', $status, $isHidden, $id);
         
         if ($stmt->execute()) {
-            $message = "Review status updated successfully!";
+            $message = "Review updated successfully!";
             $review['status'] = $status;
+            $review['is_hidden'] = $isHidden;
         } else {
             $error = "Error updating review: " . $stmt->error;
         }
@@ -115,7 +117,12 @@ require_once '../includes/layout_top.php';
                             <option value="approved" <?= $review['status'] === 'approved' ? 'selected' : '' ?>>Approved</option>
                             <option value="rejected" <?= $review['status'] === 'rejected' ? 'selected' : '' ?>>Rejected</option>
                         </select>
-                        <small class="text-muted">Only "Approved" reviews will be displayed on the website</small>
+                        <small class="text-muted">Only approved and visible reviews will be shown on the website.</small>
+                    </div>
+
+                    <div class="mb-4 form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" id="is_hidden" name="is_hidden" value="1" <?= !empty($review['is_hidden']) ? 'checked' : '' ?>>
+                        <label class="form-check-label fw-semibold" for="is_hidden">Hide this review from the public website</label>
                     </div>
 
                     <div>

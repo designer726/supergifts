@@ -19,12 +19,21 @@ $uploadDir = ($_SERVER['SERVER_NAME'] === 'localhost')
     ? $_SERVER['DOCUMENT_ROOT'] . '/supergifts/images/brandlogo/'
     : $_SERVER['DOCUMENT_ROOT'] . '/images/brandlogo/';
 
+$bannerUploadDir = ($_SERVER['SERVER_NAME'] === 'localhost')
+    ? $_SERVER['DOCUMENT_ROOT'] . '/supergifts/images/brandbanner/'
+    : $_SERVER['DOCUMENT_ROOT'] . '/images/brandbanner/';
+if (!is_dir($bannerUploadDir)) mkdir($bannerUploadDir, 0755, true);
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $brandname = trim($_POST['brandname'] ?? '');
-    $links     = trim($_POST['links'] ?? '');
-    $flag      = intval($_POST['flag'] ?? 1);
-    $seqence   = intval($_POST['seqence'] ?? 0);
-    $imageno   = $brand['imageno']; // Keep old imageno by default
+    $brandname      = trim($_POST['brandname'] ?? '');
+    $links          = trim($_POST['links'] ?? '');
+    $website        = trim($_POST['website'] ?? '');
+    $flag           = intval($_POST['flag'] ?? 1);
+    $seqence        = intval($_POST['seqence'] ?? 0);
+    $imageno        = $brand['imageno']; // Keep old imageno by default
+    $brand_banner   = $brand['brand_banner'];   // Keep old banners by default
+    $brand_banner_2 = $brand['brand_banner_2'];
+    $brand_banner_3 = $brand['brand_banner_3'];
 
     if (!$brandname) $errors[] = "Brand name is required.";
 
@@ -48,12 +57,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    // Handle new banner uploads (optional, up to 3)
+    function handleBannerUpload($slot, $fieldName, $dbCol, $currentVal, $brand, $bannerUploadDir, &$errors) {
+        if (!empty($_FILES[$fieldName]['name'])) {
+            $allowed = ['jpg','jpeg','png','webp'];
+            $ext = strtolower(pathinfo($_FILES[$fieldName]['name'], PATHINFO_EXTENSION));
+            if (!in_array($ext, $allowed)) {
+                $errors[] = "Banner {$slot}: only JPG, PNG, WEBP allowed.";
+                return $currentVal;
+            }
+            if ($_FILES[$fieldName]['size'] > 4 * 1024 * 1024) {
+                $errors[] = "Banner {$slot} must be under 4MB.";
+                return $currentVal;
+            }
+            $bannerFilename = 'banner-' . $brand['imageno'] . '-' . $slot . '-' . time() . '-' . uniqid() . '.' . $ext;
+            if (move_uploaded_file($_FILES[$fieldName]['tmp_name'], $bannerUploadDir . $bannerFilename)) {
+                if ($brand[$dbCol]) {
+                    $oldBanner = ($_SERVER['SERVER_NAME']==='localhost')
+                        ? $_SERVER['DOCUMENT_ROOT'].'/supergifts/'.$brand[$dbCol]
+                        : $_SERVER['DOCUMENT_ROOT'].'/'.$brand[$dbCol];
+                    if (file_exists($oldBanner)) @unlink($oldBanner);
+                }
+                return 'images/brandbanner/' . $bannerFilename;
+            }
+            $errors[] = "Failed to upload banner {$slot}. Check folder permissions.";
+            return $currentVal;
+        }
+        if (isset($_POST['remove_banner' . $slot])) {
+            if ($brand[$dbCol]) {
+                $oldBanner = ($_SERVER['SERVER_NAME']==='localhost')
+                    ? $_SERVER['DOCUMENT_ROOT'].'/supergifts/'.$brand[$dbCol]
+                    : $_SERVER['DOCUMENT_ROOT'].'/'.$brand[$dbCol];
+                if (file_exists($oldBanner)) @unlink($oldBanner);
+            }
+            return '';
+        }
+        return $currentVal;
+    }
+
     if (!$errors) {
-        $stmt = $conn->prepare("UPDATE brandlogo SET brandname=?, links=?, seqence=?, flag=? WHERE id=?");
-        $stmt->bind_param("ssiii", $brandname, $links, $seqence, $flag, $id);
+        $brand_banner   = handleBannerUpload(1, 'banner1', 'brand_banner',   $brand_banner,   $brand, $bannerUploadDir, $errors);
+        $brand_banner_2 = handleBannerUpload(2, 'banner2', 'brand_banner_2', $brand_banner_2, $brand, $bannerUploadDir, $errors);
+        $brand_banner_3 = handleBannerUpload(3, 'banner3', 'brand_banner_3', $brand_banner_3, $brand, $bannerUploadDir, $errors);
+    }
+
+    if (!$errors) {
+        $stmt = $conn->prepare("UPDATE brandlogo SET brandname=?, links=?, website=?, brand_banner=?, brand_banner_2=?, brand_banner_3=?, seqence=?, flag=? WHERE id=?");
+        $stmt->bind_param("ssssssiii", $brandname, $links, $website, $brand_banner, $brand_banner_2, $brand_banner_3, $seqence, $flag, $id);
         if ($stmt->execute()) {
             $success = "Brand updated successfully!";
-            $brand = array_merge($brand, compact('brandname','links','seqence','flag'));
+            $brand = array_merge($brand, compact('brandname','links','website','brand_banner','brand_banner_2','brand_banner_3','seqence','flag'));
         } else {
             $errors[] = "DB error: " . $conn->error;
         }
@@ -62,6 +115,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $logoUrl = ($_SERVER['SERVER_NAME']==='localhost' ? '/supergifts/' : '/') . 'images/brandlogo/image' . $brand['imageno'] . '.jpg';
+function bannerUrlFor($path) {
+    if (!$path) return '';
+    return ($_SERVER['SERVER_NAME']==='localhost') ? '/supergifts/'.$path : '/'.$path;
+}
+$bannerUrls = [1 => bannerUrlFor($brand['brand_banner']), 2 => bannerUrlFor($brand['brand_banner_2']), 3 => bannerUrlFor($brand['brand_banner_3'])];
 
 require_once '../includes/layout_top.php';
 ?>
@@ -87,11 +145,17 @@ require_once '../includes/layout_top.php';
                     <input type="text" name="brandname" class="form-control"
                            value="<?= htmlspecialchars($brand['brandname']) ?>" required>
                 </div>
-                <div class="mb-0">
+                <div class="mb-3">
                     <label class="form-label">Catalog URL</label>
                     <input type="text" name="links" class="form-control"
                            value="<?= htmlspecialchars($brand['links']) ?>"
                            placeholder="https://drive.google.com/...">
+                </div>
+                <div class="mb-0">
+                    <label class="form-label">Brand Website <span class="text-muted small fw-normal">(used by "About Brand" link)</span></label>
+                    <input type="text" name="website" class="form-control"
+                           value="<?= htmlspecialchars($brand['website'] ?? '') ?>"
+                           placeholder="https://www.brandwebsite.com">
                 </div>
             </div>
         </div>
@@ -123,6 +187,29 @@ require_once '../includes/layout_top.php';
                        onchange="previewImage(this)">
                 <div class="text-muted small mt-1">Leave empty to keep current logo.</div>
             </div>
+
+            <div class="form-card mt-4">
+                <h6 class="fw-bold mb-3">Brand Banners <span class="text-muted small fw-normal">(carousel on brand product page)</span></h6>
+                <?php for ($i = 1; $i <= 3; $i++): $bUrl = $bannerUrls[$i]; ?>
+                <div class="mb-3<?= $i === 3 ? ' mb-0' : '' ?>">
+                    <label class="form-label small fw-semibold">Banner <?= $i ?><?= $i === 1 ? '' : ' (optional)' ?></label>
+                    <?php if ($bUrl): ?>
+                        <img id="banner<?= $i ?>-img-preview" src="<?= htmlspecialchars($bUrl) ?>"
+                             style="max-height:90px;max-width:100%;object-fit:contain;border:1px solid #eee;border-radius:6px;padding:4px;background:#fff;margin-bottom:8px;display:block;"
+                             onerror="this.style.display='none'">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" name="remove_banner<?= $i ?>" id="remove_banner<?= $i ?>">
+                            <label class="form-check-label small text-danger" for="remove_banner<?= $i ?>">Remove this banner</label>
+                        </div>
+                    <?php else: ?>
+                        <img id="banner<?= $i ?>-img-preview" src="" style="max-height:90px;display:none;margin-bottom:8px;">
+                    <?php endif; ?>
+                    <input type="file" name="banner<?= $i ?>" class="form-control" accept="image/jpeg,image/png,image/webp"
+                           onchange="previewBanner(this, <?= $i ?>)">
+                </div>
+                <?php endfor; ?>
+                <div class="text-muted small mt-2">Max 4MB each. Leave all empty/removed to hide the banner carousel on this brand's page.</div>
+            </div>
         </div>
     </div>
 
@@ -141,6 +228,18 @@ function previewImage(input) {
         const reader = new FileReader();
         reader.onload = e => {
             const img = document.getElementById('img-preview');
+            img.src = e.target.result;
+            img.style.display = 'block';
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function previewBanner(input, idx) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => {
+            const img = document.getElementById('banner' + idx + '-img-preview');
             img.src = e.target.result;
             img.style.display = 'block';
         };

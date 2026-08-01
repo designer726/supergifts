@@ -53,10 +53,13 @@ $isDash     = strpos($currentPath, 'dashboard.php') !== false;
 $inBlogs    = strpos($currentPath, '/blogs/') !== false;
 $inBrands   = strpos($currentPath, '/brands/') !== false;
 $inProducts = strpos($currentPath, '/products/') !== false;
+$inVouchers = strpos($currentPath, '/vouchers/') !== false;
+$inReviews  = strpos($currentPath, '/reviews/') !== false;
 
 // Base URL — works on both localhost and live
 $isLocal = ($_SERVER['SERVER_NAME'] === 'localhost');
 $base = $isLocal ? '/supergifts/sgipl-manage/' : '/sgipl-manage/';
+$inBanners = strpos($currentPath, '/banners/') !== false;
 ?>
 <div class="sidebar">
     <div class="sidebar-logo">
@@ -67,6 +70,17 @@ $base = $isLocal ? '/supergifts/sgipl-manage/' : '/sgipl-manage/';
         <div class="nav-section">Main</div>
         <a href="<?= $base ?>dashboard.php" class="nav-link <?= $isDash?'active':'' ?>">
             <i class="bi bi-speedometer2"></i> Dashboard
+        </a>
+
+        <div class="nav-section">Homepage</div>
+        <a href="<?= $base ?>banners/index.php" class="nav-link <?= $inBanners?'active':'' ?>">
+            <i class="bi bi-images"></i> Banner Slides
+        </a>
+        <a href="<?= $base ?>vouchers/index.php" class="nav-link <?= $inVouchers?'active':'' ?>">
+            <i class="bi bi-gift"></i> Gift Vouchers
+        </a>
+        <a href="<?= $base ?>reviews/index.php" class="nav-link <?= $inReviews?'active':'' ?>">
+            <i class="bi bi-chat-square-quote"></i> Reviews
         </a>
 
         <div class="nav-section">Blog</div>

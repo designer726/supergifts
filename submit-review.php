@@ -39,8 +39,8 @@ if (!empty($errors)) {
 
 // Insert into database
 $stmt = $conn->prepare("
-    INSERT INTO reviews (client_name, company_name, email, rating, review_text, status, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, 'pending', NOW(), NOW())
+    INSERT INTO reviews (client_name, company_name, email, rating, review_text, status, is_hidden, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, 'pending', 0, NOW(), NOW())
 ");
 
 if (!$stmt) {
@@ -54,7 +54,7 @@ if ($stmt->execute()) {
     // Optionally send email to admin
     // You can add email notification here
     
-    echo json_encode(['success' => true, 'message' => 'Review submitted successfully']);
+    echo json_encode(['success' => true, 'message' => 'Review submitted successfully and is waiting for admin approval.']);
 } else {
     echo json_encode(['success' => false, 'message' => 'Error submitting review: ' . $stmt->error]);
 }
