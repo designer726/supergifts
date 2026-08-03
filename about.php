@@ -1,4 +1,9 @@
-<?php $pagename = basename($_SERVER['PHP_SELF']); ?>
+<?php
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+$pagename = basename($_SERVER['PHP_SELF']);
+?>
 <!DOCTYPE html>
 
 <html lang="en">
@@ -24,23 +29,281 @@
            <main id="main">
             
             <!-- Modern Hero Section -->
-            <section class="hero" id="about">
-                <div class="hero-content">
-                    <div class="hero-badge">✦ About SGIPL</div>
-                    <h1>Relentlessly at <em>your service</em><br>Unceasingly</h1>
-                    <p>Welcome to Super Gifts (india) Private Limited (SGIPL), your trusted partner in delivering unparalleled gifting experiences since 2011.</p>
-                    <div class="hero-btns">
-                        <button class="btn-primary" onclick="window.location.href='contact.php'">Get in Touch →</button>
-                        <button class="btn-outline" onclick="window.location.href='services.php'">Explore Services</button>
+            <?php
+            require_once 'sgipl-manage/includes/db.php';
+            $aboutBanners = [];
+            $res = $conn->query("SELECT slot, title, subtitle, btn_text, btn_link, file_path, file_type FROM banners WHERE slot BETWEEN 6 AND 11 AND status=1 ORDER BY slot ASC");
+            while ($row = $res->fetch_assoc()) {
+                if (!empty($row['file_path'])) {
+                    $aboutBanners[] = $row;
+                }
+            }
+            ?>
+
+            <?php if (!empty($aboutBanners)): ?>
+            <section class="about-banner-hero">
+                <div class="about-banner-container">
+                    <div class="about-banner-slider fit-cover" id="aboutBannerSlider">
+                        <?php foreach (array_values($aboutBanners) as $slideIndex => $banner): ?>
+                            <div class="banner-slide<?= $slideIndex === 0 ? ' active' : '' ?>" data-slide="<?= $slideIndex ?>">
+                                <?php if (!empty($banner['file_path']) && $banner['file_type'] === 'video'): ?>
+                                    <video src="<?= htmlspecialchars($banner['file_path']) ?>" muted playsinline autoplay loop class="banner-media"></video>
+                                <?php elseif (!empty($banner['file_path'])): ?>
+                                    <img src="<?= htmlspecialchars($banner['file_path']) ?>" alt="About Banner Slot <?= $banner['slot'] ?>" class="banner-media" />
+                                <?php else: ?>
+                                    <div class="banner-fallback"></div>
+                                <?php endif; ?>
+                                <!-- <div class="banner-overlay">
+                                    <div>
+                                        <h3><?= htmlspecialchars($banner['title'] ?: 'Corporate Gifting') ?></h3>
+                                        <p><?= htmlspecialchars($banner['subtitle'] ?: 'Tailored corporate gifting solutions with custom branding.') ?></p>
+                                    </div>
+                                    <?php if (!empty($banner['btn_link'])): ?>
+                                        <a href="<?= htmlspecialchars($banner['btn_link']) ?>" class="banner-button"><?= htmlspecialchars($banner['btn_text'] ?: 'Learn More') ?></a>
+                                    <?php endif; ?>
+                                </div> -->
+                            </div>
+                        <?php endforeach; ?>
                     </div>
-                </div>
-                <div class="hero-right">
-                    <div class="stat-card"><div class="num">30+</div><div class="lbl">Years of Experience</div></div>
-                    <div class="stat-card"><div class="num">1000+</div><div class="lbl">Companies Served</div></div>
-                    <div class="stat-card"><div class="num">3</div><div class="lbl">Pan-India Offices</div></div>
+
+                    <div class="banner-controls" style="margin-top:12px; text-align:center;">
+                        <button type="button" class="banner-nav prev" onclick="navigateBannerSlider('aboutBannerSlider', -1)">❮</button>
+                        <div class="slider-dots" id="aboutBannerDots"></div>
+                        <button type="button" class="banner-nav next" onclick="navigateBannerSlider('aboutBannerSlider', 1)">❯</button>
+                    </div>
+
+                    <!-- <?php if (!empty($_SESSION['admin_logged_in'])): ?>
+                        <div style="margin-top:10px; text-align:center;">
+                            <a href="sgipl-manage/banners/index.php" class="btn-primary" style="padding:6px 10px;font-size:13px;">Edit About Banners</a>
+                            <div style="display:inline-block;margin-left:8px;">
+                                <button id="fitCover" class="btn-outline" style="padding:6px 8px;font-size:13px;">Cover</button>
+                                <button id="fitContain" class="btn-outline" style="padding:6px 8px;font-size:13px;">Contain</button>
+                            </div>
+                        </div>
+                    <?php endif; ?> -->
                 </div>
             </section>
+            <?php endif; ?>
             <!-- End Modern Hero Section -->
+
+            <style>
+            .about-banner-hero {
+                padding: 0;
+                min-height: 520px;
+                position: relative;
+                overflow: hidden;
+            }
+            .about-banner-container {
+                width: 100%;
+            }
+            .about-banner-slider,
+            .page-banner-slider {
+                position: relative;
+                width: 100%;
+                min-height: 520px;
+                border-radius: 0;
+                overflow: hidden;
+                background: #121826;
+                margin-bottom: 0;
+            }
+            .banner-slide {
+                position: absolute;
+                inset: 0;
+                opacity: 0;
+                transition: opacity .45s ease, transform .45s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 520px;
+            }
+            .banner-slide.active {
+                opacity: 1;
+                transform: translateX(0);
+                z-index: 1;
+            }
+            .banner-media {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+            }
+            .banner-placeholder {
+                color: #e2e8f0;
+                font-weight: 700;
+                padding: 16px;
+                text-align: center;
+                width: 100%;
+            }
+             .banner-overlay {
+                position: absolute;
+                bottom: 24px;
+                left: 24px;
+                right: 24px;
+                background: rgba(12, 17, 36, 0.75);
+                border-radius: 14px;
+                padding: 18px 20px;
+                color: #fff;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 16px;
+                flex-wrap: wrap;
+                max-width: calc(100% - 48px);
+            } 
+                 .banner-overlay h3 {
+                margin: 0 0 6px;
+                font-size: 24px;
+            }
+            .banner-overlay p {
+                margin: 0;
+                font-size: 15px;
+                color: #d1d5db;
+            } 
+                 .banner-button {
+                display: inline-block;
+                background: #d4af37;
+                color: #111;
+                padding: 10px 18px;
+                border-radius: 999px;
+                text-decoration: none;
+                text-decoration: none;
+                font-weight: 700;
+                transition: transform .2s ease;
+            }
+            .banner-button:hover {
+                transform: translateY(-1px);
+            } 
+            .banner-controls {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 12px;
+                margin-top: 16px;
+            }
+            .banner-nav {
+                border: 0;
+                background: rgba(0,0,0,0.55);
+                color: #fff;
+                width: 38px;
+                height: 38px;
+                border-radius: 50%;
+                cursor: pointer;
+                font-size: 18px;
+            }
+            .slider-dots {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            .slider-dots .dot {
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                background: rgba(255,255,255,0.35);
+                cursor: pointer;
+            }
+            .slider-dots .dot.active {
+                background: #d4af37;
+            }
+            @media (max-width: 1200px) {
+                .hero#about {
+                    min-height: 420px;
+                }
+                .about-banner-slider,
+                .page-banner-slider {
+                    min-height: 420px;
+                }
+                .banner-slide {
+                    min-height: 420px;
+                }
+            }
+            @media (max-width: 767px) {
+                .hero#about {
+                    min-height: 320px;
+                }
+                .about-banner-slider,
+                .page-banner-slider {
+                    min-height: 320px;
+                }
+                .banner-slide {
+                    min-height: 320px;
+                }
+                .banner-overlay {
+                    bottom: 16px;
+                    left: 16px;
+                    right: 16px;
+                }
+            }
+            </style>
+
+            <script>
+            document.addEventListener('DOMContentLoaded', function(){
+                var coverBtn = document.getElementById('fitCover');
+                var containBtn = document.getElementById('fitContain');
+                var container = document.querySelector('.about-banner-full');
+                if(!container) return;
+                var mode = localStorage.getItem('aboutBannerFit') || 'cover';
+                container.classList.toggle('fit-contain', mode === 'contain');
+                container.classList.toggle('fit-cover', mode !== 'contain');
+                if(coverBtn) coverBtn.addEventListener('click', function(){ container.classList.remove('fit-contain'); container.classList.add('fit-cover'); localStorage.setItem('aboutBannerFit','cover'); });
+                if(containBtn) containBtn.addEventListener('click', function(){ container.classList.remove('fit-cover'); container.classList.add('fit-contain'); localStorage.setItem('aboutBannerFit','contain'); });
+            });
+
+            const bannerSliderState = {};
+            document.addEventListener('DOMContentLoaded', function() {
+                initializeBannerSlider('aboutBannerSlider', 'aboutBannerDots');
+            });
+
+            function initializeBannerSlider(sliderId, dotsId, initialSlide = 0) {
+                const slider = document.getElementById(sliderId);
+                if (!slider) return;
+                const slides = slider.querySelectorAll('.banner-slide');
+                if (!slides.length) return;
+                bannerSliderState[sliderId] = { current: initialSlide, total: slides.length };
+                const dots = document.getElementById(dotsId);
+                if (dots) {
+                    dots.innerHTML = '';
+                    slides.forEach((slide, index) => {
+                        const dot = document.createElement('span');
+                        dot.className = 'dot' + (index === initialSlide ? ' active' : '');
+                        dot.addEventListener('click', () => goToBannerSlide(sliderId, dotsId, index));
+                        dots.appendChild(dot);
+                    });
+                }
+                updateBannerSlider(sliderId, dotsId);
+            }
+
+            function navigateBannerSlider(sliderId, delta) {
+                const state = bannerSliderState[sliderId];
+                if (!state) return;
+                state.current += delta;
+                if (state.current < 0) state.current = state.total - 1;
+                if (state.current >= state.total) state.current = 0;
+                updateBannerSlider(sliderId, sliderId === 'aboutBannerSlider' ? 'aboutBannerDots' : 'homeBannerDots');
+            }
+
+            function goToBannerSlide(sliderId, dotsId, slideIndex) {
+                const state = bannerSliderState[sliderId];
+                if (!state) return;
+                state.current = slideIndex;
+                updateBannerSlider(sliderId, dotsId);
+            }
+
+            function updateBannerSlider(sliderId, dotsId) {
+                const slider = document.getElementById(sliderId);
+                if (!slider) return;
+                const slides = slider.querySelectorAll('.banner-slide');
+                slides.forEach((slide, index) => {
+                    slide.classList.toggle('active', index === bannerSliderState[sliderId].current);
+                });
+                const dots = document.getElementById(dotsId);
+                if (dots) {
+                    dots.querySelectorAll('.dot').forEach((dot, index) => {
+                        dot.classList.toggle('active', index === bannerSliderState[sliderId].current);
+                    });
+                }
+            }
+            </script>
             
             
             <!-- Marquee Section 
