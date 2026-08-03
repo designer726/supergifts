@@ -89,43 +89,50 @@ $pagename = basename($_SERVER['PHP_SELF']);
             <style>
             .about-banner-hero {
                 padding: 0;
-                min-height: 520px;
                 position: relative;
                 overflow: hidden;
             }
             .about-banner-container {
                 width: 100%;
+                height: 100%;
             }
-            .about-banner-slider,
+            .about-banner-slider {
+                position: relative;
+                width: 100%;
+                height: auto;
+                min-height: 0;
+                border-radius: 0;
+                overflow: hidden;
+                background: #121826;
+                margin-bottom: 0;
+            }
             .page-banner-slider {
                 position: relative;
                 width: 100%;
-                min-height: 520px;
+                min-height: 280px;
                 border-radius: 0;
                 overflow: hidden;
                 background: #121826;
                 margin-bottom: 0;
             }
             .banner-slide {
-                position: absolute;
-                inset: 0;
+                position: relative;
                 opacity: 0;
-                transition: opacity .45s ease, transform .45s ease;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                min-height: 520px;
+                transition: opacity .45s ease;
+                display: none;
+                width: 100%;
             }
             .banner-slide.active {
                 opacity: 1;
-                transform: translateX(0);
+                display: block;
                 z-index: 1;
             }
             .banner-media {
                 width: 100%;
-                height: 100%;
-                object-fit: cover;
+                height: auto;
+                object-fit: contain;
                 display: block;
+                max-width: 100%;
             }
             .banner-placeholder {
                 color: #e2e8f0;
@@ -134,7 +141,7 @@ $pagename = basename($_SERVER['PHP_SELF']);
                 text-align: center;
                 width: 100%;
             }
-             .banner-overlay {
+            .banner-overlay {
                 position: absolute;
                 bottom: 24px;
                 left: 24px;
@@ -149,8 +156,8 @@ $pagename = basename($_SERVER['PHP_SELF']);
                 gap: 16px;
                 flex-wrap: wrap;
                 max-width: calc(100% - 48px);
-            } 
-                 .banner-overlay h3 {
+            }
+            .banner-overlay h3 {
                 margin: 0 0 6px;
                 font-size: 24px;
             }
@@ -158,21 +165,20 @@ $pagename = basename($_SERVER['PHP_SELF']);
                 margin: 0;
                 font-size: 15px;
                 color: #d1d5db;
-            } 
-                 .banner-button {
+            }
+            .banner-button {
                 display: inline-block;
                 background: #d4af37;
                 color: #111;
                 padding: 10px 18px;
                 border-radius: 999px;
                 text-decoration: none;
-                text-decoration: none;
                 font-weight: 700;
                 transition: transform .2s ease;
             }
             .banner-button:hover {
                 transform: translateY(-1px);
-            } 
+            }
             .banner-controls {
                 display: flex;
                 align-items: center;
@@ -205,34 +211,97 @@ $pagename = basename($_SERVER['PHP_SELF']);
             .slider-dots .dot.active {
                 background: #d4af37;
             }
-            @media (max-width: 1200px) {
-                .hero#about {
-                    min-height: 420px;
+            .page-section#about {
+                padding-top: 40px; */
+                /* padding-bottom: 40px;
+            }
+            #about .row {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 20px;
+                align-items: flex-start;
+            }
+            #about .col-sm-4,
+            #about .col-sm-8 {
+                flex: 1 1 100%;
+                max-width: 100%;
+            }
+            #about .call-action-4-images img {
+                width: 100%;
+                height: auto;
+                display: block;
+                border-radius: 12px;
+            }
+            @media (min-width: 768px) {
+                #about .col-sm-4 {
+                    max-width: 33.3333%;
                 }
-                .about-banner-slider,
-                .page-banner-slider {
-                    min-height: 420px;
-                }
-                .banner-slide {
-                    min-height: 420px;
+                #about .col-sm-8 {
+                    max-width: 66.6667%;
                 }
             }
-            @media (max-width: 767px) {
-                .hero#about {
-                    min-height: 320px;
+            @media (max-width: 991px) {
+                .about-banner-slider {
+                    min-height: 260px;
+                    max-height: 360px;
+                    aspect-ratio: auto;
                 }
-                .about-banner-slider,
-                .page-banner-slider {
-                    min-height: 320px;
+                .banner-nav {
+                    width: 34px;
+                    height: 34px;
+                    font-size: 16px;
                 }
-                .banner-slide {
-                    min-height: 320px;
+                .slider-dots .dot {
+                    width: 9px;
+                    height: 9px;
                 }
                 .banner-overlay {
+                    padding: 14px 16px;
                     bottom: 16px;
                     left: 16px;
                     right: 16px;
                 }
+                .banner-overlay h3 {
+                    font-size: 20px;
+                }
+                .banner-overlay p {
+                    font-size: 14px;
+                }
+            }
+            @media (max-width: 767px) {
+                .about-banner-slider {
+                    min-height: 220px;
+                    max-height: 280px;
+                }
+                .banner-controls {
+                    flex-wrap: wrap;
+                    gap: 10px;
+                    margin-top: 12px;
+                }
+                .banner-nav {
+                    width: 34px;
+                    height: 34px;
+                }
+                .banner-overlay {
+                    position: static;
+                    background: rgba(12, 17, 36, 0.85);
+                    border-radius: 12px;
+                    padding: 14px;
+                    margin: 16px;
+                }
+                .banner-overlay h3 {
+                    font-size: 18px;
+                }
+                .banner-overlay p {
+                    font-size: 13px;
+                }
+                /* #about .page-section {
+                    padding-top: 24px;
+                    padding-bottom: 24px;
+                } */
+                /* .page-section#about .col-sm-8 {
+                    margin-top: 0;
+                } */
             }
             </style>
 
@@ -250,8 +319,10 @@ $pagename = basename($_SERVER['PHP_SELF']);
             });
 
             const bannerSliderState = {};
+            const bannerAutoSlideTimers = {};
             document.addEventListener('DOMContentLoaded', function() {
                 initializeBannerSlider('aboutBannerSlider', 'aboutBannerDots');
+                startBannerAutoSlide('aboutBannerSlider', 'aboutBannerDots', 5000);
             });
 
             function initializeBannerSlider(sliderId, dotsId, initialSlide = 0) {
@@ -266,11 +337,23 @@ $pagename = basename($_SERVER['PHP_SELF']);
                     slides.forEach((slide, index) => {
                         const dot = document.createElement('span');
                         dot.className = 'dot' + (index === initialSlide ? ' active' : '');
-                        dot.addEventListener('click', () => goToBannerSlide(sliderId, dotsId, index));
+                        dot.addEventListener('click', () => {
+                            goToBannerSlide(sliderId, dotsId, index);
+                            startBannerAutoSlide(sliderId, dotsId, 5000);
+                        });
                         dots.appendChild(dot);
                     });
                 }
                 updateBannerSlider(sliderId, dotsId);
+            }
+
+            function startBannerAutoSlide(sliderId, dotsId, interval = 5000) {
+                if (bannerAutoSlideTimers[sliderId]) {
+                    clearInterval(bannerAutoSlideTimers[sliderId]);
+                }
+                bannerAutoSlideTimers[sliderId] = setInterval(function() {
+                    navigateBannerSlider(sliderId, 1);
+                }, interval);
             }
 
             function navigateBannerSlider(sliderId, delta) {
@@ -280,6 +363,7 @@ $pagename = basename($_SERVER['PHP_SELF']);
                 if (state.current < 0) state.current = state.total - 1;
                 if (state.current >= state.total) state.current = 0;
                 updateBannerSlider(sliderId, sliderId === 'aboutBannerSlider' ? 'aboutBannerDots' : 'homeBannerDots');
+                startBannerAutoSlide(sliderId, sliderId === 'aboutBannerSlider' ? 'aboutBannerDots' : 'homeBannerDots', 5000);
             }
 
             function goToBannerSlide(sliderId, dotsId, slideIndex) {
@@ -287,6 +371,7 @@ $pagename = basename($_SERVER['PHP_SELF']);
                 if (!state) return;
                 state.current = slideIndex;
                 updateBannerSlider(sliderId, dotsId);
+                startBannerAutoSlide(sliderId, dotsId, 5000);
             }
 
             function updateBannerSlider(sliderId, dotsId) {
@@ -356,7 +441,7 @@ $pagename = basename($_SERVER['PHP_SELF']);
                             
                         </div>
                         
-                     <!--   <div class="col-lg-2 offset-xl-1 d-none d-lg-block">
+                    <!--  <div class="col-lg-2 offset-xl-1 d-none d-lg-block">
                             <div class="overflow-hidden">
                                 <img src="images/demo-strong/section-image-3.jpg" alt="Image description" class="wow scaleOutIn" data-wow-duration="1.2s" />
                             </div>
