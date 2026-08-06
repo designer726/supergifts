@@ -212,7 +212,7 @@ $pagename = basename($_SERVER['PHP_SELF']);
                 background: #d4af37;
             }
             .page-section#about {
-                padding-top: 40px; */
+                padding-top: 40px;
                 /* padding-bottom: 40px;
             }
             #about .row {
