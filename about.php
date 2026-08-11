@@ -47,9 +47,9 @@ $pagename = basename($_SERVER['PHP_SELF']);
                         <?php foreach (array_values($aboutBanners) as $slideIndex => $banner): ?>
                             <div class="banner-slide<?= $slideIndex === 0 ? ' active' : '' ?>" data-slide="<?= $slideIndex ?>">
                                 <?php if (!empty($banner['file_path']) && $banner['file_type'] === 'video'): ?>
-                                    <video src="<?= htmlspecialchars($banner['file_path']) ?>" muted playsinline autoplay loop class="banner-media"></video>
+                                    <video src="<?= htmlspecialchars($banner['file_path']) ?>" muted playsinline autoplay loop class="edia"></video>
                                 <?php elseif (!empty($banner['file_path'])): ?>
-                                    <img src="<?= htmlspecialchars($banner['file_path']) ?>" alt="About Banner Slot <?= $banner['slot'] ?>" class="banner-media" />
+                                    <img src="<?= htmlspecialchars($banner['file_path']) ?>" alt="About Banner Slot <?= $banner['slot'] ?>" class="edia" />
                                 <?php else: ?>
                                     <div class="banner-fallback"></div>
                                 <?php endif; ?>
@@ -127,7 +127,7 @@ $pagename = basename($_SERVER['PHP_SELF']);
                 display: block;
                 z-index: 1;
             }
-            .banner-media {
+            .edia {
                 width: 100%;
                 height: auto;
                 object-fit: contain;
@@ -212,7 +212,7 @@ $pagename = basename($_SERVER['PHP_SELF']);
                 background: #d4af37;
             }
             .page-section#about {
-                padding-top: 40px;
+                padding-top: 40px; */z
                 /* padding-bottom: 40px;
             }
             #about .row {
