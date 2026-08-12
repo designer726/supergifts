@@ -144,7 +144,7 @@ $next = $conn->query("SELECT title, slug FROM blogs WHERE status='published' AND
                                 <?php if (!empty($blog['link'] ?? '')): ?>
                                 <div class="p-40 round mb-50 mt-50" style="text-align:center;background:transparent;">
                                     <h4 class="mb-20" style="color:#111; font-weight:700;">Click to Know more</h4>
-                                    <a href="<?= htmlspecialchars($blog['link']) ?>" target="_blank" rel="noopener noreferrer" class="header-cta" style="display:inline-block;padding:14px 28px;border:1px solid rgba(0,0,0,0.08);border-radius:999px;color:#111;background:#fff;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">Know more</a>
+                                    <a href="<?= htmlspecialchars($blog['link']) ?>" target="_blank" rel="noopener noreferrer" class="header-cta" style="display:inline-block;padding:14px 28px;border:1px solid #000;border-radius:999px;color:#fff;background:#000;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">Know more</a>
                                 </div>
                                 <?php endif; ?>
 
@@ -154,7 +154,7 @@ $next = $conn->query("SELECT title, slug FROM blogs WHERE status='published' AND
                                     <p class="mb-30" style="color:#555; font-size:15px;">
                                         Discover how SGIPL can help you access premium products, optimize operations, and drive sustainable growth.
                                     </p>
-                                    <div class="local-scroll">
+                                    <div class="local-scroll" style="text-align:center;">
                                         <a href="contact" class="btn btn-mod btn-large btn-round btn-hover-anim"><span>Contact Us</span></a>
                                     </div>
                                 </div>

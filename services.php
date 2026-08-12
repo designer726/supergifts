@@ -32,6 +32,20 @@ if (!$brandDb->connect_error) {
     }
     $brandDb->close();
 }
+
+require_once 'sgipl-manage/includes/db.php';
+$serviceBanners = [];
+$serviceRes = $conn->query("SELECT slot, file_path, file_type FROM banners WHERE slot BETWEEN 12 AND 15 AND status=1 ORDER BY slot ASC");
+if ($serviceRes) {
+    while ($row = $serviceRes->fetch_assoc()) {
+        if (!empty($row['file_path'])) {
+            $serviceBanners[] = $row;
+        }
+    }
+}
+if (empty($serviceBanners)) {
+    $serviceBanners[] = ['slot' => 0, 'file_path' => '', 'file_type' => 'image'];
+}
 ?>
 <!DOCTYPE html>
 
@@ -58,23 +72,220 @@ if (!$brandDb->connect_error) {
            <main id="main">
             
             <!-- Modern Hero Section -->
-            <section class="hero" id="hero-services">
-                <div class="hero-content">
-                    <div class="hero-badge">✦ Our Services</div>
-                    <h1>Transforming Imaginations into <em>Personalized Gifting</em> Realities</h1>
-                    <p>Welcome to Super Gifting India Private Ltd (SGIPL), where we redefine the gifting space through close collaboration, embodying the motto "You Imagine, We Create."</p>
-                    <div class="hero-btns">
-                        <button class="btn-primary" onclick="window.location.href='contact.php'">Request Proposal →</button>
-                        <button class="btn-outline" onclick="window.location.href='products.php'">Browse Products</button>
-                    </div>
+            <section class="services-banner-hero">
+                <div class="services-banner-slides" id="servicesBannerSlider">
+                    <?php foreach ($serviceBanners as $idx => $banner): ?>
+                        <?php $isVideo = !empty($banner['file_path']) && $banner['file_type'] === 'video'; ?>
+                        <div class="banner-slide<?= $idx === 0 ? ' active' : '' ?>" data-slide="<?= $idx ?>">
+                            <?php if (!empty($banner['file_path'])): ?>
+                                <?php if ($isVideo): ?>
+                                    <video class="services-banner-media" src="<?= htmlspecialchars($banner['file_path']) ?>" muted playsinline autoplay loop></video>
+                                <?php else: ?>
+                                    <img class="services-banner-media" src="<?= htmlspecialchars($banner['file_path']) ?>" alt="Services Banner <?= $banner['slot'] ?>">
+                                <?php endif; ?>
+                            <?php else: ?>
+                                <div class="banner-fallback"></div>
+                            <?php endif; ?>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
-                <div class="hero-right">
-                    <div class="stat-card"><div class="num">8</div><div class="lbl">Core Services</div></div>
-                    <div class="stat-card"><div class="num">100%</div><div class="lbl">Customizable</div></div>
-                    <div class="stat-card"><div class="num">24x7</div><div class="lbl">Support</div></div>
+
+                <!-- <div class="services-banner-overlay">
+                    <div class="hero-content">
+                        <div class="hero-badge">✦ Our Services</div>
+                        <h1>Transforming Imaginations into <em>Personalized Gifting</em> Realities</h1>
+                        <p>Welcome to Super Gifting India Private Ltd (SGIPL), where we redefine the gifting space through close collaboration, embodying the motto "You Imagine, We Create."</p>
+                        <div class="hero-btns">
+                            <button class="btn-primary" onclick="window.location.href='contact.php'">Request Proposal →</button>
+                            <button class="btn-outline" onclick="window.location.href='products.php'">Browse Products</button>
+                        </div>
+                    </div>
+                    <div class="hero-right">
+                        <div class="stat-card"><div class="num">8</div><div class="lbl">Core Services</div></div>
+                        <div class="stat-card"><div class="num">100%</div><div class="lbl">Customizable</div></div>
+                        <div class="stat-card"><div class="num">24x7</div><div class="lbl">Support</div></div>
+                    </div>
+                </div> -->
+
+                <div class="banner-controls">
+                    <button type="button" class="services-banner-arrow prev" onclick="navigateServicesBannerSlider('servicesBannerSlider', -1)">❮</button>
+                    <button type="button" class="services-banner-arrow next" onclick="navigateServicesBannerSlider('servicesBannerSlider', 1)">❯</button>
+                    <div class="services-banner-dots" id="servicesBannerDots"></div>
                 </div>
             </section>
             <!-- End Modern Hero Section -->
+
+            <style>
+            .services-banner-hero { position: relative; overflow: hidden; height: 600px; min-height: 600px; background: #0d2b55; }
+            .services-banner-hero .services-banner-slides { position: absolute; inset: 0; z-index: 1; height: 100%; }
+            .services-banner-hero .banner-slide { position: absolute; inset: 0; opacity: 0; transition: opacity 0.6s ease; height: 100%; }
+            .services-banner-hero .banner-slide.active { opacity: 1; z-index: 1; }
+            .services-banner-hero .services-banner-media { width: 100%; height: 100%; object-fit: cover; display: block; }
+            .services-banner-hero .banner-fallback { width: 100%; height: 100%; background: linear-gradient(135deg, #0d2b55 0%, #1f3b85 45%, #071327 100%); }
+            .services-banner-hero .services-banner-overlay { position: relative; z-index: 2; display: grid; grid-template-columns: 1.7fr 1fr; gap: 32px; align-items: center; max-width: 1240px; margin: 0 auto; padding: 90px 30px; height: 100%; }
+            .services-banner-hero .services-banner-overlay::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.08), transparent 35%), linear-gradient(180deg, rgba(8,16,40,0.18), rgba(8,16,40,0.55)); pointer-events: none; }
+            .services-banner-hero .services-banner-overlay > * { position: relative; z-index: 2; }
+            .services-banner-hero .hero-content h1 { color: #fff; line-height: 1.05; }
+            .services-banner-hero .hero-content p { color: rgba(255,255,255,0.88); max-width: 640px; margin-top: 22px; }
+            .services-banner-hero .hero-right { display: grid; gap: 20px; justify-self: start; }
+            .services-banner-hero .stat-card { padding: 28px 26px; border-radius: 20px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(12px); }
+            .services-banner-hero .stat-card .num { font-size: 3rem; font-weight: 700; color: #ffc107; }
+            .services-banner-hero .stat-card .lbl { margin-top: 10px; color: #fff; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.04em; }
+            .services-banner-hero .banner-controls { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+            .services-banner-hero .services-banner-arrow {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                background: rgba(255, 255, 255, 0.15);
+                color: #fff;
+                border: 1.5px solid rgba(255, 255, 255, 0.3);
+                width: 44px;
+                height: 44px;
+                border-radius: 50%;
+                cursor: pointer;
+                font-size: 22px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.2s ease;
+                backdrop-filter: blur(6px);
+                line-height: 1;
+                pointer-events: auto;
+            }
+            .services-banner-hero .services-banner-arrow:hover {
+                background: rgba(208, 2, 27, 0.35);
+                border-color: #D0021B;
+            }
+            .services-banner-hero .services-banner-arrow.prev { left: 24px; }
+            .services-banner-hero .services-banner-arrow.next { right: 24px; }
+            .services-banner-hero .services-banner-dots {
+                position: absolute;
+                left: 48px;
+                bottom: 20px;
+                display: flex;
+                gap: 8px;
+                z-index: 10;
+                pointer-events: auto;
+            }
+            .services-banner-hero .services-banner-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.35); cursor: pointer; transition: all 0.3s ease; }
+            .services-banner-hero .services-banner-dot.active { background: #D0021B; width: 20px; border-radius: 4px; }
+            .metrics-track .metric-card,
+            .process-track .process-card,
+            .features-track .feature-card { min-width: 280px; }
+            @media(max-width: 1200px) {
+                .services-banner-hero { height: 520px; }
+                .services-banner-hero .services-banner-overlay { padding: 60px 24px; }
+                .services-banner-hero .hero-content h1 { font-size: 3.2rem; }
+                .services-banner-hero .hero-right { gap: 16px; }
+            }
+            @media(max-width: 991px) {
+                .services-banner-hero { height: auto; min-height: 520px; }
+                .services-banner-hero .services-banner-overlay { grid-template-columns: 1fr; padding: 60px 20px; min-height: 520px; }
+                .services-banner-hero .hero-right { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+                .slider-nav-btn { width: 42px; height: 42px; font-size: 18px; }
+                .metrics-slider-container .slider-nav-btn.prev,
+                .process-slider-container .slider-nav-btn.prev,
+                .features-slider-container .slider-nav-btn.prev { left: 10px !important; }
+                .metrics-slider-container .slider-nav-btn.next,
+                .process-slider-container .slider-nav-btn.next,
+                .features-slider-container .slider-nav-btn.next { right: 10px !important; }
+            }
+            @media(max-width: 767px) {
+                .services-banner-hero { min-height: 420px; height: auto; }
+                .services-banner-hero .banner-controls { bottom: 12px; }
+                .services-banner-hero .hero-right { grid-template-columns: 1fr; }
+                .services-banner-hero .hero-content h1 { font-size: 2.4rem; }
+                .services-banner-hero .hero-content p { font-size: 0.96rem; }
+                .metrics-track,
+                .process-track,
+                .features-track { gap: 18px; }
+                .metrics-track .metric-card,
+                .process-track .process-card,
+                .features-track .feature-card { flex: 0 0 calc(100% - 20px) !important; }
+                .slider-nav-btn { left: 10px !important; right: 10px !important; }
+            }
+            @media(max-width: 575px) {
+                .services-banner-hero { min-height: 380px; }
+                .services-banner-hero .services-banner-overlay { padding: 50px 16px; }
+                .services-banner-hero .banner-controls { gap: 10px; }
+                .services-banner-hero .services-banner-arrow { width: 38px; height: 38px; }
+                .services-banner-hero .services-banner-dots { gap: 8px; }
+                .services-banner-hero .services-banner-dot { width: 10px; height: 10px; }
+            }
+            </style>
+
+            <script>
+            const servicesBannerSliderState = {};
+            const servicesBannerAutoSlideTimers = {};
+            document.addEventListener('DOMContentLoaded', function() {
+                initializeServicesBannerSlider('servicesBannerSlider', 'servicesBannerDots');
+                startServicesBannerAutoSlide('servicesBannerSlider', 'servicesBannerDots', 5000);
+            });
+
+            function initializeServicesBannerSlider(sliderId, dotsId, initialSlide = 0) {
+                const slider = document.getElementById(sliderId);
+                if (!slider) return;
+                const slides = slider.querySelectorAll('.banner-slide');
+                if (!slides.length) return;
+                servicesBannerSliderState[sliderId] = { current: initialSlide, total: slides.length };
+                const dots = document.getElementById(dotsId);
+                if (dots) {
+                    dots.innerHTML = '';
+                    slides.forEach((slide, index) => {
+                        const dot = document.createElement('span');
+                        dot.className = 'services-banner-dot' + (index === initialSlide ? ' active' : '');
+                        dot.addEventListener('click', function() {
+                            goToServicesBannerSlide(sliderId, dotsId, index);
+                            startServicesBannerAutoSlide(sliderId, dotsId, 5000);
+                        });
+                        dots.appendChild(dot);
+                    });
+                }
+                updateServicesBannerSlider(sliderId, dotsId);
+            }
+
+            function startServicesBannerAutoSlide(sliderId, dotsId, interval = 5000) {
+                if (servicesBannerAutoSlideTimers[sliderId]) {
+                    clearInterval(servicesBannerAutoSlideTimers[sliderId]);
+                }
+                servicesBannerAutoSlideTimers[sliderId] = setInterval(function() {
+                    navigateServicesBannerSlider(sliderId, 1);
+                }, interval);
+            }
+
+            function navigateServicesBannerSlider(sliderId, delta) {
+                const state = servicesBannerSliderState[sliderId];
+                if (!state) return;
+                state.current += delta;
+                if (state.current < 0) state.current = state.total - 1;
+                if (state.current >= state.total) state.current = 0;
+                updateServicesBannerSlider(sliderId, 'servicesBannerDots');
+                startServicesBannerAutoSlide(sliderId, 'servicesBannerDots', 5000);
+            }
+
+            function goToServicesBannerSlide(sliderId, dotsId, slideIndex) {
+                const state = servicesBannerSliderState[sliderId];
+                if (!state) return;
+                state.current = slideIndex;
+                updateServicesBannerSlider(sliderId, dotsId);
+                startServicesBannerAutoSlide(sliderId, dotsId, 5000);
+            }
+
+            function updateServicesBannerSlider(sliderId, dotsId) {
+                const slider = document.getElementById(sliderId);
+                if (!slider) return;
+                const slides = slider.querySelectorAll('.banner-slide');
+                slides.forEach((slide, index) => {
+                    slide.classList.toggle('active', index === servicesBannerSliderState[sliderId].current);
+                });
+                const dots = document.getElementById(dotsId);
+                if (dots) {
+                    dots.querySelectorAll('.services-banner-dot').forEach((dot, index) => {
+                        dot.classList.toggle('active', index === servicesBannerSliderState[sliderId].current);
+                    });
+                }
+            }
+            </script>
 
             <!-- Informatic Dynamic Sliders Section -->
             <section class="informatic-sliders-section" style="padding: 80px 0; background: linear-gradient(135deg, #f5f7fa 0%, #e9f0f8 100%);">
