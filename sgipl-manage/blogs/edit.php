@@ -27,8 +27,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $content  = trim($_POST['content'] ?? '');
     $category = trim($_POST['category'] ?? 'Blog');
     $author   = trim($_POST['author'] ?? 'SGIPL Team');
-    $status   = in_array($_POST['status'] ?? '', ['published', 'draft']) ? $_POST['status'] : 'published';
-    $image    = $post['image']; // Keep old image by default
+    $link             = trim($_POST['link'] ?? '');
+    $status           = in_array($_POST['status'] ?? '', ['published', 'draft']) ? $_POST['status'] : 'published';
+    $image            = $post['image']; // Keep old image by default
+    $title_bg_image   = $post['title_bg_image'];
 
     if (!$title)   $errors[] = "Title is required.";
     if (!$slug)    $errors[] = "Slug is required.";
@@ -67,12 +69,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    if (!$errors && !empty($_FILES['title_bg_image']['name'])) {
+        $allowed = ['jpg', 'jpeg', 'png', 'webp'];
+        $ext = strtolower(pathinfo($_FILES['title_bg_image']['name'], PATHINFO_EXTENSION));
+        if (!in_array($ext, $allowed)) {
+            $errors[] = "Only JPG, PNG, WEBP images are allowed for the title background.";
+        } elseif ($_FILES['title_bg_image']['size'] > 2 * 1024 * 1024) {
+            $errors[] = "Background image must be under 2MB.";
+        } else {
+            $filename = 'blog-title-bg-' . time() . '-' . uniqid() . '.' . $ext;
+            $dest = UPLOAD_DIR . $filename;
+            if (move_uploaded_file($_FILES['title_bg_image']['tmp_name'], $dest)) {
+                if ($post['title_bg_image'] && file_exists($_SERVER['DOCUMENT_ROOT'] . '/' . $post['title_bg_image'])) {
+                    @unlink($_SERVER['DOCUMENT_ROOT'] . '/' . $post['title_bg_image']);
+                }
+                $title_bg_image = 'images/blog/' . $filename;
+            } else {
+                $errors[] = "Failed to upload title background image. Check folder permissions.";
+            }
+        }
+    }
+
     if (!$errors) {
-        $stmt = $conn->prepare("UPDATE blogs SET title=?, slug=?, excerpt=?, content=?, image=?, category=?, author=?, status=? WHERE id=?");
-        $stmt->bind_param("ssssssssi", $title, $slug, $excerpt, $content, $image, $category, $author, $status, $id);
+        $stmt = $conn->prepare("UPDATE blogs SET title=?, slug=?, excerpt=?, content=?, image=?, title_bg_image=?, category=?, author=?, status=?, link=? WHERE id=?");
+        $stmt->bind_param("ssssssssssi", $title, $slug, $excerpt, $content, $image, $title_bg_image, $category, $author, $status, $link, $id);
         if ($stmt->execute()) {
             $success = "Blog post updated successfully!";
-            $post = array_merge($post, compact('title','slug','excerpt','content','image','category','author','status'));
+            $post = array_merge($post, compact('title','slug','excerpt','content','image','category','author','status','link','title_bg_image'));
         } else {
             $errors[] = "Database error: " . $conn->error;
         }
@@ -140,18 +163,28 @@ require_once '../includes/layout_top.php';
                     <label class="form-label">Author</label>
                     <input type="text" name="author" class="form-control" value="<?= htmlspecialchars($post['author']) ?>">
                 </div>
+                <div class="mb-3">
+                    <label class="form-label">Optional Link</label>
+                    <input type="text" name="link" class="form-control" value="<?= htmlspecialchars($post['link'] ?? '') ?>" placeholder="https://example.com or /contact">
+                    <div class="text-muted small mt-1">Leave empty to hide the link section on the blog page.</div>
+                </div>
             </div>
-
             <div class="form-card">
-                <h6 class="fw-bold mb-3">Featured Image</h6>
-                <?php if ($post['image']): ?>
-                    <img src="https://www.supergifts.in/<?= htmlspecialchars($post['image']) ?>" id="img-preview" style="width:100%;height:150px;object-fit:cover;border-radius:8px;border:1px solid #e9ecef;margin-bottom:10px;" onerror="this.style.display='none'">
-                <?php else: ?>
-                    <img id="img-preview" src="" style="width:100%;height:150px;object-fit:cover;border-radius:8px;border:1px solid #e9ecef;margin-bottom:10px;display:none;">
-                <?php endif; ?>
-                <input type="file" name="image" class="form-control" accept="image/jpeg,image/png,image/webp" onchange="previewImage(this)">
-                <div class="text-muted small mt-1">Leave empty to keep current image.</div>
+                <h6 class="fw-bold mb-3">Images</h6>
+                <div id="preview-box-featured" class="mb-2" style="display:<?= $post['image'] ? 'block' : 'none' ?>;">
+                    <img id="img-preview-featured" src="<?= $post['image'] ? 'https://www.supergifts.in/' . htmlspecialchars($post['image']) : '' ?>" style="width:100%;height:150px;object-fit:cover;border-radius:8px;border:1px solid #e9ecef;">
+                </div>
+                <label class="form-label">Featured Image</label>
+                <input type="file" name="image" class="form-control mb-3" accept="image/jpeg,image/png,image/webp" onchange="previewImage(this, 'img-preview-featured', 'preview-box-featured')">
+                <div class="text-muted small mb-3">Leave empty to keep current featured image.</div>
+                <div id="preview-box-bg" class="mb-2" style="display:<?= $post['title_bg_image'] ? 'block' : 'none' ?>;">
+                    <img id="img-preview-bg" src="<?= $post['title_bg_image'] ? 'https://www.supergifts.in/' . htmlspecialchars($post['title_bg_image']) : '' ?>" style="width:100%;height:150px;object-fit:cover;border-radius:8px;border:1px solid #e9ecef;">
+                </div>
+                <label class="form-label">Title Background Image</label>
+                <input type="file" name="title_bg_image" class="form-control" accept="image/jpeg,image/png,image/webp" onchange="previewImage(this, 'img-preview-bg', 'preview-box-bg')">
+                <div class="text-muted small mt-1">This image appears behind the blog title. Leave empty to keep current background.</div>
             </div>
+        </div>
         </div>
     </div>
 
@@ -162,13 +195,13 @@ require_once '../includes/layout_top.php';
 </form>
 
 <script>
-function previewImage(input) {
+function previewImage(input, previewId, previewBoxId) {
     if (input.files && input.files[0]) {
         const reader = new FileReader();
         reader.onload = e => {
-            const img = document.getElementById('img-preview');
+            const img = document.getElementById(previewId);
             img.src = e.target.result;
-            img.style.display = 'block';
+            document.getElementById(previewBoxId).style.display = 'block';
         };
         reader.readAsDataURL(input.files[0]);
     }
