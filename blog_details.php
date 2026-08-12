@@ -49,7 +49,7 @@ $next = $conn->query("SELECT title, slug FROM blogs WHERE status='published' AND
     <?php include('common/head.php'); ?>
     <title><?= htmlspecialchars($blog['title']) ?> | SGIPL Blog</title>
 </head>
-<body class="appear-animate">
+<body class="appear-animate" style="background:#ffffff;color:#111;">
 
     <!-- Page Loader -->
     <div class="page-loader">
@@ -65,36 +65,41 @@ $next = $conn->query("SELECT title, slug FROM blogs WHERE status='published' AND
         <main id="main">
 
             <!-- Header Section -->
-            <section class="page-section bg-gray-light-1 bg-light-alpha-90 parallax-5" style="background-image: url(images/full-width-images/section-bg-1.jpg)">
-                <div class="container position-relative pt-30 pt-sm-50">
+            <?php
+            $titleHeaderBgImage = '';
+            if (!empty($blog['title_bg_image'])) {
+                $titleHeaderBgImage = htmlspecialchars($blog['title_bg_image']);
+            } elseif (!empty($blog['image'])) {
+                $titleHeaderBgImage = htmlspecialchars($blog['image']);
+            }
+            ?>
+            <section class="page-section parallax-5" style="<?php if ($titleHeaderBgImage): ?>background-image:url('<?= $titleHeaderBgImage ?>');background-size:cover;background-position:center;background-repeat:no-repeat;background-color:#ffffff;<?php else: ?>background:#ffffff;<?php endif; ?> color:#111;">
+                <div class="container pt-50 pb-50">
                     <div class="text-center">
-                        <div class="row">
-                            <div class="col-md-8 offset-md-2">
+                        <div class="row justify-content-center">
+                            <div class="col-xl-7 col-lg-8 col-md-10">
+                                <div style="background: rgba(255,255,255,0.92); padding: 42px 32px; border-radius: 24px;">
 
-                                <!-- Category Badge -->
-                                <div class="mb-20">
-                                    <span style="background:#c8a96e;color:#fff;font-size:12px;padding:4px 14px;border-radius:20px;font-weight:600;letter-spacing:1px;text-transform:uppercase;">
+                                <div class="mb-16">
+                                    <span style="background:#111;color:#fff;font-size:11px;padding:6px 12px;border-radius:999px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;">
                                         <?= htmlspecialchars($blog['category']) ?>
                                     </span>
                                 </div>
 
-                                <!-- Title -->
-                                <h1 class="hs-title-1 mb-20">
-                                    <span class="wow charsAnimIn" data-splitting="chars">
-                                        <?= htmlspecialchars($blog['title']) ?>
-                                    </span>
+                                <h1 class="hs-title-1 mb-18" style="font-size:3rem; line-height:1.05; color:#111; font-weight:800;">
+                                    <?= htmlspecialchars($blog['title']) ?>
                                 </h1>
 
-                                <!-- Meta -->
                                 <div class="row">
-                                    <div class="col-md-10 offset-md-1 col-lg-8 offset-lg-2">
-                                        <p class="section-descr mb-0 wow fadeIn" data-wow-delay="0.2s" data-wow-duration="1.2s">
+                                    <div class="col-md-10 offset-md-1 col-lg-10 offset-lg-1">
+                                        <p class="section-descr mb-0" style="color:#5f5f5f; letter-spacing:0.03em; font-size:0.95rem;">
                                             <?= date('F d, Y', strtotime($blog['created_at'])) ?>
-                                            &nbsp;|&nbsp; By <?= htmlspecialchars($blog['author']) ?>
+                                            &nbsp;|&nbsp; <?= htmlspecialchars($blog['author']) ?>
                                         </p>
                                     </div>
                                 </div>
 
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -104,8 +109,8 @@ $next = $conn->query("SELECT title, slug FROM blogs WHERE status='published' AND
 
 
             <!-- Blog Post Content Section -->
-            <section class="page-section">
-                <div class="container relative">
+            <section class="page-section" style="background:#ffffff;">
+                <div class="container relative" style="color:#2a2a2a;">
                     <div class="row">
 
                         <!-- Main Content -->
@@ -125,21 +130,28 @@ $next = $conn->query("SELECT title, slug FROM blogs WHERE status='published' AND
                             <article>
 
                                 <!-- Excerpt (intro) -->
-                                <p class="text-gray mb-30" style="font-size:18px;font-weight:500;line-height:1.7;border-left:4px solid #c8a96e;padding-left:20px;">
+                                <p class="text-gray mb-30" style="font-size:18px;font-weight:500;line-height:1.7;border-left:4px solid #e1e1e1;padding-left:20px;color:#5c5c5c;">
                                     <?= htmlspecialchars($blog['excerpt']) ?>
                                 </p>
 
                                 <!-- Full Content -->
                                 <?php if (!empty($blog['content'])): ?>
-                                <div class="blog-content text-gray" style="line-height:1.9;font-size:16px;">
+                                <div class="blog-content text-gray" style="line-height:1.95;font-size:17px;color:#333;">
                                     <?= nl2br(htmlspecialchars($blog['content'])) ?>
                                 </div>
                                 <?php endif; ?>
 
+                                <?php if (!empty($blog['link'] ?? '')): ?>
+                                <div class="p-40 round mb-50 mt-50" style="text-align:center;background:transparent;">
+                                    <h4 class="mb-20" style="color:#111; font-weight:700;">Click to Know more</h4>
+                                    <a href="<?= htmlspecialchars($blog['link']) ?>" target="_blank" rel="noopener noreferrer" class="header-cta" style="display:inline-block;padding:14px 28px;border:1px solid rgba(0,0,0,0.08);border-radius:999px;color:#111;background:#fff;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">Know more</a>
+                                </div>
+                                <?php endif; ?>
+
                                 <!-- Call to Action -->
-                                <div class="bg-gray-light-1 p-40 round mb-50 mt-50">
-                                    <h3 class="mb-20">Ready to Transform Your Business?</h3>
-                                    <p class="mb-30">
+                                <div class="p-40 round mb-50 mt-50" style="background:#f6f6f6;">
+                                    <h3 class="mb-20" style="color:#111; font-weight:700;">Ready to Transform Your Business?</h3>
+                                    <p class="mb-30" style="color:#555; font-size:15px;">
                                         Discover how SGIPL can help you access premium products, optimize operations, and drive sustainable growth.
                                     </p>
                                     <div class="local-scroll">

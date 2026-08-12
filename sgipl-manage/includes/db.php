@@ -53,4 +53,14 @@ $brandWebsiteCol = $conn->query("SHOW COLUMNS FROM brandlogo LIKE 'website'");
 if ($brandWebsiteCol && $brandWebsiteCol->num_rows === 0) {
     $conn->query("ALTER TABLE brandlogo ADD COLUMN website VARCHAR(255) DEFAULT '' AFTER links");
 }
+
+$blogLinkCol = $conn->query("SHOW COLUMNS FROM blogs LIKE 'link'");
+if ($blogLinkCol && $blogLinkCol->num_rows === 0) {
+    $conn->query("ALTER TABLE blogs ADD COLUMN link VARCHAR(255) DEFAULT '' AFTER image");
+}
+
+$blogTitleBgCol = $conn->query("SHOW COLUMNS FROM blogs LIKE 'title_bg_image'");
+if ($blogTitleBgCol && $blogTitleBgCol->num_rows === 0) {
+    $conn->query("ALTER TABLE blogs ADD COLUMN title_bg_image VARCHAR(255) DEFAULT '' AFTER image");
+}
 ?>

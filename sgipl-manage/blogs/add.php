@@ -15,8 +15,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $content  = trim($_POST['content'] ?? '');
     $category = trim($_POST['category'] ?? 'Blog');
     $author   = trim($_POST['author'] ?? 'SGIPL Team');
-    $status   = in_array($_POST['status'] ?? '', ['published', 'draft']) ? $_POST['status'] : 'published';
-    $image    = '';
+    $link             = trim($_POST['link'] ?? '');
+    $status           = in_array($_POST['status'] ?? '', ['published', 'draft']) ? $_POST['status'] : 'published';
+    $image            = '';
+    $title_bg_image   = '';
 
     // Validate
     if (!$title)   $errors[] = "Title is required.";
@@ -36,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $chk->close();
     }
 
-    // Handle image upload
+    // Handle featured image upload
     if (!$errors && !empty($_FILES['image']['name'])) {
         $allowed = ['jpg', 'jpeg', 'png', 'webp'];
         $ext = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
@@ -55,13 +57,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    // Handle title background image upload
+    if (!$errors && !empty($_FILES['title_bg_image']['name'])) {
+        $allowed = ['jpg', 'jpeg', 'png', 'webp'];
+        $ext = strtolower(pathinfo($_FILES['title_bg_image']['name'], PATHINFO_EXTENSION));
+        if (!in_array($ext, $allowed)) {
+            $errors[] = "Only JPG, PNG, WEBP images are allowed for the title background.";
+        } elseif ($_FILES['title_bg_image']['size'] > 2 * 1024 * 1024) {
+            $errors[] = "Background image must be under 2MB.";
+        } else {
+            $filename = 'blog-title-bg-' . time() . '-' . uniqid() . '.' . $ext;
+            $dest = UPLOAD_DIR . $filename;
+            if (move_uploaded_file($_FILES['title_bg_image']['tmp_name'], $dest)) {
+                $title_bg_image = 'images/blog/' . $filename;
+            } else {
+                $errors[] = "Failed to upload title background image. Check folder permissions.";
+            }
+        }
+    }
+
     // Save to DB
     if (!$errors) {
-        $stmt = $conn->prepare("INSERT INTO blogs (title, slug, excerpt, content, image, category, author, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("ssssssss", $title, $slug, $excerpt, $content, $image, $category, $author, $status);
+        $stmt = $conn->prepare("INSERT INTO blogs (title, slug, excerpt, content, image, title_bg_image, category, author, status, link) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssssssssss", $title, $slug, $excerpt, $content, $image, $title_bg_image, $category, $author, $status, $link);
         if ($stmt->execute()) {
             $success = "Blog post added successfully!";
-            $title = $slug = $excerpt = $content = $category = $author = '';
+            $title = $slug = $excerpt = $content = $category = $author = $link = $title_bg_image = '';
             $status = 'published';
         } else {
             $errors[] = "Database error: " . $conn->error;
@@ -132,16 +153,26 @@ require_once '../includes/layout_top.php';
                 <div class="mb-0">
                     <label class="form-label">Author</label>
                     <input type="text" name="author" class="form-control" value="<?= htmlspecialchars($author ?? 'SGIPL Team') ?>">
-                </div>
-            </div>
+                </div>                <div class="mb-3">
+                    <label class="form-label">Optional Link</label>
+                    <input type="text" name="link" class="form-control" value="<?= htmlspecialchars($link ?? '') ?>" placeholder="https://example.com or /contact">
+                    <div class="text-muted small mt-1">Leave empty if you don't want to show the link section.</div>
+                </div>            </div>
 
             <div class="form-card">
-                <h6 class="fw-bold mb-3">Featured Image</h6>
-                <div id="preview-box" class="mb-2" style="display:none;">
-                    <img id="img-preview" src="" style="width:100%;height:150px;object-fit:cover;border-radius:8px;border:1px solid #e9ecef;">
+                <h6 class="fw-bold mb-3">Images</h6>
+                <div id="preview-box-featured" class="mb-2" style="display:none;">
+                    <img id="img-preview-featured" src="" style="width:100%;height:150px;object-fit:cover;border-radius:8px;border:1px solid #e9ecef;">
                 </div>
-                <input type="file" name="image" class="form-control" accept="image/jpeg,image/png,image/webp" onchange="previewImage(this)">
-                <div class="text-muted small mt-1">Max 2MB. JPG, PNG or WEBP.</div>
+                <label class="form-label">Featured Image</label>
+                <input type="file" name="image" class="form-control mb-3" accept="image/jpeg,image/png,image/webp" onchange="previewImage(this, 'img-preview-featured', 'preview-box-featured')">
+                <div class="text-muted small mb-3">Max 2MB. JPG, PNG or WEBP.</div>
+                <div id="preview-box-bg" class="mb-2" style="display:none;">
+                    <img id="img-preview-bg" src="" style="width:100%;height:150px;object-fit:cover;border-radius:8px;border:1px solid #e9ecef;">
+                </div>
+                <label class="form-label">Title Background Image</label>
+                <input type="file" name="title_bg_image" class="form-control" accept="image/jpeg,image/png,image/webp" onchange="previewImage(this, 'img-preview-bg', 'preview-box-bg')">
+                <div class="text-muted small mt-1">This image appears behind the blog title. Leave empty to use the featured image or default background.</div>
             </div>
         </div>
     </div>
@@ -157,12 +188,12 @@ function generateSlug(title) {
     const slug = title.toLowerCase().replace(/[^a-z0-9\s-]/g, '').trim().replace(/\s+/g, '-');
     document.getElementById('slug').value = slug;
 }
-function previewImage(input) {
+function previewImage(input, previewId, previewBoxId) {
     if (input.files && input.files[0]) {
         const reader = new FileReader();
         reader.onload = e => {
-            document.getElementById('img-preview').src = e.target.result;
-            document.getElementById('preview-box').style.display = 'block';
+            document.getElementById(previewId).src = e.target.result;
+            document.getElementById(previewBoxId).style.display = 'block';
         };
         reader.readAsDataURL(input.files[0]);
     }
