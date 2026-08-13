@@ -99,8 +99,7 @@ $pagename = basename($_SERVER['PHP_SELF']);
             .about-banner-slider {
                 position: relative;
                 width: 100%;
-                height: auto;
-                min-height: 0;
+                height: clamp(320px, 34vw, 460px);
                 border-radius: 0;
                 overflow: hidden;
                 background: #121826;
@@ -124,13 +123,17 @@ $pagename = basename($_SERVER['PHP_SELF']);
             }
             .banner-slide.active {
                 opacity: 1;
-                display: block;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100%;
                 z-index: 1;
             }
             .edia {
                 width: 100%;
-                height: auto;
+                height: 100%;
                 object-fit: contain;
+                object-position: center;
                 display: block;
                 max-width: 100%;
             }
@@ -242,9 +245,7 @@ $pagename = basename($_SERVER['PHP_SELF']);
             }
             @media (max-width: 991px) {
                 .about-banner-slider {
-                    min-height: 260px;
-                    max-height: 360px;
-                    aspect-ratio: auto;
+                    height: clamp(260px, 42vw, 360px);
                 }
                 .banner-nav {
                     width: 34px;
@@ -270,8 +271,18 @@ $pagename = basename($_SERVER['PHP_SELF']);
             }
             @media (max-width: 767px) {
                 .about-banner-slider {
-                    min-height: 220px;
-                    max-height: 280px;
+                    height: auto;
+                    min-height: 0;
+                }
+                .about-banner-slider .banner-slide.active {
+                    display: block;
+                    height: auto;
+                }
+                .about-banner-slider .edia {
+                    height: auto;
+                    max-height: none;
+                    object-fit: contain;
+                    object-position: center;
                 }
                 .banner-controls {
                     flex-wrap: wrap;
@@ -322,7 +333,7 @@ $pagename = basename($_SERVER['PHP_SELF']);
             const bannerAutoSlideTimers = {};
             document.addEventListener('DOMContentLoaded', function() {
                 initializeBannerSlider('aboutBannerSlider', 'aboutBannerDots');
-                startBannerAutoSlide('aboutBannerSlider', 'aboutBannerDots', 5000);
+                startBannerAutoSlide('aboutBannerSlider', 'aboutBannerDots');
             });
 
             function initializeBannerSlider(sliderId, dotsId, initialSlide = 0) {
@@ -339,7 +350,7 @@ $pagename = basename($_SERVER['PHP_SELF']);
                         dot.className = 'dot' + (index === initialSlide ? ' active' : '');
                         dot.addEventListener('click', () => {
                             goToBannerSlide(sliderId, dotsId, index);
-                            startBannerAutoSlide(sliderId, dotsId, 5000);
+                            startBannerAutoSlide(sliderId, dotsId);
                         });
                         dots.appendChild(dot);
                     });
@@ -349,9 +360,32 @@ $pagename = basename($_SERVER['PHP_SELF']);
 
             function startBannerAutoSlide(sliderId, dotsId, interval = 5000) {
                 if (bannerAutoSlideTimers[sliderId]) {
-                    clearInterval(bannerAutoSlideTimers[sliderId]);
+                    clearTimeout(bannerAutoSlideTimers[sliderId]);
                 }
-                bannerAutoSlideTimers[sliderId] = setInterval(function() {
+
+                const state = bannerSliderState[sliderId];
+                const slider = document.getElementById(sliderId);
+                if (!state || !slider || state.total < 2) return;
+
+                const activeVideo = slider.querySelector('.banner-slide.active video');
+                if (activeVideo) {
+                    const scheduleVideoSlide = function() {
+                        if (!activeVideo.closest('.banner-slide').classList.contains('active')) return;
+                        const videoDuration = Number.isFinite(activeVideo.duration) ? activeVideo.duration * 1000 : interval;
+                        bannerAutoSlideTimers[sliderId] = setTimeout(function() {
+                            navigateBannerSlider(sliderId, 1);
+                        }, videoDuration);
+                    };
+
+                    if (activeVideo.readyState >= 1) {
+                        scheduleVideoSlide();
+                    } else {
+                        activeVideo.addEventListener('loadedmetadata', scheduleVideoSlide, { once: true });
+                    }
+                    return;
+                }
+
+                bannerAutoSlideTimers[sliderId] = setTimeout(function() {
                     navigateBannerSlider(sliderId, 1);
                 }, interval);
             }
@@ -363,7 +397,7 @@ $pagename = basename($_SERVER['PHP_SELF']);
                 if (state.current < 0) state.current = state.total - 1;
                 if (state.current >= state.total) state.current = 0;
                 updateBannerSlider(sliderId, sliderId === 'aboutBannerSlider' ? 'aboutBannerDots' : 'homeBannerDots');
-                startBannerAutoSlide(sliderId, sliderId === 'aboutBannerSlider' ? 'aboutBannerDots' : 'homeBannerDots', 5000);
+                startBannerAutoSlide(sliderId, sliderId === 'aboutBannerSlider' ? 'aboutBannerDots' : 'homeBannerDots');
             }
 
             function goToBannerSlide(sliderId, dotsId, slideIndex) {
@@ -371,7 +405,7 @@ $pagename = basename($_SERVER['PHP_SELF']);
                 if (!state) return;
                 state.current = slideIndex;
                 updateBannerSlider(sliderId, dotsId);
-                startBannerAutoSlide(sliderId, dotsId, 5000);
+                startBannerAutoSlide(sliderId, dotsId);
             }
 
             function updateBannerSlider(sliderId, dotsId) {
@@ -379,7 +413,16 @@ $pagename = basename($_SERVER['PHP_SELF']);
                 if (!slider) return;
                 const slides = slider.querySelectorAll('.banner-slide');
                 slides.forEach((slide, index) => {
-                    slide.classList.toggle('active', index === bannerSliderState[sliderId].current);
+                    const isActive = index === bannerSliderState[sliderId].current;
+                    slide.classList.toggle('active', isActive);
+                    const video = slide.querySelector('video');
+                    if (video) {
+                        if (isActive) {
+                            video.play().catch(function() {});
+                        } else {
+                            video.pause();
+                        }
+                    }
                 });
                 const dots = document.getElementById(dotsId);
                 if (dots) {

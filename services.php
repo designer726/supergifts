@@ -172,6 +172,109 @@ if (empty($serviceBanners)) {
             .metrics-track .metric-card,
             .process-track .process-card,
             .features-track .feature-card { min-width: 280px; }
+            #services .container {
+                max-width: 100% !important;
+                width: 100% !important;
+                padding-left: 20px !important;
+                padding-right: 20px !important;
+            }
+            #services .row.mb-n30 {
+                display: grid !important;
+                grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+                gap: 22px !important;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+                align-items: stretch !important;
+            }
+            #services .row.mb-n30 > [class*="col-"] {
+                width: 100% !important;
+                max-width: none !important;
+                flex: 0 0 100% !important;
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+                margin-bottom: 0 !important;
+                display: flex !important;
+                align-items: stretch !important;
+            }
+            #services .row.mb-n30 > .col-lg-4,
+            #services .row.mb-n30 > .col-md-6 {
+                flex-basis: 100% !important;
+                max-width: 100% !important;
+            }
+            #services .services-3-item {
+                width: 100% !important;
+                height: 100% !important;
+                min-height: 380px !important;
+                display: flex !important;
+                align-items: stretch !important;
+                justify-content: flex-start !important;
+                border-radius: 18px !important;
+                background: #081b4a !important;
+                box-shadow: 0 12px 28px rgba(6, 26, 72, 0.12) !important;
+                padding: 30px 22px 26px !important;
+                position: relative;
+                overflow: hidden;
+            }
+            #services .services-3-item .wow {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: flex-start;
+                text-align: center;
+            }
+            #services .services-3-icon {
+                width: 90px;
+                height: 90px;
+                min-width: 90px;
+                min-height: 90px;
+                margin: 0 auto 18px;
+                background: #f4f5f7;
+                color: #0d2b55;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: inset 0 0 0 2px rgba(13, 43, 85, 0.08);
+            }
+            #services .services-3-title {
+                font-size: clamp(1.3rem, 1vw + 0.8rem, 2rem);
+                line-height: 1.3;
+                margin-bottom: 18px;
+                color: #f6d222;
+                font-weight: 700;
+            }
+            #services .services-3-text {
+                font-size: 1rem;
+                line-height: 1.6;
+                color: rgba(255,255,255,0.84);
+                margin: 0;
+                max-width: 100%;
+            }
+            @media (max-width: 991px) {
+                #services .row.mb-n30 {
+                    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                }
+                #services .services-3-item {
+                    min-height: 320px !important;
+                }
+            }
+            @media (max-width: 767px) {
+                #services .row.mb-n30 {
+                    grid-template-columns: 1fr !important;
+                    row-gap: 30px !important;
+                }
+                #services .services-3-item {
+                    min-height: 260px !important;
+                    padding: 22px 18px 20px !important;
+                }
+                #services .services-3-title {
+                    font-size: 1.6rem;
+                }
+                #services .services-3-text {
+                    font-size: 0.95rem;
+                }
+            }
             @media(max-width: 1200px) {
                 .services-banner-hero { height: 520px; }
                 .services-banner-hero .services-banner-overlay { padding: 60px 24px; }
@@ -191,8 +294,43 @@ if (empty($serviceBanners)) {
                 .features-slider-container .slider-nav-btn.next { right: 10px !important; }
             }
             @media(max-width: 767px) {
-                .services-banner-hero { min-height: 420px; height: auto; }
-                .services-banner-hero .banner-controls { bottom: 12px; }
+                .services-banner-hero {
+                    height: auto;
+                    min-height: 0;
+                    background: #0d2b55;
+                }
+                .services-banner-hero .services-banner-slides {
+                    position: relative;
+                    height: auto;
+                }
+                .services-banner-hero .banner-slide {
+                    position: relative;
+                    inset: auto;
+                    display: none;
+                    height: auto;
+                }
+                .services-banner-hero .banner-slide.active {
+                    display: block;
+                }
+                .services-banner-hero .services-banner-media {
+                    width: 100%;
+                    height: auto;
+                    max-height: none;
+                    object-fit: contain;
+                    object-position: center;
+                }
+                .services-banner-hero .banner-fallback {
+                    aspect-ratio: 16 / 9;
+                    height: auto;
+                }
+                .services-banner-hero .banner-controls { inset: 0; }
+                .services-banner-hero .services-banner-arrow.prev { left: 10px; }
+                .services-banner-hero .services-banner-arrow.next { right: 10px; }
+                .services-banner-hero .services-banner-dots {
+                    left: 50%;
+                    bottom: 10px;
+                    transform: translateX(-50%);
+                }
                 .services-banner-hero .hero-right { grid-template-columns: 1fr; }
                 .services-banner-hero .hero-content h1 { font-size: 2.4rem; }
                 .services-banner-hero .hero-content p { font-size: 0.96rem; }
@@ -205,7 +343,6 @@ if (empty($serviceBanners)) {
                 .slider-nav-btn { left: 10px !important; right: 10px !important; }
             }
             @media(max-width: 575px) {
-                .services-banner-hero { min-height: 380px; }
                 .services-banner-hero .services-banner-overlay { padding: 50px 16px; }
                 .services-banner-hero .banner-controls { gap: 10px; }
                 .services-banner-hero .services-banner-arrow { width: 38px; height: 38px; }
@@ -424,61 +561,45 @@ if (empty($serviceBanners)) {
                         </div>
 
                         <div class="features-slider-container" style="position: relative;">
-                            <!-- Slider Navigation -->
-                            <button class="slider-nav-btn prev" onclick="moveSlider('features', -1)" style="position: absolute; left: -50px; top: 50%; transform: translateY(-50%); z-index: 10; background: #28a745; color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 20px; transition: all 0.3s;">❮</button>
-                            <button class="slider-nav-btn next" onclick="moveSlider('features', 1)" style="position: absolute; right: -50px; top: 50%; transform: translateY(-50%); z-index: 10; background: #28a745; color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 20px; transition: all 0.3s;">❯</button>
-
-                            <!-- Slider Track -->
-                            <div class="features-track" style="display: flex; gap: 30px; overflow: hidden; padding: 20px 0;">
-                                <!-- Feature 1 -->
-                                <div class="feature-card" style="flex: 0 0 calc(33.333% - 20px); background: white; padding: 40px 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(13, 43, 85, 0.1); transition: all 0.4s ease; cursor: pointer; border-top: 4px solid #ffc107;">
-                                    <div style="font-size: 2.5rem; margin-bottom: 20px;">✅</div>
-                                    <h4 style="color: #0d2b55; font-size: 1.2rem; margin: 15px 0; font-weight: 700;">100% Authentic</h4>
-                                    <p style="color: #666; font-size: 0.95rem; line-height: 1.6;">Genuine products from authorized distributors. No counterfeits, guaranteed.</p>
+                            <button type="button" class="features-mobile-nav prev" aria-label="Previous feature">&#10094;</button>
+                            <div class="features-track" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; align-items: stretch; padding: 20px 0;">
+                                <div class="feature-card" style="background: white; padding: 30px 22px; border-radius: 16px; box-shadow: 0 10px 25px rgba(13, 43, 85, 0.08); transition: all 0.4s ease; cursor: pointer; border-top: 4px solid #ffc107; min-height: 220px; display: flex; flex-direction: column; justify-content: flex-start;">
+                                    <div style="font-size: 2.2rem; margin-bottom: 18px;">✅</div>
+                                    <h4 style="color: #0d2b55; font-size: 1.2rem; margin: 0 0 12px; font-weight: 700;">100% Authentic</h4>
+                                    <p style="color: #666; font-size: 0.95rem; line-height: 1.6; margin: 0;">Genuine products from authorized distributors. No counterfeits, guaranteed.</p>
                                 </div>
 
-                                <!-- Feature 2 -->
-                                <div class="feature-card" style="flex: 0 0 calc(33.333% - 20px); background: white; padding: 40px 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(13, 43, 85, 0.1); transition: all 0.4s ease; cursor: pointer; border-top: 4px solid #28a745;">
-                                    <div style="font-size: 2.5rem; margin-bottom: 20px;">⚡</div>
-                                    <h4 style="color: #0d2b55; font-size: 1.2rem; margin: 15px 0; font-weight: 700;">Quick Turnaround</h4>
-                                    <p style="color: #666; font-size: 0.95rem; line-height: 1.6;">Rush deliveries available. Get your orders within 24-48 hours.</p>
+                                <div class="feature-card" style="background: white; padding: 30px 22px; border-radius: 16px; box-shadow: 0 10px 25px rgba(13, 43, 85, 0.08); transition: all 0.4s ease; cursor: pointer; border-top: 4px solid #28a745; min-height: 220px; display: flex; flex-direction: column; justify-content: flex-start;">
+                                    <div style="font-size: 2.2rem; margin-bottom: 18px;">⚡</div>
+                                    <h4 style="color: #0d2b55; font-size: 1.2rem; margin: 0 0 12px; font-weight: 700;">Quick Turnaround</h4>
+                                    <p style="color: #666; font-size: 0.95rem; line-height: 1.6; margin: 0;">Rush deliveries available. Get your orders within 24-48 hours.</p>
                                 </div>
 
-                                <!-- Feature 3 -->
-                                <div class="feature-card" style="flex: 0 0 calc(33.333% - 20px); background: white; padding: 40px 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(13, 43, 85, 0.1); transition: all 0.4s ease; cursor: pointer; border-top: 4px solid #007bff;">
-                                    <div style="font-size: 2.5rem; margin-bottom: 20px;">💰</div>
-                                    <h4 style="color: #0d2b55; font-size: 1.2rem; margin: 15px 0; font-weight: 700;">Best Pricing</h4>
-                                    <p style="color: #666; font-size: 0.95rem; line-height: 1.6;">Competitive rates with bulk discounts. Transparent pricing with no hidden charges.</p>
+                                <div class="feature-card" style="background: white; padding: 30px 22px; border-radius: 16px; box-shadow: 0 10px 25px rgba(13, 43, 85, 0.08); transition: all 0.4s ease; cursor: pointer; border-top: 4px solid #007bff; min-height: 220px; display: flex; flex-direction: column; justify-content: flex-start;">
+                                    <div style="font-size: 2.2rem; margin-bottom: 18px;">💰</div>
+                                    <h4 style="color: #0d2b55; font-size: 1.2rem; margin: 0 0 12px; font-weight: 700;">Best Pricing</h4>
+                                    <p style="color: #666; font-size: 0.95rem; line-height: 1.6; margin: 0;">Competitive rates with bulk discounts. Transparent pricing with no hidden charges.</p>
                                 </div>
 
-                                <!-- Feature 4 -->
-                                <div class="feature-card" style="flex: 0 0 calc(33.333% - 20px); background: white; padding: 40px 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(13, 43, 85, 0.1); transition: all 0.4s ease; cursor: pointer; border-top: 4px solid #ff6b6b;">
-                                    <div style="font-size: 2.5rem; margin-bottom: 20px;">🎯</div>
-                                    <h4 style="color: #0d2b55; font-size: 1.2rem; margin: 15px 0; font-weight: 700;">Full Customization</h4>
-                                    <p style="color: #666; font-size: 0.95rem; line-height: 1.6;">Print, engrave, or embroider your branding. Unlimited customization options.</p>
+                                <div class="feature-card" style="background: white; padding: 30px 22px; border-radius: 16px; box-shadow: 0 10px 25px rgba(13, 43, 85, 0.08); transition: all 0.4s ease; cursor: pointer; border-top: 4px solid #ff6b6b; min-height: 220px; display: flex; flex-direction: column; justify-content: flex-start;">
+                                    <div style="font-size: 2.2rem; margin-bottom: 18px;">🎯</div>
+                                    <h4 style="color: #0d2b55; font-size: 1.2rem; margin: 0 0 12px; font-weight: 700;">Full Customization</h4>
+                                    <p style="color: #666; font-size: 0.95rem; line-height: 1.6; margin: 0;">Print, engrave, or embroider your branding. Unlimited customization options.</p>
                                 </div>
 
-                                <!-- Feature 5 -->
-                                <div class="feature-card" style="flex: 0 0 calc(33.333% - 20px); background: white; padding: 40px 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(13, 43, 85, 0.1); transition: all 0.4s ease; cursor: pointer; border-top: 4px solid #17a2b8;">
-                                    <div style="font-size: 2.5rem; margin-bottom: 20px;">🏆</div>
-                                    <h4 style="color: #0d2b55; font-size: 1.2rem; margin: 15px 0; font-weight: 700;">Expert Support</h4>
-                                    <p style="color: #666; font-size: 0.95rem; line-height: 1.6;">24x7 customer support. Dedicated account managers for bulk orders.</p>
+                                <div class="feature-card" style="background: white; padding: 30px 22px; border-radius: 16px; box-shadow: 0 10px 25px rgba(13, 43, 85, 0.08); transition: all 0.4s ease; cursor: pointer; border-top: 4px solid #17a2b8; min-height: 220px; display: flex; flex-direction: column; justify-content: flex-start;">
+                                    <div style="font-size: 2.2rem; margin-bottom: 18px;">🏆</div>
+                                    <h4 style="color: #0d2b55; font-size: 1.2rem; margin: 0 0 12px; font-weight: 700;">Expert Support</h4>
+                                    <p style="color: #666; font-size: 0.95rem; line-height: 1.6; margin: 0;">24x7 customer support. Dedicated account managers for bulk orders.</p>
                                 </div>
 
-                                <!-- Feature 6 -->
-                                <div class="feature-card" style="flex: 0 0 calc(33.333% - 20px); background: white; padding: 40px 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(13, 43, 85, 0.1); transition: all 0.4s ease; cursor: pointer; border-top: 4px solid #6f42c1;">
-                                    <div style="font-size: 2.5rem; margin-bottom: 20px;">🌐</div>
-                                    <h4 style="color: #0d2b55; font-size: 1.2rem; margin: 15px 0; font-weight: 700;">Pan-India Reach</h4>
-                                    <p style="color: #666; font-size: 0.95rem; line-height: 1.6;">Deliver anywhere in India. With our logistics network covering all major cities.</p>
+                                <div class="feature-card" style="background: white; padding: 30px 22px; border-radius: 16px; box-shadow: 0 10px 25px rgba(13, 43, 85, 0.08); transition: all 0.4s ease; cursor: pointer; border-top: 4px solid #6f42c1; min-height: 220px; display: flex; flex-direction: column; justify-content: flex-start;">
+                                    <div style="font-size: 2.2rem; margin-bottom: 18px;">🌐</div>
+                                    <h4 style="color: #0d2b55; font-size: 1.2rem; margin: 0 0 12px; font-weight: 700;">Pan-India Reach</h4>
+                                    <p style="color: #666; font-size: 0.95rem; line-height: 1.6; margin: 0;">Deliver anywhere in India. With our logistics network covering all major cities.</p>
                                 </div>
                             </div>
-
-                            <!-- Slider Indicators -->
-                            <div style="display: flex; gap: 8px; margin-top: 30px; justify-content: center;">
-                                <div class="indicator" style="width: 12px; height: 12px; border-radius: 50%; background: #0d2b55; cursor: pointer; transition: all 0.3s;" onclick="goToSlide('features', 0)"></div>
-                                <div class="indicator" style="width: 12px; height: 12px; border-radius: 50%; background: #ccc; cursor: pointer; transition: all 0.3s;" onclick="goToSlide('features', 1)"></div>
-                                <div class="indicator" style="width: 12px; height: 12px; border-radius: 50%; background: #ccc; cursor: pointer; transition: all 0.3s;" onclick="goToSlide('features', 2)"></div>
-                            </div>
+                            <button type="button" class="features-mobile-nav next" aria-label="Next feature">&#10095;</button>
                         </div>
                     </div>
                 </div>
@@ -491,7 +612,7 @@ if (empty($serviceBanners)) {
                         
                         <div class="row mb-n30">
                             
-                            <!-- Services Item-->
+                            <!-- Services Item (Exclusive Corporate Gifting) -->
                             <div class="col-md-6 col-lg-4 d-flex align-items-stretch mb-30">
                                 <div class="services-3-item round text-center">
                                     <div class="wow fadeInUpShort" data-wow-offset="50">
@@ -516,7 +637,7 @@ if (empty($serviceBanners)) {
                             </div>
                             <!-- End Services Item-->
                             
-                            <!-- Services Item-->
+                            <!-- Services Item (Customizable Packages) -->
                             <div class="col-md-6 col-lg-4 d-flex align-items-stretch mb-30">
                                 <div class="services-3-item round text-center">
                                     <div class="wow fadeInUpShort" data-wow-offset="50">
@@ -541,7 +662,7 @@ if (empty($serviceBanners)) {
                             </div>
                             <!-- End Services Item-->
                             
-                            <!-- Services Item-->
+                            <!-- Services (Gift Vouchers) -->
                             <div class="col-md-6 col-lg-4 d-flex align-items-stretch mb-30">
                                 <div class="services-3-item round text-center">
                                     <div class="wow fadeInUpShort" data-wow-offset="50">
@@ -566,7 +687,7 @@ if (empty($serviceBanners)) {
                             </div>
                             <!-- End Services Item-->
                             
-                            <!-- Services Item-->
+                            <!-- Services Item (Brand Embossed Gifts) -->
                             <div class="col-md-6 col-lg-4 d-flex align-items-stretch mb-30">
                                 <div class="services-3-item round text-center">
                                     <div class="wow fadeInUpShort" data-wow-offset="50">
@@ -591,7 +712,7 @@ if (empty($serviceBanners)) {
                             </div>
                             <!-- End Services Item-->
                             
-                            <!-- Services Item-->
+                            <!-- Services Item (Employee Gifting Programs) -->
                             <div class="col-md-6 col-lg-4 d-flex align-items-stretch mb-30">
                                 <div class="services-3-item round text-center">
                                     <div class="wow fadeInUpShort" data-wow-offset="50">
@@ -604,7 +725,7 @@ if (empty($serviceBanners)) {
                                         
                                         <h3 class="services-3-title">
                                         Employee Gifting Programs
-                                        </h3
+                                        </h3>
                                         
                                         
                                         <div class="services-3-text">
@@ -755,7 +876,7 @@ if (empty($serviceBanners)) {
                     </div>
                 </section>
                    <!-- Logotypes Section -->
-                   <section class="small-section pt-20 pb-20">
+                   <section class="small-section pt-20 pb-20 services-brand-partners">
                     <div class="container relative">
                         
                         <div class="row wow fadeInUpShort">
@@ -963,6 +1084,16 @@ if (empty($serviceBanners)) {
             // Initialize sliders on page load
             document.addEventListener('DOMContentLoaded', function() {
                 adjustSlidersForResponsive();
+                const featuresTrack = document.querySelector('.features-track');
+                document.querySelectorAll('.features-mobile-nav').forEach(function(button) {
+                    button.addEventListener('click', function() {
+                        if (!featuresTrack || window.innerWidth > 768) return;
+                        featuresTrack.scrollBy({
+                            left: button.classList.contains('next') ? featuresTrack.clientWidth : -featuresTrack.clientWidth,
+                            behavior: 'smooth'
+                        });
+                    });
+                });
                 
                 // Add card hover effects on all sliders
                 document.querySelectorAll('.metrics-track, .process-track, .features-track').forEach(track => {
@@ -999,7 +1130,35 @@ if (empty($serviceBanners)) {
                 transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             }
 
-            .metric-card:hover, .process-card:hover, .feature-card:hover {
+            .features-track {
+                display: grid !important;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 24px;
+                align-items: stretch;
+            }
+
+            .features-mobile-nav {
+                display: none;
+            }
+
+            .feature-card {
+                flex: unset !important;
+                width: 100% !important;
+                min-height: 220px;
+                border: 1px solid #edf1f7;
+                box-shadow: 0 10px 25px rgba(13, 43, 85, 0.08);
+                background: #ffffff;
+                align-items: center;
+                justify-content: center !important;
+                text-align: center;
+            }
+
+            .feature-card:hover {
+                transform: translateY(-6px);
+                box-shadow: 0 16px 30px rgba(13, 43, 85, 0.12);
+            }
+
+            .metric-card:hover, .process-card:hover {
                 transform: translateY(-10px);
             }
 
@@ -1055,6 +1214,10 @@ if (empty($serviceBanners)) {
                     font-size: 2rem;
                 }
 
+                .features-track {
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                }
+
                 .slider-nav-btn {
                     left: 10px !important;
                     right: auto !important;
@@ -1073,8 +1236,49 @@ if (empty($serviceBanners)) {
                     padding: 40px 0;
                 }
 
+                .informatic-sliders-section .container,
+                .services-brand-partners .container {
+                    padding-left: 16px;
+                    padding-right: 16px;
+                }
+
+                .informatic-slider-wrapper {
+                    margin-bottom: 42px !important;
+                }
+
+                .informatic-slider-wrapper:last-child {
+                    margin-bottom: 0 !important;
+                }
+
+                .slider-header {
+                    margin-bottom: 24px !important;
+                }
+
                 .slider-header h2 {
                     font-size: 1.5rem;
+                    line-height: 1.25;
+                }
+
+                .slider-header p {
+                    font-size: 0.95rem !important;
+                    line-height: 1.55;
+                }
+
+                .features-track {
+                    display: flex !important;
+                    grid-template-columns: none;
+                    gap: 12px !important;
+                    padding: 0 4px 10px !important;
+                    overflow-x: auto;
+                    overflow-y: hidden;
+                    scroll-snap-type: x mandatory;
+                    scroll-behavior: smooth;
+                    scrollbar-width: none;
+                    -webkit-overflow-scrolling: touch;
+                }
+
+                .features-track::-webkit-scrollbar {
+                    display: none;
                 }
 
                 .slider-nav-btn {
@@ -1085,12 +1289,111 @@ if (empty($serviceBanners)) {
                     padding: 30px 20px !important;
                 }
 
+                .feature-card {
+                    flex: 0 0 calc(100% - 8px) !important;
+                    width: calc(100% - 8px) !important;
+                    min-height: 0 !important;
+                    padding: 22px 20px !important;
+                    border-radius: 14px !important;
+                    scroll-snap-align: center;
+                }
+
+                .feature-card > div:first-child {
+                    margin-bottom: 12px !important;
+                }
+
+                .features-mobile-nav {
+                    display: flex;
+                    position: absolute;
+                    top: 50%;
+                    z-index: 2;
+                    align-items: center;
+                    justify-content: center;
+                    width: 34px;
+                    height: 34px;
+                    border: 0;
+                    border-radius: 50%;
+                    background: #0d2b55;
+                    color: #fff;
+                    box-shadow: 0 3px 10px rgba(13, 43, 85, 0.25);
+                    transform: translateY(-50%);
+                }
+
+                .features-mobile-nav.prev { left: -3px; }
+                .features-mobile-nav.next { right: -3px; }
+
                 .metric-card h4, .process-card h4, .feature-card h4 {
                     font-size: 1.1rem !important;
                 }
 
                 .metric-card p, .process-card p, .feature-card p {
                     font-size: 0.9rem !important;
+                }
+
+                .services-brand-partners {
+                    padding-top: 28px !important;
+                    padding-bottom: 28px !important;
+                }
+
+                .services-brand-partners .section-title-tiny {
+                    margin-bottom: 18px !important;
+                    font-size: 1.35rem;
+                    line-height: 1.3;
+                }
+
+                .services-brand-partners .small-item-carousel {
+                    padding: 0 4px;
+                }
+
+                .services-brand-partners .logo-item {
+                    height: 96px;
+                    margin: 0 6px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    opacity: 1;
+                    background: #fff;
+                    border: 1px solid #e7ebf1;
+                    border-radius: 12px;
+                    box-shadow: 0 4px 14px rgba(13, 43, 85, 0.08);
+                }
+
+                .services-brand-partners .logo-item a {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 100%;
+                    height: 100%;
+                    padding: 10px;
+                }
+
+                .services-brand-partners .logo-item img.aiir_brand_img {
+                    position: static;
+                    transform: none;
+                    width: 100% !important;
+                    max-width: 130px;
+                    height: 68px !important;
+                    object-fit: contain;
+                }
+
+                .services-brand-partners .owl-item {
+                    padding: 0 !important;
+                }
+            }
+
+            @media (max-width: 420px) {
+                .slider-header h2 {
+                    font-size: 1.35rem;
+                }
+
+                .services-brand-partners .logo-item {
+                    height: 88px;
+                    margin: 0 4px;
+                }
+
+                .services-brand-partners .logo-item img.aiir_brand_img {
+                    max-width: 112px;
+                    height: 60px !important;
                 }
             }
         </style>
