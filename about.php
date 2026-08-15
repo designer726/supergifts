@@ -271,18 +271,28 @@ $pagename = basename($_SERVER['PHP_SELF']);
             }
             @media (max-width: 767px) {
                 .about-banner-slider {
-                    height: auto;
-                    min-height: 0;
+                    width: 100% !important;
+                    height: auto !important;
+                    min-height: 0 !important;
+                    max-height: none !important;
+                }
+                .about-banner-hero,
+                .about-banner-container,
+                .about-banner-slider .banner-slide {
+                    width: 100% !important;
+                    max-width: 100% !important;
                 }
                 .about-banner-slider .banner-slide.active {
-                    display: block;
-                    height: auto;
+                    display: block !important;
+                    height: auto !important;
                 }
                 .about-banner-slider .edia {
-                    height: auto;
-                    max-height: none;
-                    object-fit: contain;
-                    object-position: center;
+                    width: 100% !important;
+                    height: auto !important;
+                    max-width: 100% !important;
+                    max-height: none !important;
+                    object-fit: contain !important;
+                    object-position: center !important;
                 }
                 .banner-controls {
                     flex-wrap: wrap;
