@@ -96,10 +96,13 @@ $pagename = basename($_SERVER['PHP_SELF']);
                 width: 100%;
                 height: 100%;
             }
+            /* Use an aspect ratio with sensible min/max heights for consistent banners */
             .about-banner-slider {
                 position: relative;
                 width: 100%;
-                height: clamp(320px, 34vw, 460px);
+                aspect-ratio: 16 / 6;
+                min-height: 240px;
+                max-height: 460px;
                 border-radius: 0;
                 overflow: hidden;
                 background: #121826;
@@ -115,7 +118,8 @@ $pagename = basename($_SERVER['PHP_SELF']);
                 margin-bottom: 0;
             }
             .banner-slide {
-                position: relative;
+                position: absolute;
+                inset: 0;
                 opacity: 0;
                 transition: opacity .45s ease;
                 display: none;
@@ -123,19 +127,18 @@ $pagename = basename($_SERVER['PHP_SELF']);
             }
             .banner-slide.active {
                 opacity: 1;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                height: 100%;
+                display: block;
                 z-index: 1;
             }
             .edia {
                 width: 100%;
                 height: 100%;
-                object-fit: contain;
+                object-fit: cover;
                 object-position: center;
                 display: block;
-                max-width: 100%;
+            }
+            .banner-slide video.edia {
+                display: block;
             }
             .banner-placeholder {
                 color: #e2e8f0;
@@ -215,8 +218,7 @@ $pagename = basename($_SERVER['PHP_SELF']);
                 background: #d4af37;
             }
             .page-section#about {
-                padding-top: 40px; */z
-                /* padding-bottom: 40px;
+                padding-top: 40px;
             }
             #about .row {
                 display: flex;
@@ -245,7 +247,7 @@ $pagename = basename($_SERVER['PHP_SELF']);
             }
             @media (max-width: 991px) {
                 .about-banner-slider {
-                    height: clamp(260px, 42vw, 360px);
+                    max-height: 360px;
                 }
                 .banner-nav {
                     width: 34px;
@@ -271,28 +273,28 @@ $pagename = basename($_SERVER['PHP_SELF']);
             }
             @media (max-width: 767px) {
                 .about-banner-slider {
-                    width: 100% !important;
-                    height: auto !important;
-                    min-height: 0 !important;
-                    max-height: none !important;
+                    aspect-ratio: auto;
+                    height: auto;
+                    min-height: 0;
+                    max-height: none;
                 }
                 .about-banner-hero,
                 .about-banner-container,
                 .about-banner-slider .banner-slide {
-                    width: 100% !important;
-                    max-width: 100% !important;
+                    width: 100%;
+                    max-width: 100%;
                 }
                 .about-banner-slider .banner-slide.active {
-                    display: block !important;
-                    height: auto !important;
+                    display: block;
+                    position: relative;
+                    height: auto;
                 }
                 .about-banner-slider .edia {
-                    width: 100% !important;
-                    height: auto !important;
-                    max-width: 100% !important;
-                    max-height: none !important;
-                    object-fit: contain !important;
-                    object-position: center !important;
+                    width: 100%;
+                    height: auto;
+                    object-fit: cover;
+                    object-position: center;
+                    max-height: none;
                 }
                 .banner-controls {
                     flex-wrap: wrap;
@@ -316,13 +318,6 @@ $pagename = basename($_SERVER['PHP_SELF']);
                 .banner-overlay p {
                     font-size: 13px;
                 }
-                /* #about .page-section {
-                    padding-top: 24px;
-                    padding-bottom: 24px;
-                } */
-                /* .page-section#about .col-sm-8 {
-                    margin-top: 0;
-                } */
             }
             </style>
 
