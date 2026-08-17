@@ -98,7 +98,8 @@ $pagename = basename($_SERVER['PHP_SELF']);
             .about-banner-slider {
                 position: relative;
                 width: 100%;
-                height: clamp(320px, 34vw, 460px);
+                height: 600px;
+                min-height: 600px;
                 border-radius: 0;
                 overflow: hidden;
                 background: #121826;
@@ -124,10 +125,7 @@ $pagename = basename($_SERVER['PHP_SELF']);
             }
             .banner-slide.active {
                 opacity: 1;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                height: 100%;
+                display: block;
                 z-index: 1;
             }
             .edia {
@@ -136,7 +134,9 @@ $pagename = basename($_SERVER['PHP_SELF']);
                 object-fit: contain;
                 object-position: center;
                 display: block;
-                max-width: 100%;
+            }
+            .banner-slide video.edia {
+                display: block;
             }
             .banner-placeholder {
                 color: #e2e8f0;
@@ -246,9 +246,16 @@ $pagename = basename($_SERVER['PHP_SELF']);
                     margin-top: 0 !important;
                 }
             }
+            @media (max-width: 1200px) {
+                .about-banner-slider {
+                    height: 520px;
+                    min-height: 520px;
+                }
+            }
             @media (max-width: 991px) {
                 .about-banner-slider {
-                    height: clamp(260px, 42vw, 360px);
+                    height: auto;
+                    min-height: 520px;
                 }
                 .banner-nav {
                     width: 34px;
@@ -274,31 +281,32 @@ $pagename = basename($_SERVER['PHP_SELF']);
             }
             @media (max-width: 767px) {
                 .about-banner-slider {
-                    width: 100% !important;
-                    height: auto !important;
-                    min-height: 0 !important;
-                    max-height: none !important;
+                    width: 100%;
+                    aspect-ratio: auto;
+                    height: auto;
+                    min-height: 0;
+                    max-height: none;
                     background: transparent;
                 }
                 .about-banner-hero,
                 .about-banner-container,
                 .about-banner-slider .banner-slide {
-                    width: 100% !important;
-                    max-width: 100% !important;
+                    width: 100%;
+                    max-width: 100%;
                 }
                 .about-banner-slider .banner-slide.active {
                     position: relative;
                     inset: auto;
-                    display: block !important;
-                    height: auto !important;
+                    display: block;
+                    height: auto;
                 }
                 .about-banner-slider .edia {
-                    width: 100% !important;
-                    height: auto !important;
-                    max-width: 100% !important;
-                    max-height: none !important;
-                    object-fit: contain !important;
-                    object-position: center !important;
+                    width: 100%;
+                    height: auto;
+                    max-width: 100%;
+                    max-height: none;
+                    object-fit: contain;
+                    object-position: center;
                     vertical-align: middle;
                 }
                 .banner-controls {
@@ -323,13 +331,6 @@ $pagename = basename($_SERVER['PHP_SELF']);
                 .banner-overlay p {
                     font-size: 13px;
                 }
-                /* #about .page-section {
-                    padding-top: 24px;
-                    padding-bottom: 24px;
-                } */
-                /* .page-section#about .col-sm-8 {
-                    margin-top: 0;
-                } */
             }
             </style>
 
