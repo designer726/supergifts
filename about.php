@@ -94,7 +94,6 @@ $pagename = basename($_SERVER['PHP_SELF']);
             }
             .about-banner-container {
                 width: 100%;
-                height: 100%;
             }
             .about-banner-slider {
                 position: relative;
@@ -115,11 +114,13 @@ $pagename = basename($_SERVER['PHP_SELF']);
                 margin-bottom: 0;
             }
             .banner-slide {
-                position: relative;
+                position: absolute;
+                inset: 0;
                 opacity: 0;
                 transition: opacity .45s ease;
                 display: none;
                 width: 100%;
+                height: 100%;
             }
             .banner-slide.active {
                 opacity: 1;
@@ -215,18 +216,17 @@ $pagename = basename($_SERVER['PHP_SELF']);
                 background: #d4af37;
             }
             .page-section#about {
-                padding-top: 40px; */z
-                /* padding-bottom: 40px;
+                padding-top: 40px;
+                padding-bottom: 40px;
             }
             #about .row {
                 display: flex;
                 flex-wrap: wrap;
-                gap: 20px;
                 align-items: flex-start;
             }
             #about .col-sm-4,
             #about .col-sm-8 {
-                flex: 1 1 100%;
+                flex: 0 0 100%;
                 max-width: 100%;
             }
             #about .call-action-4-images img {
@@ -237,10 +237,13 @@ $pagename = basename($_SERVER['PHP_SELF']);
             }
             @media (min-width: 768px) {
                 #about .col-sm-4 {
+                    flex: 0 0 33.3333%;
                     max-width: 33.3333%;
                 }
                 #about .col-sm-8 {
+                    flex: 0 0 66.6667%;
                     max-width: 66.6667%;
+                    margin-top: 0 !important;
                 }
             }
             @media (max-width: 991px) {
@@ -275,6 +278,7 @@ $pagename = basename($_SERVER['PHP_SELF']);
                     height: auto !important;
                     min-height: 0 !important;
                     max-height: none !important;
+                    background: transparent;
                 }
                 .about-banner-hero,
                 .about-banner-container,
@@ -283,6 +287,8 @@ $pagename = basename($_SERVER['PHP_SELF']);
                     max-width: 100% !important;
                 }
                 .about-banner-slider .banner-slide.active {
+                    position: relative;
+                    inset: auto;
                     display: block !important;
                     height: auto !important;
                 }
@@ -293,6 +299,7 @@ $pagename = basename($_SERVER['PHP_SELF']);
                     max-height: none !important;
                     object-fit: contain !important;
                     object-position: center !important;
+                    vertical-align: middle;
                 }
                 .banner-controls {
                     flex-wrap: wrap;
