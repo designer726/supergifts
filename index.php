@@ -2,12 +2,26 @@
 $pagename = basename($_SERVER['PHP_SELF']);
 
 /* ── helpers ── */
+// function findBrandLogoPath($imageno) {
+//     $root = rtrim($_SERVER['DOCUMENT_ROOT'], '/\\') . '/supergifts/';
+//     foreach (['.jpg','.jpeg','.png','.webp'] as $ext) {
+//         $file = $root . 'images/brandlogo/image' . intval($imageno) . $ext;
+//         if (file_exists($file)) return 'images/brandlogo/image' . intval($imageno) . $ext;
+//     }
+//     return 'images/brandlogo/image' . intval($imageno) . '.jpg';
+// }
+
 function findBrandLogoPath($imageno) {
-    $root = rtrim($_SERVER['DOCUMENT_ROOT'], '/\\') . '/supergifts/';
-    foreach (['.jpg','.jpeg','.png','.webp'] as $ext) {
+    $root = rtrim($_SERVER['DOCUMENT_ROOT'], '/\\') . '/';
+
+    foreach (['.jpg', '.jpeg', '.png', '.webp'] as $ext) {
         $file = $root . 'images/brandlogo/image' . intval($imageno) . $ext;
-        if (file_exists($file)) return 'images/brandlogo/image' . intval($imageno) . $ext;
+
+        if (is_file($file)) {
+            return 'images/brandlogo/image' . intval($imageno) . $ext;
+        }
     }
+
     return 'images/brandlogo/image' . intval($imageno) . '.jpg';
 }
 
@@ -165,7 +179,7 @@ if (!$db->connect_error) {
                     <!-- Background: uploaded image / video / gradient fallback -->
                     <?php if (!empty($sl['file_path'])): ?>
                         <?php if ($isVideo): ?>
-                        <video class="hp-banner-bg-video" muted playsinline preload="auto">
+                        <video class="hp-banner-bg-video" muted playsinline preload="metadata">
                             <source src="<?= htmlspecialchars($sl['file_path']) ?>">
                         </video>
                         <?php else: ?>
@@ -205,6 +219,48 @@ if (!$db->connect_error) {
                 <?php else: ?>
                 <p style="color:#9CA3AF;font-size:14px;">Brand partners coming soon.</p>
                 <?php endif; ?>
+            </section>
+
+             <!-- ═══════════ PAN INDIA INDIVIDUAL DELIVERY ═══════════ -->
+            <div class="hp-pan-india">
+                <h3>PAN India Individual Delivery Available</h3>
+                <p>Delivering to 500+ cities across India — fast, reliable, and trackable</p>
+            </div>
+
+             <!-- ═══════════ AVAILABLE GIFT VOUCHERS ═══════════ -->
+            <section class="hp-vouchers-sec">
+                <div class="hp-sec-title">Available Gift Vouchers</div>
+                <div class="hp-vouchers-track-wrapper">
+                    <div class="hp-vouchers-track">
+                        <?php if (!empty($dbVouchers)): ?>
+                            <?php foreach (array_merge($dbVouchers, $dbVouchers) as $v): ?>
+                            <a href="voucher-detail.php?id=<?= intval($v['id']) ?>" class="hp-voucher-card">
+                                <img src="<?= htmlspecialchars($v['image']) ?>" alt="<?= htmlspecialchars($v['title']) ?>" loading="lazy">
+                            </a>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <?php
+                            $staticVouchers = [
+                                ['icon' => '🛍️', 'label' => 'Shopping Voucher'],
+                                ['icon' => '🍽️', 'label' => 'Dining Voucher'],
+                                ['icon' => '✈️', 'label' => 'Travel Voucher'],
+                                ['icon' => '💆', 'label' => 'Wellness Voucher'],
+                                ['icon' => '🎬', 'label' => 'Entertainment'],
+                                ['icon' => '📱', 'label' => 'Tech Voucher'],
+                                ['icon' => '⚽', 'label' => 'Sports Voucher'],
+                                ['icon' => '🎓', 'label' => 'Education Voucher'],
+                            ];
+                            foreach (array_merge($staticVouchers, $staticVouchers) as $v): ?>
+                            <div class="hp-voucher-card">
+                                <div class="hp-voucher-placeholder">
+                                    <span class="icon"><?= $v['icon'] ?></span>
+                                    <span><?= $v['label'] ?></span>
+                                </div>
+                            </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
+                </div>
             </section>
 
             <!-- ═══════════ PREMIUM BRANDED PRODUCT ═══════════ -->
@@ -260,96 +316,127 @@ if (!$db->connect_error) {
                 </div>
             </section>
 
-            <!-- ═══════════ CURRENT UPDATES ═══════════ -->
-            <section class="hp-updates-sec">
-                <div class="hp-updates-header">
-                    <h2>Current Updates</h2>
-                    <a href="blog" class="hp-see-all">See all →</a>
-                </div>
-                <div class="hp-updates-slider">
-                    <div class="hp-updates-arrow" onclick="var s=document.getElementById('updatesScroll');s.scrollLeft -= s.clientWidth">&#8249;</div>
-                    <div style="overflow:hidden;flex:1;">
-                        <div id="updatesScroll" style="display:flex;gap:16px;overflow-x:auto;scroll-behavior:smooth;scrollbar-width:none;">
-                            <?php if (!empty($blogPosts)): ?>
-                                <?php foreach ($blogPosts as $blog): ?>
-                                <!--<a href="blog_details?BlogDetails=<?= htmlspecialchars($blog['slug']) ?>" class="hp-blog-card" style="min-width:calc(33.333% - 11px);max-width:calc(33.333% - 11px);flex-shrink:0;">-->
-                                <a href="blog_details?BlogDetails=<?= htmlspecialchars($blog['slug']) ?>" class="hp-blog-card">
-                                    <div class="hp-blog-img">
-                                        <?php if (!empty($blog['image'])): ?>
-                                        <img src="<?= htmlspecialchars($blog['image']) ?>" alt="<?= htmlspecialchars($blog['title']) ?>" loading="lazy">
-                                        <?php else: ?>
-                                        <div style="display:flex;align-items:center;justify-content:center;height:100%;background:#F4F3F8;color:#9CA3AF;font-size:32px;">📰</div>
-                                        <?php endif; ?>
-                                    </div>
-                                    <div class="hp-blog-body">
-                                        <div class="hp-blog-cat"><?= htmlspecialchars($blog['category']) ?></div>
-                                        <div class="hp-blog-title"><?= htmlspecialchars($blog['title']) ?></div>
-                                        <!-- <div class="hp-blog-excerpt"><?= htmlspecialchars($blog['excerpt']) ?></div> -->
-                                    </div>
-                                </a>
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <div style="padding:40px;color:#9CA3AF;font-size:14px;">No updates available yet.</div>
-                            <?php endif; ?>
-                        </div>
+            <!-- ═══════════ EXECUTIVE BRANDED PRODUCT ═══════════ -->
+            <section class="hp-carousel-sec">
+                <div class="hp-carousel-header">
+                    <h2>Executive Product</h2>
+                    <div class="hp-carousel-nav">
+                        <button class="hp-c-btn" onclick="scrollProd(-1)" aria-label="Previous">&#8249;</button>
+                        <button class="hp-c-btn" onclick="scrollProd(1)" aria-label="Next">&#8250;</button>
                     </div>
-                    <div class="hp-updates-arrow" onclick="var s=document.getElementById('updatesScroll');s.scrollLeft += s.clientWidth">&#8250;</div>
+                </div>
+                <div class="hp-carousel-outer">
+                    <div class="hp-carousel-track" id="prodTrack">
+                        <?php if (!empty($premiumProducts)): ?>
+                            <?php foreach ($premiumProducts as $p): ?>
+                            <a href="product-detail.php?id=<?= intval($p['id']) ?>" class="hp-prod-card" style="text-decoration:none;color:inherit;">
+                                <div class="hp-prod-card-image">
+                                    <?php if (!empty($p['image'])): ?>
+                                    <img src="<?= htmlspecialchars($p['image']) ?>" alt="<?= htmlspecialchars($p['name']) ?>" loading="lazy">
+                                    <?php else: ?>
+                                    <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#9CA3AF;font-size:36px;">🎁</div>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="hp-prod-card-body">
+                                    <div class="hp-prod-brand-logo">
+                                        <img src="<?= htmlspecialchars($p['brandLogoUrl']) ?>" alt="<?= htmlspecialchars($p['category']) ?>" loading="lazy" onerror="this.parentElement.style.display='none'">
+                                    </div>
+                                    <div class="hp-prod-name"><?= htmlspecialchars($p['name']) ?></div>
+                                    <?php if (!empty($p['offer_price']) && $p['offer_price'] > 0 && $p['offer_price'] < $p['mrp']): ?>
+                                    <div class="hp-prod-price-row">
+                                        <div class="hp-prod-price">₹<?= number_format($p['offer_price'], 0) ?>/-</div>
+                                        <!-- <div class="hp-prod-mrp">₹<?= number_format($p['mrp'], 0) ?>/-</div> -->
+                                    </div>
+                                    <?php elseif ($p['offer_price'] > 0): ?>
+                                    <div class="hp-prod-price">₹<?= number_format($p['offer_price'], 0) ?>/-</div>
+                                    <?php else: ?>
+                                    <div class="hp-prod-price">Price on Request</div>
+                                    <?php endif; ?>
+                                    <div class="hp-prod-mrp">₹<?= number_format($p['mrp'], 0) ?>/-</div>
+                                </div>
+                            </a>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <div style="padding:40px;color:#9CA3AF;font-size:14px;">Products coming soon.</div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <?php $pages = max(1, ceil(count($premiumProducts) / 4)); ?>
+                <div class="hp-carousel-dots" id="prodDots">
+                    <?php for ($i = 0; $i < $pages; $i++): ?>
+                    <div class="hp-carousel-dot <?= $i === 0 ? 'active' : '' ?>" onclick="goToProdPage(<?= $i ?>)"></div>
+                    <?php endfor; ?>
+                </div>
+            </section>
+
+            <!-- ═══════════ ECONOMY BRANDED PRODUCT ═══════════ -->
+            <section class="hp-carousel-sec">
+                <div class="hp-carousel-header">
+                    <h2>Economy Product</h2>
+                    <div class="hp-carousel-nav">
+                        <button class="hp-c-btn" onclick="scrollProd(-1)" aria-label="Previous">&#8249;</button>
+                        <button class="hp-c-btn" onclick="scrollProd(1)" aria-label="Next">&#8250;</button>
+                    </div>
+                </div>
+                <div class="hp-carousel-outer">
+                    <div class="hp-carousel-track" id="prodTrack">
+                        <?php if (!empty($premiumProducts)): ?>
+                            <?php foreach ($premiumProducts as $p): ?>
+                            <a href="product-detail.php?id=<?= intval($p['id']) ?>" class="hp-prod-card" style="text-decoration:none;color:inherit;">
+                                <div class="hp-prod-card-image">
+                                    <?php if (!empty($p['image'])): ?>
+                                    <img src="<?= htmlspecialchars($p['image']) ?>" alt="<?= htmlspecialchars($p['name']) ?>" loading="lazy">
+                                    <?php else: ?>
+                                    <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#9CA3AF;font-size:36px;">🎁</div>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="hp-prod-card-body">
+                                    <div class="hp-prod-brand-logo">
+                                        <img src="<?= htmlspecialchars($p['brandLogoUrl']) ?>" alt="<?= htmlspecialchars($p['category']) ?>" loading="lazy" onerror="this.parentElement.style.display='none'">
+                                    </div>
+                                    <div class="hp-prod-name"><?= htmlspecialchars($p['name']) ?></div>
+                                    <?php if (!empty($p['offer_price']) && $p['offer_price'] > 0 && $p['offer_price'] < $p['mrp']): ?>
+                                    <div class="hp-prod-price-row">
+                                        <div class="hp-prod-price">₹<?= number_format($p['offer_price'], 0) ?>/-</div>
+                                        <!-- <div class="hp-prod-mrp">₹<?= number_format($p['mrp'], 0) ?>/-</div> -->
+                                    </div>
+                                    <?php elseif ($p['offer_price'] > 0): ?>
+                                    <div class="hp-prod-price">₹<?= number_format($p['offer_price'], 0) ?>/-</div>
+                                    <?php else: ?>
+                                    <div class="hp-prod-price">Price on Request</div>
+                                    <?php endif; ?>
+                                    <div class="hp-prod-mrp">₹<?= number_format($p['mrp'], 0) ?>/-</div>
+                                </div>
+                            </a>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <div style="padding:40px;color:#9CA3AF;font-size:14px;">Products coming soon.</div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <?php $pages = max(1, ceil(count($premiumProducts) / 4)); ?>
+                <div class="hp-carousel-dots" id="prodDots">
+                    <?php for ($i = 0; $i < $pages; $i++): ?>
+                    <div class="hp-carousel-dot <?= $i === 0 ? 'active' : '' ?>" onclick="goToProdPage(<?= $i ?>)"></div>
+                    <?php endfor; ?>
                 </div>
             </section>
 
             <!-- ═══════════ LARGE HOME & COMMERCIAL APPLIANCES ═══════════ -->
-            <section class="hp-appliances-sec">
+            <!-- <section class="hp-appliances-sec">
                 <div class="hp-sec-title">Large Home &amp; Commercial Appliances</div>
                 <?php if (!empty($applianceBrands)): ?>
                 <div class="hp-appliances-grid">
                     <?php foreach ($applianceBrands as $brand): ?>
                     <a href="brand-products.php?brand=<?= intval($brand['id']) ?>" class="hp-appliance-box" title="<?= htmlspecialchars($brand['brandname']) ?>">
                         <img src="<?= htmlspecialchars($brand['logoUrl']) ?>" alt="<?= htmlspecialchars($brand['brandname']) ?>">
-                        <!-- <div class="hp-appliance-name"><?= htmlspecialchars($brand['brandname']) ?></div> -->
                     </a>
                     <?php endforeach; ?>
                 </div>
                 <?php else: ?>
                 <div style="color:#9CA3AF;font-size:14px;padding:20px 0;">Brands coming soon.</div>
                 <?php endif; ?>
-            </section>
-
-            <!-- ═══════════ PAN INDIA INDIVIDUAL DELIVERY ═══════════ -->
-            <div class="hp-pan-india">
-                <h3>PAN India Individual Delivery Available</h3>
-                <p>Delivering to 500+ cities across India — fast, reliable, and trackable</p>
-            </div>
-
-            <!-- ═══════════ BULK PROMOTIONAL SWAG ═══════════ -->
-            <section class="hp-bulk-sec">
-                <div class="hp-bulk-title">Bulk <span>Promotional Swag</span></div>
-
-                <div class="hp-bulk-steps">
-                    <div class="hp-bulk-step-wrap">
-                        <div class="hp-bulk-step" style="background-image:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 100%), url('images/warehouse.jpg');">
-                            <div class="hp-bulk-step-val">5000+</div>
-                        </div>
-                        <div class="hp-bulk-step-label">Ready to Go Inventory</div>
-                        <div class="hp-bulk-step-sub">Units available in stock, ready for immediate co-branding</div>
-                    </div>
-                    <div class="hp-bulk-arrow">→</div>
-                    <div class="hp-bulk-step-wrap">
-                        <div class="hp-bulk-step" style="background-image:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 100%), url('images/printing.jpg');">
-                            <div class="hp-bulk-step-val">Quick</div>
-                        </div>
-                        <div class="hp-bulk-step-label">Co-Branding Option</div>
-                        <div class="hp-bulk-step-sub">Your logo printed or embossed on any product within hours</div>
-                    </div>
-                    <div class="hp-bulk-arrow">→</div>
-                    <div class="hp-bulk-step-wrap">
-                        <div class="hp-bulk-step" style="background-image:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 100%), url('images/logestic.jpg');">
-                            <div class="hp-bulk-step-val">Express</div>
-                        </div>
-                        <div class="hp-bulk-step-label">Pan India Delivery</div>
-                        <div class="hp-bulk-step-sub">Through India Post, Blue Dart, Delhivery, & Express Bees</div>
-                    </div>
-                </div>
-            </section>
+            </section>    -->
 
             <!-- ═══════════ PRODUCT SELECTION ═══════════ -->
             <section class="hp-sel-sec">
@@ -465,6 +552,37 @@ if (!$db->connect_error) {
                 <?php endforeach; ?>
             </section>
 
+            <!-- ═══════════ BULK PROMOTIONAL SWAG ═══════════ -->
+            <section class="hp-bulk-sec">
+                <div class="hp-bulk-title">Bulk <span>Promotional Swag</span></div>
+
+                <div class="hp-bulk-steps">
+                    <div class="hp-bulk-step-wrap">
+                        <div class="hp-bulk-step" style="background-image:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 100%), url('images/warehouse.jpg');">
+                            <div class="hp-bulk-step-val">5000+</div>
+                        </div>
+                        <div class="hp-bulk-step-label">Ready to Go Inventory</div>
+                        <div class="hp-bulk-step-sub">Units available in stock, ready for immediate co-branding</div>
+                    </div>
+                    <div class="hp-bulk-arrow">→</div>
+                    <div class="hp-bulk-step-wrap">
+                        <div class="hp-bulk-step" style="background-image:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 100%), url('images/printing.jpg');">
+                            <div class="hp-bulk-step-val">Quick</div>
+                        </div>
+                        <div class="hp-bulk-step-label">Co-Branding Option</div>
+                        <div class="hp-bulk-step-sub">Your logo printed or embossed on any product within hours</div>
+                    </div>
+                    <div class="hp-bulk-arrow">→</div>
+                    <div class="hp-bulk-step-wrap">
+                        <div class="hp-bulk-step" style="background-image:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 100%), url('images/logestic.jpg');">
+                            <div class="hp-bulk-step-val">Express</div>
+                        </div>
+                        <div class="hp-bulk-step-label">Pan India Delivery</div>
+                        <div class="hp-bulk-step-sub">Through India Post, Blue Dart, Delhivery, & Express Bees</div>
+                    </div>
+                </div>
+            </section>
+
             <!-- ═══════════ LOOKING FOR LONGTERM GIFTING PARTNERS ═══════════ -->
             <section class="hp-partners-sec">
                 <div class="hp-partners-title">Looking for <span>Long-term Collaboration</span></div>
@@ -491,39 +609,40 @@ if (!$db->connect_error) {
                 <p class="hp-tieup-tagline">We store the selected product and ship globally on demand!</p>
             </section>
 
-            <!-- ═══════════ AVAILABLE GIFT VOUCHERS ═══════════ -->
-            <section class="hp-vouchers-sec">
-                <div class="hp-sec-title">Available Gift Vouchers</div>
-                <div class="hp-vouchers-track-wrapper">
-                    <div class="hp-vouchers-track">
-                        <?php if (!empty($dbVouchers)): ?>
-                            <?php foreach (array_merge($dbVouchers, $dbVouchers) as $v): ?>
-                            <a href="voucher-detail.php?id=<?= intval($v['id']) ?>" class="hp-voucher-card">
-                                <img src="<?= htmlspecialchars($v['image']) ?>" alt="<?= htmlspecialchars($v['title']) ?>" loading="lazy">
-                            </a>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <?php
-                            $staticVouchers = [
-                                ['icon' => '🛍️', 'label' => 'Shopping Voucher'],
-                                ['icon' => '🍽️', 'label' => 'Dining Voucher'],
-                                ['icon' => '✈️', 'label' => 'Travel Voucher'],
-                                ['icon' => '💆', 'label' => 'Wellness Voucher'],
-                                ['icon' => '🎬', 'label' => 'Entertainment'],
-                                ['icon' => '📱', 'label' => 'Tech Voucher'],
-                                ['icon' => '⚽', 'label' => 'Sports Voucher'],
-                                ['icon' => '🎓', 'label' => 'Education Voucher'],
-                            ];
-                            foreach (array_merge($staticVouchers, $staticVouchers) as $v): ?>
-                            <div class="hp-voucher-card">
-                                <div class="hp-voucher-placeholder">
-                                    <span class="icon"><?= $v['icon'] ?></span>
-                                    <span><?= $v['label'] ?></span>
-                                </div>
-                            </div>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
+            <!-- ═══════════ CURRENT UPDATES ═══════════ -->
+            <section class="hp-updates-sec">
+                <div class="hp-updates-header">
+                    <h2>Current Updates</h2>
+                    <a href="blog" class="hp-see-all">See all →</a>
+                </div>
+                <div class="hp-updates-slider">
+                    <div class="hp-updates-arrow" onclick="var s=document.getElementById('updatesScroll');s.scrollLeft -= s.clientWidth">&#8249;</div>
+                    <div style="overflow:hidden;flex:1;">
+                        <div id="updatesScroll" style="display:flex;gap:16px;overflow-x:auto;scroll-behavior:smooth;scrollbar-width:none;">
+                            <?php if (!empty($blogPosts)): ?>
+                                <?php foreach ($blogPosts as $blog): ?>
+                                <!--<a href="blog_details?BlogDetails=<?= htmlspecialchars($blog['slug']) ?>" class="hp-blog-card" style="min-width:calc(33.333% - 11px);max-width:calc(33.333% - 11px);flex-shrink:0;">-->
+                                <a href="blog_details?BlogDetails=<?= htmlspecialchars($blog['slug']) ?>" class="hp-blog-card">
+                                    <div class="hp-blog-img">
+                                        <?php if (!empty($blog['image'])): ?>
+                                        <img src="<?= htmlspecialchars($blog['image']) ?>" alt="<?= htmlspecialchars($blog['title']) ?>" loading="lazy">
+                                        <?php else: ?>
+                                        <div style="display:flex;align-items:center;justify-content:center;height:100%;background:#F4F3F8;color:#9CA3AF;font-size:32px;">📰</div>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="hp-blog-body">
+                                        <div class="hp-blog-cat"><?= htmlspecialchars($blog['category']) ?></div>
+                                        <div class="hp-blog-title"><?= htmlspecialchars($blog['title']) ?></div>
+                                        <!-- <div class="hp-blog-excerpt"><?= htmlspecialchars($blog['excerpt']) ?></div> -->
+                                    </div>
+                                </a>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <div style="padding:40px;color:#9CA3AF;font-size:14px;">No updates available yet.</div>
+                            <?php endif; ?>
+                        </div>
                     </div>
+                    <div class="hp-updates-arrow" onclick="var s=document.getElementById('updatesScroll');s.scrollLeft += s.clientWidth">&#8250;</div>
                 </div>
             </section>
 

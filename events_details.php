@@ -21,10 +21,32 @@
             
            <?php include('common/nav.php'); ?>
             
-           <main id="main">
-            <?php  include("news/".$_GET["EventDetails"].".php") ?>
+       <!--    <main id="main">-->
+       <!--     <?php  include("news/".$_GET["EventDetails"].".php") ?>-->
        
-       </main>
+       <!--</main>-->
+       
+       <main id="main">
+     <?php
+        $eventDetails = $_GET['EventDetails'] ?? '';
+
+        // Allow only safe filename characters
+        if (!preg_match('/^[a-zA-Z0-9_-]+$/', $eventDetails)) {
+            http_response_code(404);
+            echo '<h2 style="text-align:center; padding:100px 20px;">Event Not Found</h2>';
+        } else {
+            $eventFile = __DIR__ . '/news/' . $eventDetails . '.php';
+
+            // Check that the requested file actually exists
+            if (is_file($eventFile)) {
+                include $eventFile;
+            } else {
+                http_response_code(404);
+                echo '<h2 style="text-align:center; padding:100px 20px;">Event Not Found</h2>';
+            }
+        }
+    ?>
+    </main>
             
           <?php include('common/footer.php'); ?>
     </body>
