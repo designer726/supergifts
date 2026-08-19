@@ -55,9 +55,8 @@ require_once  './mailinclude.php';
         
         
 				  
-			//	 $mail1->AddAddress("jatinmistrii@gmail.com");
-            //     $mail1->AddAddress("jatin@oakthree.in");
-			$mail1->AddAddress("hitesh@hitesh.co.in");
+		
+			$mail1->AddAddress("anil@supergifts.in");
                     $mail1->IsHTML(true);
 					$mail1->Body=$mailbody1;
 					$mail1->Subject="SGIPL Website Form Submited";

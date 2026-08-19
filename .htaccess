@@ -1,12 +1,37 @@
 RewriteEngine On
 
-
 # Resolve .php file for extensionless PHP URLs
 RewriteRule ^([^/.]+)$ $1.php [L]
+
 # Disabled HTTPS redirect for local development
 # RewriteCond %{SERVER_PORT} 80
 # RewriteRule ^(.*)$ https://www.supergifts.in/$1 [R,L]
 
+
+# ==========================================
+# Global cache control
+# Always check for latest website files
+# ==========================================
+
+<IfModule mod_headers.c>
+
+    <FilesMatch "\.(jpg|jpeg|png|gif|webp|svg|ico)$">
+        Header always set Cache-Control "no-cache, must-revalidate"
+    </FilesMatch>
+
+    <FilesMatch "\.css$">
+        Header always set Cache-Control "no-cache, must-revalidate"
+    </FilesMatch>
+
+    <FilesMatch "\.js$">
+        Header always set Cache-Control "no-cache, must-revalidate"
+    </FilesMatch>
+
+    <FilesMatch "\.(php|html|htm)$">
+        Header always set Cache-Control "no-cache, must-revalidate"
+    </FilesMatch>
+
+</IfModule>
 # php -- BEGIN cPanel-generated handler, do not edit
 # Set the “ea-php82” package as the default “PHP” programming language.
 <IfModule mime_module>

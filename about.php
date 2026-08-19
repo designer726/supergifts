@@ -95,13 +95,11 @@ $pagename = basename($_SERVER['PHP_SELF']);
             .about-banner-container {
                 width: 100%;
             }
-            /* Use an aspect ratio with sensible min/max heights for consistent banners */
             .about-banner-slider {
                 position: relative;
                 width: 100%;
-                aspect-ratio: 16 / 6;
-                min-height: 240px;
-                max-height: 460px;
+                height: 600px;
+                min-height: 600px;
                 border-radius: 0;
                 overflow: hidden;
                 background: #121826;
@@ -133,7 +131,7 @@ $pagename = basename($_SERVER['PHP_SELF']);
             .edia {
                 width: 100%;
                 height: 100%;
-                object-fit: cover;
+                object-fit: contain;
                 object-position: center;
                 display: block;
             }
@@ -248,9 +246,16 @@ $pagename = basename($_SERVER['PHP_SELF']);
                     margin-top: 0 !important;
                 }
             }
+            @media (max-width: 1200px) {
+                .about-banner-slider {
+                    height: 520px;
+                    min-height: 520px;
+                }
+            }
             @media (max-width: 991px) {
                 .about-banner-slider {
-                    max-height: 360px;
+                    height: auto;
+                    min-height: 520px;
                 }
                 .banner-nav {
                     width: 34px;
@@ -276,10 +281,11 @@ $pagename = basename($_SERVER['PHP_SELF']);
             }
             @media (max-width: 767px) {
                 .about-banner-slider {
-                    width: 100% !important;
-                    height: auto !important;
-                    min-height: 0 !important;
-                    max-height: none !important;
+                    width: 100%;
+                    aspect-ratio: auto;
+                    height: auto;
+                    min-height: 0;
+                    max-height: none;
                     background: transparent;
                 }
                 .about-banner-hero,
@@ -291,16 +297,16 @@ $pagename = basename($_SERVER['PHP_SELF']);
                 .about-banner-slider .banner-slide.active {
                     position: relative;
                     inset: auto;
-                    display: block !important;
-                    height: auto !important;
+                    display: block;
+                    height: auto;
                 }
                 .about-banner-slider .edia {
-                    width: 100% !important;
-                    height: auto !important;
-                    max-width: 100% !important;
-                    max-height: none !important;
-                    object-fit: contain !important;
-                    object-position: center !important;
+                    width: 100%;
+                    height: auto;
+                    max-width: 100%;
+                    max-height: none;
+                    object-fit: contain;
+                    object-position: center;
                     vertical-align: middle;
                 }
                 .banner-controls {
