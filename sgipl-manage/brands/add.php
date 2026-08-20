@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Get next imageno if not uploading
     if (!$errors) {
-        $maxImg = $conn->query("SELECT MAX(imageno) as m FROM brandlogo")->fetch_assoc()['m'];
+        $maxImg = $conn->query("SELECT MAX(CAST(imageno AS UNSIGNED)) as m FROM brandlogo")->fetch_assoc()['m'];
         $imageno = ($maxImg ?? 0) + 1;
     }
 

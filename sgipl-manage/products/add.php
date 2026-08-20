@@ -20,7 +20,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $mrp         = floatval($_POST['mrp'] ?? 0);
     $offer_price = floatval($_POST['offer_price'] ?? 0);
     $quantity    = intval($_POST['quantity'] ?? 0);
-    $is_premium  = intval($_POST['is_premium'] ?? 0);
+    $category    = $_POST['category'] ?? 'NA';
+    $allowedCategories = ['Premium', 'Executive', 'Economy', 'NA'];
+    if (!in_array($category, $allowedCategories, true)) $category = 'NA';
+    $is_premium  = $category === 'Premium' ? 1 : 0;
     $new_lunch   = intval($_POST['new_lunch'] ?? 0);
     $series      = trim($_POST['series'] ?? '');
     $sequence    = intval($_POST['sequence'] ?? 0);
@@ -48,11 +51,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (!$errors) {
-        $stmt = $conn->prepare("INSERT INTO products (brand_id, name, image, mrp, offer_price, quantity, is_premium, new_lunch, series, sequence, status) VALUES (?,?,?,?,?,?,?,?,?,?,?)");
-        $stmt->bind_param("issddiiisii", $brand_id, $name, $image, $mrp, $offer_price, $quantity, $is_premium, $new_lunch, $series, $sequence, $status);
+        $stmt = $conn->prepare("INSERT INTO products (brand_id, name, image, mrp, offer_price, quantity, category, is_premium, new_lunch, series, sequence, status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
+        $stmt->bind_param("issddisiisii", $brand_id, $name, $image, $mrp, $offer_price, $quantity, $category, $is_premium, $new_lunch, $series, $sequence, $status);
         if ($stmt->execute()) {
             $success = "Product added! <a href='index.php?brand_id={$brand_id}'>View brand products →</a>";
-            $name = ''; $mrp = 0; $offer_price = 0; $quantity = 0; $is_premium = 0; $new_lunch = 0; $series = ''; $sequence = 0;
+            $name = ''; $mrp = 0; $offer_price = 0; $quantity = 0; $category = 'NA'; $is_premium = 0; $new_lunch = 0; $series = ''; $sequence = 0;
         } else {
             $errors[] = "DB error: ".$conn->error;
         }
@@ -125,10 +128,11 @@ require_once '../includes/layout_top.php';
                                value="<?= $quantity ?? 0 ?>" min="0" placeholder="0">
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">Premium</label>
-                        <select name="is_premium" class="form-select">
-                            <option value="0">No</option>
-                            <option value="1">Yes</option>
+                        <label class="form-label">Category</label>
+                        <select name="category" class="form-select">
+                            <?php foreach (['Premium', 'Executive', 'Economy', 'NA'] as $categoryOption): ?>
+                                <option value="<?= $categoryOption ?>" <?= ($category ?? 'NA') === $categoryOption ? 'selected' : '' ?>><?= $categoryOption ?></option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                     <div class="col-md-6">

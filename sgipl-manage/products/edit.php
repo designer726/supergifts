@@ -28,7 +28,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $mrp         = floatval($_POST['mrp'] ?? 0);
     $offer_price = floatval($_POST['offer_price'] ?? 0);
     $quantity    = intval($_POST['quantity'] ?? 0);
-    $is_premium  = intval($_POST['is_premium'] ?? 0);
+    $category    = $_POST['category'] ?? ($product['category'] ?? 'NA');
+    $allowedCategories = ['Premium', 'Executive', 'Economy', 'NA'];
+    if (!in_array($category, $allowedCategories, true)) $category = 'NA';
+    $is_premium  = $category === 'Premium' ? 1 : 0;
     $new_lunch   = intval($_POST['new_lunch'] ?? 0);
     $series      = trim($_POST['series'] ?? '');
     $sequence    = intval($_POST['sequence'] ?? 0);
@@ -63,11 +66,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (!$errors) {
-        $stmt = $conn->prepare("UPDATE products SET brand_id=?, name=?, image=?, mrp=?, offer_price=?, quantity=?, is_premium=?, new_lunch=?, series=?, sequence=?, status=? WHERE id=?");
-        $stmt->bind_param("issddiiisiii", $brand_id, $name, $image, $mrp, $offer_price, $quantity, $is_premium, $new_lunch, $series, $sequence, $status, $id);
+        $stmt = $conn->prepare("UPDATE products SET brand_id=?, name=?, image=?, mrp=?, offer_price=?, quantity=?, category=?, is_premium=?, new_lunch=?, series=?, sequence=?, status=? WHERE id=?");
+        $stmt->bind_param("issddisiisiii", $brand_id, $name, $image, $mrp, $offer_price, $quantity, $category, $is_premium, $new_lunch, $series, $sequence, $status, $id);
         if ($stmt->execute()) {
             $success = "Product updated!";
-            $product = array_merge($product, compact('brand_id','name','image','mrp','offer_price','quantity','is_premium','new_lunch','series','sequence','status'));
+            $product = array_merge($product, compact('brand_id','name','image','mrp','offer_price','quantity','category','is_premium','new_lunch','series','sequence','status'));
         } else {
             $errors[] = "DB error: ".$conn->error;
         }
@@ -138,10 +141,11 @@ require_once '../includes/layout_top.php';
                                value="<?= $product['quantity'] ?>" min="0">
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">Premium</label>
-                        <select name="is_premium" class="form-select">
-                            <option value="0" <?= $product['is_premium']==0?'selected':'' ?>>No</option>
-                            <option value="1" <?= $product['is_premium']==1?'selected':'' ?>>Yes</option>
+                        <label class="form-label">Category</label>
+                        <select name="category" class="form-select">
+                            <?php foreach (['Premium', 'Executive', 'Economy', 'NA'] as $categoryOption): ?>
+                                <option value="<?= $categoryOption ?>" <?= ($product['category'] ?? 'NA') === $categoryOption ? 'selected' : '' ?>><?= $categoryOption ?></option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                     <div class="col-md-6">

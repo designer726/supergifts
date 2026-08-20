@@ -86,7 +86,7 @@ require_once '../includes/layout_top.php';
                 <th>MRP</th>
                 <th>Offer Price</th>
                 <th>Qty</th>
-                <th>Premium</th>
+                <th>Category</th>
                 <th>Status</th>
                 <th style="width:100px;">Actions</th>
             </tr>
@@ -130,9 +130,7 @@ require_once '../includes/layout_top.php';
                 </td>
                 <td class="text-muted small"><?= intval($row['quantity']) ?></td>
                 <td>
-                    <?= $row['is_premium']==1
-                        ? '<span class="badge-published">Yes</span>'
-                        : '<span class="badge-draft">No</span>' ?>
+                    <span class="badge bg-light text-dark border"><?= htmlspecialchars($row['category'] ?? ($row['is_premium'] ? 'Premium' : 'NA')) ?></span>
                 </td>
                 <td>
                     <?= $row['status']==1

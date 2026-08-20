@@ -10,7 +10,7 @@
         <link rel="icon" href="images/favicon.png" type="image/png" sizes="any">
     
 
-        <!-- CSS -->
+       <!-- CSS -->
         <link rel="stylesheet" href="css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <link rel="stylesheet" href="css/font-awesome-brands.css">
@@ -24,8 +24,7 @@
         <link rel="stylesheet" href="css/splitting.css">
         <link rel="stylesheet" href="css/YTPlayer.css">
         <link rel="stylesheet" href="css/demo-main/demo-main.css">
-        <!-- Font Awesome for stars and icons -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        
         
         <!-- Google Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
