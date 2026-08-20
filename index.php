@@ -258,7 +258,10 @@ if (!$db->connect_error) {
                 <?php if (!empty($brandCategorySections)): ?>
                 <div class="brand-cat-tabs" id="brandCatTabs">
                     <?php $catIdx = 0; foreach ($brandCategorySections as $catName => $catBrands): ?>
-                    <button type="button" class="brand-cat-tab <?= $catIdx === 0 ? 'active' : '' ?>" data-cat-index="<?= $catIdx ?>"><?= htmlspecialchars($catName) ?></button>
+                    <button type="button" class="brand-cat-tab <?= $catIdx === 0 ? 'active' : '' ?>" data-cat-index="<?= $catIdx ?>">
+                        <span class="brand-cat-tab-label"><?= htmlspecialchars($catName) ?></span>
+                        <span class="brand-cat-tab-progress"></span>
+                    </button>
                     <?php $catIdx++; endforeach; ?>
                 </div>
                 <div class="brand-cat-panels" id="brandCatPanels">
@@ -274,7 +277,7 @@ if (!$db->connect_error) {
                     </div>
                     <?php $catIdx++; endforeach; ?>
                 </div>
-                <p style="color:#6B7280;font-size:13px;text-align:right;margin-top:14px;">&amp; many more...</p>
+                <!-- <p class="brand-partner-more">&amp; many more...</p> -->
                 <?php elseif (!empty($brandPartners)): ?>
                 <div class="brand-logo-grid">
                     <?php foreach ($brandPartners as $brand): ?>
@@ -283,7 +286,7 @@ if (!$db->connect_error) {
                     </a>
                     <?php endforeach; ?>
                 </div>
-                <p style="color:#6B7280;font-size:13px;text-align:right;margin-top:14px;">&amp; many more...</p>
+                <!-- <p class="brand-partner-more">&amp; many more...</p> -->
                 <?php else: ?>
                 <p style="color:#9CA3AF;font-size:14px;">Brand partners coming soon.</p>
                 <?php endif; ?>
@@ -336,12 +339,12 @@ if (!$db->connect_error) {
                 <div class="hp-carousel-header">
                     <h2>Premium Branded Product</h2>
                     <div class="hp-carousel-nav">
-                        <button class="hp-c-btn" onclick="scrollProd(-1)" aria-label="Previous">&#8249;</button>
-                        <button class="hp-c-btn" onclick="scrollProd(1)" aria-label="Next">&#8250;</button>
+                        <button class="hp-c-btn" onclick="scrollProd(this, -1)" aria-label="Previous">&#8249;</button>
+                        <button class="hp-c-btn" onclick="scrollProd(this, 1)" aria-label="Next">&#8250;</button>
                     </div>
                 </div>
                 <div class="hp-carousel-outer">
-                    <div class="hp-carousel-track" id="prodTrack">
+                    <div class="hp-carousel-track">
                         <?php if (!empty($premiumProducts)): ?>
                             <?php foreach ($premiumProducts as $p): ?>
                             <a href="product-detail.php?id=<?= intval($p['id']) ?>" class="hp-prod-card" style="text-decoration:none;color:inherit;">
@@ -377,9 +380,9 @@ if (!$db->connect_error) {
                     </div>
                 </div>
                 <?php $pages = max(1, ceil(count($premiumProducts) / 4)); ?>
-                <div class="hp-carousel-dots" id="prodDots">
+                <div class="hp-carousel-dots">
                     <?php for ($i = 0; $i < $pages; $i++): ?>
-                    <div class="hp-carousel-dot <?= $i === 0 ? 'active' : '' ?>" onclick="goToProdPage(<?= $i ?>)"></div>
+                    <div class="hp-carousel-dot <?= $i === 0 ? 'active' : '' ?>" onclick="goToProdPage(this, <?= $i ?>)"></div>
                     <?php endfor; ?>
                 </div>
             </section>
@@ -389,12 +392,12 @@ if (!$db->connect_error) {
                 <div class="hp-carousel-header">
                     <h2>Executive Product</h2>
                     <div class="hp-carousel-nav">
-                        <button class="hp-c-btn" onclick="scrollProd(-1)" aria-label="Previous">&#8249;</button>
-                        <button class="hp-c-btn" onclick="scrollProd(1)" aria-label="Next">&#8250;</button>
+                        <button class="hp-c-btn" onclick="scrollProd(this, -1)" aria-label="Previous">&#8249;</button>
+                        <button class="hp-c-btn" onclick="scrollProd(this, 1)" aria-label="Next">&#8250;</button>
                     </div>
                 </div>
                 <div class="hp-carousel-outer">
-                    <div class="hp-carousel-track" id="prodTrack">
+                    <div class="hp-carousel-track">
                         <?php if (!empty($executiveProducts)): ?>
                             <?php foreach ($executiveProducts as $p): ?>
                             <a href="product-detail.php?id=<?= intval($p['id']) ?>" class="hp-prod-card" style="text-decoration:none;color:inherit;">
@@ -430,9 +433,9 @@ if (!$db->connect_error) {
                     </div>
                 </div>
                 <?php $pages = max(1, ceil(count($executiveProducts) / 4)); ?>
-                <div class="hp-carousel-dots" id="prodDots">
+                <div class="hp-carousel-dots">
                     <?php for ($i = 0; $i < $pages; $i++): ?>
-                    <div class="hp-carousel-dot <?= $i === 0 ? 'active' : '' ?>" onclick="goToProdPage(<?= $i ?>)"></div>
+                    <div class="hp-carousel-dot <?= $i === 0 ? 'active' : '' ?>" onclick="goToProdPage(this, <?= $i ?>)"></div>
                     <?php endfor; ?>
                 </div>
             </section>
@@ -442,12 +445,12 @@ if (!$db->connect_error) {
                 <div class="hp-carousel-header">
                     <h2>Economy Product</h2>
                     <div class="hp-carousel-nav">
-                        <button class="hp-c-btn" onclick="scrollProd(-1)" aria-label="Previous">&#8249;</button>
-                        <button class="hp-c-btn" onclick="scrollProd(1)" aria-label="Next">&#8250;</button>
+                        <button class="hp-c-btn" onclick="scrollProd(this, -1)" aria-label="Previous">&#8249;</button>
+                        <button class="hp-c-btn" onclick="scrollProd(this, 1)" aria-label="Next">&#8250;</button>
                     </div>
                 </div>
                 <div class="hp-carousel-outer">
-                    <div class="hp-carousel-track" id="prodTrack">
+                    <div class="hp-carousel-track">
                         <?php if (!empty($economyProducts)): ?>
                             <?php foreach ($economyProducts as $p): ?>
                             <a href="product-detail.php?id=<?= intval($p['id']) ?>" class="hp-prod-card" style="text-decoration:none;color:inherit;">
@@ -483,9 +486,9 @@ if (!$db->connect_error) {
                     </div>
                 </div>
                 <?php $pages = max(1, ceil(count($economyProducts) / 4)); ?>
-                <div class="hp-carousel-dots" id="prodDots">
+                <div class="hp-carousel-dots">
                     <?php for ($i = 0; $i < $pages; $i++): ?>
-                    <div class="hp-carousel-dot <?= $i === 0 ? 'active' : '' ?>" onclick="goToProdPage(<?= $i ?>)"></div>
+                    <div class="hp-carousel-dot <?= $i === 0 ? 'active' : '' ?>" onclick="goToProdPage(this, <?= $i ?>)"></div>
                     <?php endfor; ?>
                 </div>
             </section>
@@ -831,16 +834,8 @@ if (!$db->connect_error) {
         }
     })();
 
-    /* ── Product Carousel (vanilla JS, runs after footer scripts) ── */
+    /* ── Product Carousels (Premium / Executive / Economy — each scrolls independently) ── */
     (function() {
-        var track = document.getElementById('prodTrack');
-        if (!track) return;
-
-        var cards = Array.from(track.querySelectorAll('.hp-prod-card'));
-        var dots  = Array.from(document.querySelectorAll('#prodDots .hp-carousel-dot'));
-        var page  = 0;
-        var timer;
-
         function perPage() {
             if (window.innerWidth < 540)  return 1;
             if (window.innerWidth < 820)  return 2;
@@ -848,35 +843,63 @@ if (!$db->connect_error) {
             return 4;
         }
 
-        function totalPages() {
-            return Math.max(1, Math.ceil(cards.length / perPage()));
-        }
+        document.querySelectorAll('.hp-carousel-sec').forEach(function(section) {
+            var track = section.querySelector('.hp-carousel-track');
+            var cards = track ? Array.from(track.querySelectorAll('.hp-prod-card')) : [];
+            if (!track || !cards.length) return;
 
-        function update() {
-            if (!cards.length) return;
-            var pp    = perPage();
-            var cardW = cards[0].getBoundingClientRect().width + 16;
-            track.style.transform = 'translateX(-' + (page * pp * cardW) + 'px)';
-            dots.forEach(function(d, i) { d.classList.toggle('active', i === page); });
-        }
+            var dots = Array.from(section.querySelectorAll('.hp-carousel-dot'));
+            var page = 0;
+            var timer;
 
-        window.scrollProd = function(dir) {
-            page = (page + dir + totalPages()) % totalPages();
+            function totalPages() {
+                return Math.max(1, Math.ceil(cards.length / perPage()));
+            }
+
+            function update() {
+                var pp    = perPage();
+                var cardW = cards[0].getBoundingClientRect().width + 16;
+                track.style.transform = 'translateX(-' + (page * pp * cardW) + 'px)';
+                dots.forEach(function(d, i) { d.classList.toggle('active', i === page); });
+            }
+
+            function goTo(p) {
+                var tp = totalPages();
+                page = ((p % tp) + tp) % tp;
+                update();
+            }
+
+            function restartAutoplay() {
+                clearInterval(timer);
+                timer = setInterval(function() { goTo(page + 1); }, 5000);
+            }
+
+            section.__carousel = { scroll: function(dir) { goTo(page + dir); }, goTo: goTo, restartAutoplay: restartAutoplay };
+
             update();
-        };
+            window.addEventListener('resize', function() {
+                page = Math.min(page, totalPages() - 1);
+                update();
+            });
 
-        window.goToProdPage = function(p) {
-            page = p;
-            update();
-        };
-
-        update();
-        window.addEventListener('resize', function() {
-            page = Math.min(page, totalPages() - 1);
-            update();
+            restartAutoplay();
         });
 
-        timer = setInterval(function() { window.scrollProd(1); }, 5000);
+        window.scrollProd = function(btn, dir) {
+            var section = btn.closest('.hp-carousel-sec');
+            if (section && section.__carousel) {
+                section.__carousel.scroll(dir);
+                section.__carousel.restartAutoplay();
+            }
+        };
+
+        window.goToProdPage = function(dot, p) {
+            var section = dot.closest('.hp-carousel-sec');
+            if (section && section.__carousel) {
+                section.__carousel.goTo(p);
+                section.__carousel.restartAutoplay();
+            }
+        };
     })();
 
     /* ── Authorised Brand Partner category rotation ── */
@@ -890,7 +913,18 @@ if (!$db->connect_error) {
 
         function show(idx) {
             current = idx;
-            tabs.forEach(function(t, i) { t.classList.toggle('active', i === idx); });
+            tabs.forEach(function(t, i) {
+                var active = i === idx;
+                t.classList.toggle('active', active);
+                var bar = t.querySelector('.brand-cat-tab-progress');
+                if (bar) {
+                    bar.style.animation = 'none';
+                    if (active) {
+                        void bar.offsetWidth; // force reflow so the animation restarts from 0
+                        bar.style.animation = '';
+                    }
+                }
+            });
             panels.forEach(function(p, i) { p.classList.toggle('active', i === idx); });
         }
 
