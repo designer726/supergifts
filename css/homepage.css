@@ -236,6 +236,52 @@
   object-fit: contain;
 }
 
+/* Category tabs above the rotating brand-logo grid */
+.brand-cat-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.brand-cat-tab {
+  border: 1px solid #E5E7EB;
+  background: #fff;
+  color: #4B5563;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 7px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.brand-cat-tab:hover {
+  border-color: #D0021B;
+  color: #D0021B;
+}
+
+.brand-cat-tab.active {
+  background: #241C6B;
+  border-color: #241C6B;
+  color: #fff;
+}
+
+.brand-cat-panel {
+  display: none;
+  animation: brandCatFade 0.4s ease;
+}
+
+.brand-cat-panel.active {
+  display: block;
+}
+
+@keyframes brandCatFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 /* ═══════════════════════════════
    PRODUCT CAROUSEL (Premium Branded)
 ═══════════════════════════════ */

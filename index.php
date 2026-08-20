@@ -73,15 +73,42 @@ if (!$db->connect_error) {
         $db->query("UPDATE products SET category = CASE WHEN is_premium = 1 THEN 'Premium' ELSE 'NA' END");
     }
 
+    $brandCategoryCol = $db->query("SHOW COLUMNS FROM brandlogo LIKE 'category'");
+    if ($brandCategoryCol && $brandCategoryCol->num_rows === 0) {
+        $db->query("ALTER TABLE brandlogo ADD COLUMN category VARCHAR(50) NOT NULL DEFAULT '' AFTER flag");
+    }
+
     /* Homepage banners */
     $r = $db->query("SELECT * FROM banners WHERE status=1 ORDER BY slot ASC LIMIT 4");
     if ($r) while ($row = $r->fetch_assoc()) $dbBanners[$row['slot']] = $row;
 
-    /* Authorised brand partners */
-    // $r = $db->query("SELECT id, brandname, imageno FROM brandlogo WHERE flag=1 ORDER BY seqence ASC, brandname ASC");
-    $r = $db->query("SELECT id, brandname, imageno FROM brandlogo WHERE flag=1 ORDER BY seqence ASC, brandname ASC");
-    if ($r) while ($row = $r->fetch_assoc())
-        $brandPartners[] = array_merge($row, ['logoUrl' => findBrandLogoPath($row['imageno'])]);
+    /* Authorised brand partners, grouped by category for the sectioned/auto-rotating display */
+    $brandCategoryOrder = [
+        'Electronics',
+        'Electrical',
+        'Home & Kitchen',
+        'Travel & Luggage',
+        'Apparels/Sports',
+        'Lifestyle / Personal Hygiene',
+        'Food & Beverages',
+        'Large Home & Commercial Appliances',
+    ];
+    $brandPartnersByCategory = [];
+    $r = $db->query("SELECT id, brandname, imageno, category FROM brandlogo WHERE flag=1 ORDER BY seqence ASC, brandname ASC");
+    if ($r) while ($row = $r->fetch_assoc()) {
+        $brand = array_merge($row, ['logoUrl' => findBrandLogoPath($row['imageno'])]);
+        $brandPartners[] = $brand;
+        $cat = $row['category'] ?: '';
+        if ($cat !== '' && in_array($cat, $brandCategoryOrder, true)) {
+            $brandPartnersByCategory[$cat][] = $brand;
+        }
+    }
+    // Keep only categories that actually have brands assigned, in the fixed display order
+    $brandPartnersByCategory = array_filter($brandPartnersByCategory, fn($list) => !empty($list));
+    $brandCategorySections = [];
+    foreach ($brandCategoryOrder as $cat) {
+        if (!empty($brandPartnersByCategory[$cat])) $brandCategorySections[$cat] = $brandPartnersByCategory[$cat];
+    }
 
     /* Category products for homepage carousels */
     $r = $db->query("SELECT p.id, p.name, p.image, p.mrp, p.offer_price, p.category, b.brandname, b.imageno
@@ -228,7 +255,27 @@ if (!$db->connect_error) {
             <!-- ═══════════ AUTHORISED BRAND PARTNER ═══════════ -->
             <section class="brand-partner-sec">
                 <div class="hp-sec-title">Authorised Brand Partner</div>
-                <?php if (!empty($brandPartners)): ?>
+                <?php if (!empty($brandCategorySections)): ?>
+                <div class="brand-cat-tabs" id="brandCatTabs">
+                    <?php $catIdx = 0; foreach ($brandCategorySections as $catName => $catBrands): ?>
+                    <button type="button" class="brand-cat-tab <?= $catIdx === 0 ? 'active' : '' ?>" data-cat-index="<?= $catIdx ?>"><?= htmlspecialchars($catName) ?></button>
+                    <?php $catIdx++; endforeach; ?>
+                </div>
+                <div class="brand-cat-panels" id="brandCatPanels">
+                    <?php $catIdx = 0; foreach ($brandCategorySections as $catName => $catBrands): ?>
+                    <div class="brand-cat-panel <?= $catIdx === 0 ? 'active' : '' ?>" data-cat-index="<?= $catIdx ?>">
+                        <div class="brand-logo-grid">
+                            <?php foreach ($catBrands as $brand): ?>
+                            <a class="brand-logo-box" href="brand-products.php?brand=<?= intval($brand['id']) ?>" title="<?= htmlspecialchars($brand['brandname']) ?>">
+                                <img src="<?= htmlspecialchars($brand['logoUrl']) ?>" alt="<?= htmlspecialchars($brand['brandname']) ?>" loading="lazy">
+                            </a>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                    <?php $catIdx++; endforeach; ?>
+                </div>
+                <p style="color:#6B7280;font-size:13px;text-align:right;margin-top:14px;">&amp; many more...</p>
+                <?php elseif (!empty($brandPartners)): ?>
                 <div class="brand-logo-grid">
                     <?php foreach ($brandPartners as $brand): ?>
                     <a class="brand-logo-box" href="brand-products.php?brand=<?= intval($brand['id']) ?>" title="<?= htmlspecialchars($brand['brandname']) ?>">
@@ -830,6 +877,37 @@ if (!$db->connect_error) {
         });
 
         timer = setInterval(function() { window.scrollProd(1); }, 5000);
+    })();
+
+    /* ── Authorised Brand Partner category rotation ── */
+    (function() {
+        var tabs   = Array.from(document.querySelectorAll('#brandCatTabs .brand-cat-tab'));
+        var panels = Array.from(document.querySelectorAll('#brandCatPanels .brand-cat-panel'));
+        if (!tabs.length || !panels.length) return;
+
+        var current = 0;
+        var timer;
+
+        function show(idx) {
+            current = idx;
+            tabs.forEach(function(t, i) { t.classList.toggle('active', i === idx); });
+            panels.forEach(function(p, i) { p.classList.toggle('active', i === idx); });
+        }
+
+        function startAutoplay() {
+            clearInterval(timer);
+            timer = setInterval(function() { show((current + 1) % tabs.length); }, 5000);
+        }
+
+        tabs.forEach(function(tab, i) {
+            tab.addEventListener('click', function() {
+                show(i);
+                startAutoplay();
+            });
+        });
+
+        show(0);
+        startAutoplay();
     })();
 
     /* ── Budget Friendly Tabs ── */

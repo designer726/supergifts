@@ -17,6 +17,11 @@ if ($categoryCol && $categoryCol->num_rows === 0) {
     $conn->query("UPDATE products SET category = CASE WHEN is_premium = 1 THEN 'Premium' ELSE 'NA' END");
 }
 
+$brandCategoryCol = $conn->query("SHOW COLUMNS FROM brandlogo LIKE 'category'");
+if ($brandCategoryCol && $brandCategoryCol->num_rows === 0) {
+    $conn->query("ALTER TABLE brandlogo ADD COLUMN category VARCHAR(50) NOT NULL DEFAULT '' AFTER flag");
+}
+
 // $reviewColumns = $conn->query("SHOW COLUMNS FROM reviews LIKE 'is_hidden'");
 // if ($reviewColumns && $reviewColumns->num_rows === 0) {
 //     $conn->query("ALTER TABLE reviews ADD COLUMN is_hidden TINYINT(1) NOT NULL DEFAULT 0 AFTER status");

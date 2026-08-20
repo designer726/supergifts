@@ -5,6 +5,17 @@ require_once '../includes/db.php';
 $pageTitle = 'Edit Brand';
 $errors = []; $success = '';
 
+$brandCategories = [
+    'Electronics',
+    'Electrical',
+    'Home & Kitchen',
+    'Travel & Luggage',
+    'Apparels/Sports',
+    'Lifestyle / Personal Hygiene',
+    'Food & Beverages',
+    'Large Home & Commercial Appliances',
+];
+
 $id = intval($_GET['id'] ?? 0);
 if (!$id) { header("Location: index.php"); exit(); }
 
@@ -29,6 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $links          = trim($_POST['links'] ?? '');
     $website        = trim($_POST['website'] ?? '');
     $flag           = intval($_POST['flag'] ?? 1);
+    $category       = trim($_POST['category'] ?? '');
     $seqence        = intval($_POST['seqence'] ?? 0);
     $imageno        = $brand['imageno']; // Keep old imageno by default
     $brand_banner   = $brand['brand_banner'];   // Keep old banners by default
@@ -102,11 +114,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (!$errors) {
-        $stmt = $conn->prepare("UPDATE brandlogo SET brandname=?, links=?, website=?, brand_banner=?, brand_banner_2=?, brand_banner_3=?, seqence=?, flag=? WHERE id=?");
-        $stmt->bind_param("ssssssiii", $brandname, $links, $website, $brand_banner, $brand_banner_2, $brand_banner_3, $seqence, $flag, $id);
+        $stmt = $conn->prepare("UPDATE brandlogo SET brandname=?, links=?, website=?, brand_banner=?, brand_banner_2=?, brand_banner_3=?, seqence=?, flag=?, category=? WHERE id=?");
+        $stmt->bind_param("ssssssiisi", $brandname, $links, $website, $brand_banner, $brand_banner_2, $brand_banner_3, $seqence, $flag, $category, $id);
         if ($stmt->execute()) {
             $success = "Brand updated successfully!";
-            $brand = array_merge($brand, compact('brandname','links','website','brand_banner','brand_banner_2','brand_banner_3','seqence','flag'));
+            $brand = array_merge($brand, compact('brandname','links','website','brand_banner','brand_banner_2','brand_banner_3','seqence','flag','category'));
         } else {
             $errors[] = "DB error: " . $conn->error;
         }
@@ -168,6 +180,15 @@ require_once '../includes/layout_top.php';
                     <select name="flag" class="form-select">
                         <option value="1" <?= $brand['flag']==1?'selected':'' ?>>⭐ Authorised Brand Partner</option>
                         <option value="0" <?= $brand['flag']==0?'selected':'' ?>>🤝 We Also Deal</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Brand Category <span class="text-muted small fw-normal">(homepage section)</span></label>
+                    <select name="category" class="form-select">
+                        <option value="">— Select Category —</option>
+                        <?php foreach ($brandCategories as $cat): ?>
+                        <option value="<?= htmlspecialchars($cat) ?>" <?= ($brand['category'] ?? '')===$cat?'selected':'' ?>><?= htmlspecialchars($cat) ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
                 <div class="mb-0">

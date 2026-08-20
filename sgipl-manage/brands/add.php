@@ -5,6 +5,17 @@ require_once '../includes/db.php';
 $pageTitle = 'Add Brand';
 $errors = []; $success = '';
 
+$brandCategories = [
+    'Electronics',
+    'Electrical',
+    'Home & Kitchen',
+    'Travel & Luggage',
+    'Apparels/Sports',
+    'Lifestyle / Personal Hygiene',
+    'Food & Beverages',
+    'Large Home & Commercial Appliances',
+];
+
 // Upload dir for logos
 $uploadDir = ($_SERVER['SERVER_NAME'] === 'localhost')
     ? $_SERVER['DOCUMENT_ROOT'] . '/supergifts/images/brandlogo/'
@@ -21,6 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $links          = trim($_POST['links'] ?? '');
     $website        = trim($_POST['website'] ?? '');
     $flag           = intval($_POST['flag'] ?? 1);
+    $category       = trim($_POST['category'] ?? '');
     $seqence        = intval($_POST['seqence'] ?? 0);
     $imageno        = '';
     $brand_banner   = '';
@@ -79,12 +91,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     unset($targetVar);
 
     if (!$errors) {
-        $stmt = $conn->prepare("INSERT INTO brandlogo (brandname, links, website, imageno, brand_banner, brand_banner_2, brand_banner_3, seqence, flag) VALUES (?,?,?,?,?,?,?,?,?)");
-        $stmt->bind_param("sssisssii", $brandname, $links, $website, $imageno, $brand_banner, $brand_banner_2, $brand_banner_3, $seqence, $flag);
+        $stmt = $conn->prepare("INSERT INTO brandlogo (brandname, links, website, imageno, brand_banner, brand_banner_2, brand_banner_3, seqence, flag, category) VALUES (?,?,?,?,?,?,?,?,?,?)");
+        $stmt->bind_param("sssisssiis", $brandname, $links, $website, $imageno, $brand_banner, $brand_banner_2, $brand_banner_3, $seqence, $flag, $category);
         if ($stmt->execute()) {
             $newId = $conn->insert_id;
             $success = "Brand added! <a href='../products/add.php?brand_id={$newId}'>Add products →</a>";
-            $brandname = $links = $website = ''; $flag = 1; $seqence = 0;
+            $brandname = $links = $website = ''; $flag = 1; $category = ''; $seqence = 0;
         } else {
             $errors[] = "DB error: " . $conn->error;
         }
@@ -140,6 +152,15 @@ require_once '../includes/layout_top.php';
                     <select name="flag" class="form-select">
                         <option value="1" <?= ($flag??1)==1?'selected':'' ?>>⭐ Authorised Brand Partner</option>
                         <option value="0" <?= ($flag??1)==0?'selected':'' ?>>🤝 We Also Deal</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Brand Category <span class="text-muted small fw-normal">(homepage section)</span></label>
+                    <select name="category" class="form-select">
+                        <option value="">— Select Category —</option>
+                        <?php foreach ($brandCategories as $cat): ?>
+                        <option value="<?= htmlspecialchars($cat) ?>" <?= ($category ?? '')===$cat?'selected':'' ?>><?= htmlspecialchars($cat) ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
                 <div class="mb-0">
