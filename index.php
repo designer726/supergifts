@@ -78,6 +78,16 @@ if (!$db->connect_error) {
         $db->query("ALTER TABLE brandlogo ADD COLUMN category VARCHAR(50) NOT NULL DEFAULT '' AFTER flag");
     }
 
+    $productSelectionCol = $db->query("SHOW COLUMNS FROM products LIKE 'is_selection'");
+    if ($productSelectionCol && $productSelectionCol->num_rows === 0) {
+        $db->query("ALTER TABLE products ADD COLUMN is_selection TINYINT(1) NOT NULL DEFAULT 0 AFTER new_lunch");
+    }
+
+    $budgetTierCol = $db->query("SHOW COLUMNS FROM products LIKE 'budget_tier'");
+    if ($budgetTierCol && $budgetTierCol->num_rows === 0) {
+        $db->query("ALTER TABLE products ADD COLUMN budget_tier VARCHAR(10) NOT NULL DEFAULT '' AFTER is_selection");
+    }
+
     /* Homepage banners */
     $r = $db->query("SELECT * FROM banners WHERE status=1 ORDER BY slot ASC LIMIT 4");
     if ($r) while ($row = $r->fetch_assoc()) $dbBanners[$row['slot']] = $row;
@@ -132,21 +142,31 @@ if (!$db->connect_error) {
     $executiveProducts = $categoryProducts['Executive'];
     $economyProducts = $categoryProducts['Economy'];
 
-    /* Product selection — round-robin across brands: one product per brand per pass
-       (brand A, brand B, brand C, ... then back to brand A's 2nd product, etc.)
-       so a single brand never dominates consecutive cards. Includes qty=1 items. */
+    /* Product Selection — admin-curated first (products flagged "Show in Product Selection"
+       in admin, ordered by their Display Order). Falls back to an automatic round-robin
+       across brands (one product per brand per pass) when nothing has been curated yet,
+       so the section is never empty on a fresh install. */
     $r = $db->query("SELECT p.id, p.name, p.image, p.mrp, p.offer_price, p.quantity, p.brand_id, p.category, b.brandname, b.imageno
                      FROM products p JOIN brandlogo b ON p.brand_id=b.id
-                     WHERE p.status=1 AND p.quantity>=1 ORDER BY p.brand_id ASC, p.id DESC");
-    $selByBrand = [];
+                     WHERE p.status=1 AND p.quantity>=1 AND p.is_selection=1
+                     ORDER BY p.sequence ASC, p.id DESC");
     if ($r) while ($row = $r->fetch_assoc())
-        $selByBrand[$row['brand_id']][] = array_merge($row, ['brandLogoUrl' => findBrandLogoPath($row['imageno'])]);
-    while (!empty($selByBrand)) {
-        foreach ($selByBrand as $bId => &$queue) {
-            $selProducts[] = array_shift($queue);
-            if (empty($queue)) unset($selByBrand[$bId]);
+        $selProducts[] = array_merge($row, ['brandLogoUrl' => findBrandLogoPath($row['imageno'])]);
+
+    if (empty($selProducts)) {
+        $r = $db->query("SELECT p.id, p.name, p.image, p.mrp, p.offer_price, p.quantity, p.brand_id, p.category, b.brandname, b.imageno
+                         FROM products p JOIN brandlogo b ON p.brand_id=b.id
+                         WHERE p.status=1 AND p.quantity>=1 ORDER BY p.brand_id ASC, p.id DESC");
+        $selByBrand = [];
+        if ($r) while ($row = $r->fetch_assoc())
+            $selByBrand[$row['brand_id']][] = array_merge($row, ['brandLogoUrl' => findBrandLogoPath($row['imageno'])]);
+        while (!empty($selByBrand)) {
+            foreach ($selByBrand as $bId => &$queue) {
+                $selProducts[] = array_shift($queue);
+                if (empty($queue)) unset($selByBrand[$bId]);
+            }
+            unset($queue);
         }
-        unset($queue);
     }
 
     
@@ -160,15 +180,38 @@ if (!$db->connect_error) {
                      FROM reviews WHERE status='approved' AND is_hidden = 0 ORDER BY created_at DESC LIMIT 3");
     if ($r) while ($row = $r->fetch_assoc()) $testimonials[] = $row;
 
-    /* Budget products by price range */
-    $r = $db->query("SELECT p.id,p.name,p.image,p.mrp,p.offer_price FROM products p WHERE p.status=1 AND p.offer_price>=10 AND p.offer_price<=100 ORDER BY p.sequence ASC LIMIT 6");
-    if ($r) while ($row=$r->fetch_assoc()) $budgetLow[]=$row;
-    $r = $db->query("SELECT p.id,p.name,p.image,p.mrp,p.offer_price FROM products p WHERE p.status=1 AND p.offer_price>100 AND p.offer_price<=500 ORDER BY p.sequence ASC LIMIT 6");
-    if ($r) while ($row=$r->fetch_assoc()) $budgetMid[]=$row;
-    $r = $db->query("SELECT p.id,p.name,p.image,p.mrp,p.offer_price FROM products p WHERE p.status=1 AND p.offer_price>500 AND p.offer_price<=1000 ORDER BY p.sequence ASC LIMIT 6");
-    if ($r) while ($row=$r->fetch_assoc()) $budgetHigh[]=$row;
-    $r = $db->query("SELECT p.id,p.name,p.image,p.mrp,p.offer_price FROM products p WHERE p.status=1 AND p.offer_price>1000 ORDER BY p.sequence ASC LIMIT 6");
-    if ($r) while ($row=$r->fetch_assoc()) $budgetPremium[]=$row;
+    /* Budget Friendly tiers — admin-curated first (products flagged with a Budget Tier
+       in admin, ordered by Display Order). Falls back to automatic price-range bucketing
+       per tier when nothing has been curated for that tier yet. */
+    $budgetTierMeta = [
+        'tier1' => ['min' => 10,   'max' => 200],
+        'tier2' => ['min' => 200,  'max' => 500],
+        'tier3' => ['min' => 500,  'max' => 1000],
+        'tier4' => ['min' => 1000, 'max' => null],
+    ];
+    $budgetByTier = ['tier1' => [], 'tier2' => [], 'tier3' => [], 'tier4' => []];
+    foreach ($budgetTierMeta as $tierKey => $range) {
+        $stmt = $db->prepare("SELECT p.id,p.name,p.image,p.mrp,p.offer_price FROM products p
+                              WHERE p.status=1 AND p.budget_tier=? ORDER BY p.sequence ASC, p.id DESC LIMIT 6");
+        $stmt->bind_param('s', $tierKey);
+        $stmt->execute();
+        $curatedResult = $stmt->get_result();
+        while ($row = $curatedResult->fetch_assoc()) $budgetByTier[$tierKey][] = $row;
+        $stmt->close();
+
+        if (empty($budgetByTier[$tierKey])) {
+            $sql = "SELECT p.id,p.name,p.image,p.mrp,p.offer_price FROM products p
+                    WHERE p.status=1 AND p.offer_price>=" . intval($range['min']) .
+                   ($range['max'] !== null ? " AND p.offer_price<=" . intval($range['max']) : "") .
+                   " ORDER BY p.sequence ASC LIMIT 6";
+            $r = $db->query($sql);
+            if ($r) while ($row = $r->fetch_assoc()) $budgetByTier[$tierKey][] = $row;
+        }
+    }
+    $budgetLow     = $budgetByTier['tier1'];
+    $budgetMid     = $budgetByTier['tier2'];
+    $budgetHigh    = $budgetByTier['tier3'];
+    $budgetPremium = $budgetByTier['tier4'];
 
     /* Brands for appliances section */
     $r = $db->query("SELECT id, brandname, imageno FROM brandlogo WHERE flag=0 ORDER BY seqence ASC, id ASC LIMIT 8");
@@ -567,8 +610,8 @@ if (!$db->connect_error) {
 
                 <?php
                 $budgetRanges = [
-                    ['label' => '₹10 – ₹100',    'data' => $budgetLow],
-                    ['label' => '₹100 – ₹500',   'data' => $budgetMid],
+                    ['label' => '₹10 – ₹200',    'data' => $budgetLow],
+                    ['label' => '₹200 – ₹500',   'data' => $budgetMid],
                     ['label' => '₹500 – ₹1000',  'data' => $budgetHigh],
                     ['label' => '₹1000 & Above', 'data' => $budgetPremium],
                 ];

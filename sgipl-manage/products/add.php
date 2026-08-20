@@ -7,6 +7,13 @@ $errors = []; $success = '';
 
 $prefill_brand = intval($_GET['brand_id'] ?? 0);
 
+$budgetTiers = [
+    'tier1' => '₹10 – ₹200',
+    'tier2' => '₹200 – ₹500',
+    'tier3' => '₹500 – ₹1000',
+    'tier4' => '₹1000 & Above',
+];
+
 $imgUploadDir = ($_SERVER['SERVER_NAME'] === 'localhost')
     ? $_SERVER['DOCUMENT_ROOT'] . '/supergifts/images/products/'
     : $_SERVER['DOCUMENT_ROOT'] . '/images/products/';
@@ -25,6 +32,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!in_array($category, $allowedCategories, true)) $category = 'NA';
     $is_premium  = $category === 'Premium' ? 1 : 0;
     $new_lunch   = intval($_POST['new_lunch'] ?? 0);
+    $is_selection = intval($_POST['is_selection'] ?? 0);
+    $budget_tier = trim($_POST['budget_tier'] ?? '');
+    if (!array_key_exists($budget_tier, $budgetTiers)) $budget_tier = '';
     $series      = trim($_POST['series'] ?? '');
     $sequence    = intval($_POST['sequence'] ?? 0);
     $status      = intval($_POST['status'] ?? 1);
@@ -51,11 +61,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (!$errors) {
-        $stmt = $conn->prepare("INSERT INTO products (brand_id, name, image, mrp, offer_price, quantity, category, is_premium, new_lunch, series, sequence, status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
-        $stmt->bind_param("issddisiisii", $brand_id, $name, $image, $mrp, $offer_price, $quantity, $category, $is_premium, $new_lunch, $series, $sequence, $status);
+        $stmt = $conn->prepare("INSERT INTO products (brand_id, name, image, mrp, offer_price, quantity, category, is_premium, new_lunch, is_selection, budget_tier, series, sequence, status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+        $stmt->bind_param("issddisiiissii", $brand_id, $name, $image, $mrp, $offer_price, $quantity, $category, $is_premium, $new_lunch, $is_selection, $budget_tier, $series, $sequence, $status);
         if ($stmt->execute()) {
             $success = "Product added! <a href='index.php?brand_id={$brand_id}'>View brand products →</a>";
-            $name = ''; $mrp = 0; $offer_price = 0; $quantity = 0; $category = 'NA'; $is_premium = 0; $new_lunch = 0; $series = ''; $sequence = 0;
+            $name = ''; $mrp = 0; $offer_price = 0; $quantity = 0; $category = 'NA'; $is_premium = 0; $new_lunch = 0; $is_selection = 0; $budget_tier = ''; $series = ''; $sequence = 0;
         } else {
             $errors[] = "DB error: ".$conn->error;
         }
@@ -141,6 +151,24 @@ require_once '../includes/layout_top.php';
                             <option value="0">No</option>
                             <option value="1">Yes</option>
                         </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Product Selection <span class="text-muted small fw-normal">(homepage)</span></label>
+                        <select name="is_selection" class="form-select">
+                            <option value="0" <?= (($is_selection??0)==0)?'selected':'' ?>>Not shown</option>
+                            <option value="1" <?= (($is_selection??0)==1)?'selected':'' ?>>⭐ Show in Product Selection</option>
+                        </select>
+                        <div class="text-muted small mt-1">Curates the "Product Selection" carousel on the homepage.</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Budget Tier <span class="text-muted small fw-normal">(Budget Friendly homepage section)</span></label>
+                        <select name="budget_tier" class="form-select">
+                            <option value="" <?= ($budget_tier??'')===''?'selected':'' ?>>— Not Set —</option>
+                            <?php foreach ($budgetTiers as $tierKey => $tierLabel): ?>
+                            <option value="<?= $tierKey ?>" <?= ($budget_tier??'')===$tierKey?'selected':'' ?>><?= $tierLabel ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <div class="text-muted small mt-1">Curates that tab of "Made to Order – Budget Friendly".</div>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Series</label>
