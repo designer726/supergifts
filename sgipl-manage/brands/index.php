@@ -4,12 +4,25 @@ if (!isset($_SESSION['admin_logged_in'])) { header("Location: ../login.php"); ex
 require_once '../includes/db.php';
 $pageTitle = 'Brand Partners';
 
-$search = trim($_GET['search'] ?? '');
-$filter = $_GET['flag'] ?? '';
+$brandCategories = [
+    'Electronics',
+    'Electrical',
+    'Home & Kitchen',
+    'Travel & Luggage',
+    'Apparels/Sports',
+    'Lifestyle / Personal Hygiene',
+    'Food & Beverages',
+    'Large Home & Commercial Appliances',
+];
+
+$search       = trim($_GET['search'] ?? '');
+$filter       = $_GET['flag'] ?? '';
+$catFilter    = $_GET['category'] ?? '';
 
 $where = []; $params = []; $types = '';
 if ($search) { $where[] = "brandname LIKE ?"; $params[] = "%$search%"; $types .= 's'; }
 if ($filter !== '' && in_array($filter, ['0','1'])) { $where[] = "flag = ?"; $params[] = intval($filter); $types .= 'i'; }
+if ($catFilter !== '' && in_array($catFilter, $brandCategories, true)) { $where[] = "category = ?"; $params[] = $catFilter; $types .= 's'; }
 
 $sql = "SELECT * FROM brandlogo" . ($where ? " WHERE ".implode(" AND ",$where) : "") . " ORDER BY flag DESC, seqence ASC";
 $stmt = $conn->prepare($sql);
@@ -66,8 +79,14 @@ require_once '../includes/layout_top.php';
             <option value="1" <?= $filter==='1'?'selected':'' ?>>Authorised Partners</option>
             <option value="0" <?= $filter==='0'?'selected':'' ?>>Also Deal Brands</option>
         </select>
+        <select name="category" class="form-select form-select-sm" style="width:210px;">
+            <option value="">All Categories</option>
+            <?php foreach ($brandCategories as $cat): ?>
+            <option value="<?= htmlspecialchars($cat) ?>" <?= $catFilter===$cat?'selected':'' ?>><?= htmlspecialchars($cat) ?></option>
+            <?php endforeach; ?>
+        </select>
         <button class="btn btn-sm btn-secondary" type="submit"><i class="bi bi-search"></i></button>
-        <?php if ($search || $filter !== ''): ?>
+        <?php if ($search || $filter !== '' || $catFilter !== ''): ?>
             <a href="index.php" class="btn btn-sm btn-outline-secondary">Clear</a>
         <?php endif; ?>
     </form>
@@ -83,6 +102,7 @@ require_once '../includes/layout_top.php';
                 <th style="width:90px;">Logo</th>
                 <th>Brand Name</th>
                 <th>Type</th>
+                <th>Category</th>
                 <th>Catalog Link</th>
                 <th>Products</th>
                 <th style="width:120px;">Actions</th>
@@ -90,7 +110,7 @@ require_once '../includes/layout_top.php';
         </thead>
         <tbody>
             <?php if ($brands->num_rows === 0): ?>
-                <tr><td colspan="7" class="text-center text-muted py-4">No brands found.</td></tr>
+                <tr><td colspan="8" class="text-center text-muted py-4">No brands found.</td></tr>
             <?php endif; ?>
             <?php while ($row = $brands->fetch_assoc()):
                 $prodCount = $conn->query("SELECT COUNT(*) as c FROM products WHERE brand_id={$row['id']}")->fetch_assoc()['c'];
@@ -111,6 +131,13 @@ require_once '../includes/layout_top.php';
                         <span style="background:#dbeafe;color:#1d4ed8;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;">⭐ Authorised</span>
                     <?php else: ?>
                         <span style="background:#fef9c3;color:#854d0e;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;">🤝 Also Deal</span>
+                    <?php endif; ?>
+                </td>
+                <td>
+                    <?php if (!empty($row['category'])): ?>
+                        <span class="small text-muted"><?= htmlspecialchars($row['category']) ?></span>
+                    <?php else: ?>
+                        <span class="small text-danger">— Uncategorised</span>
                     <?php endif; ?>
                 </td>
                 <td>

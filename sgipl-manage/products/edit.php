@@ -8,6 +8,13 @@ $errors = []; $success = '';
 $id = intval($_GET['id'] ?? 0);
 if (!$id) { header("Location: index.php"); exit(); }
 
+$budgetTiers = [
+    'tier1' => '₹10 – ₹200',
+    'tier2' => '₹200 – ₹500',
+    'tier3' => '₹500 – ₹1000',
+    'tier4' => '₹1000 & Above',
+];
+
 $stmt = $conn->prepare("SELECT * FROM products WHERE id = ?");
 $stmt->bind_param("i", $id);
 $stmt->execute();
@@ -28,8 +35,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $mrp         = floatval($_POST['mrp'] ?? 0);
     $offer_price = floatval($_POST['offer_price'] ?? 0);
     $quantity    = intval($_POST['quantity'] ?? 0);
-    $is_premium  = intval($_POST['is_premium'] ?? 0);
+    $category    = $_POST['category'] ?? ($product['category'] ?? 'NA');
+    $allowedCategories = ['Premium', 'Executive', 'Economy', 'NA'];
+    if (!in_array($category, $allowedCategories, true)) $category = 'NA';
+    $is_premium  = $category === 'Premium' ? 1 : 0;
     $new_lunch   = intval($_POST['new_lunch'] ?? 0);
+    $is_selection = intval($_POST['is_selection'] ?? 0);
+    $budget_tier = trim($_POST['budget_tier'] ?? '');
+    if (!array_key_exists($budget_tier, $budgetTiers)) $budget_tier = '';
     $series      = trim($_POST['series'] ?? '');
     $sequence    = intval($_POST['sequence'] ?? 0);
     $status      = intval($_POST['status'] ?? 1);
@@ -63,11 +76,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (!$errors) {
-        $stmt = $conn->prepare("UPDATE products SET brand_id=?, name=?, image=?, mrp=?, offer_price=?, quantity=?, is_premium=?, new_lunch=?, series=?, sequence=?, status=? WHERE id=?");
-        $stmt->bind_param("issddiiisiii", $brand_id, $name, $image, $mrp, $offer_price, $quantity, $is_premium, $new_lunch, $series, $sequence, $status, $id);
+        $stmt = $conn->prepare("UPDATE products SET brand_id=?, name=?, image=?, mrp=?, offer_price=?, quantity=?, category=?, is_premium=?, new_lunch=?, is_selection=?, budget_tier=?, series=?, sequence=?, status=? WHERE id=?");
+        $stmt->bind_param("issddisiiissiii", $brand_id, $name, $image, $mrp, $offer_price, $quantity, $category, $is_premium, $new_lunch, $is_selection, $budget_tier, $series, $sequence, $status, $id);
         if ($stmt->execute()) {
             $success = "Product updated!";
-            $product = array_merge($product, compact('brand_id','name','image','mrp','offer_price','quantity','is_premium','new_lunch','series','sequence','status'));
+            $product = array_merge($product, compact('brand_id','name','image','mrp','offer_price','quantity','category','is_premium','new_lunch','is_selection','budget_tier','series','sequence','status'));
         } else {
             $errors[] = "DB error: ".$conn->error;
         }
@@ -138,10 +151,11 @@ require_once '../includes/layout_top.php';
                                value="<?= $product['quantity'] ?>" min="0">
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">Premium</label>
-                        <select name="is_premium" class="form-select">
-                            <option value="0" <?= $product['is_premium']==0?'selected':'' ?>>No</option>
-                            <option value="1" <?= $product['is_premium']==1?'selected':'' ?>>Yes</option>
+                        <label class="form-label">Category</label>
+                        <select name="category" class="form-select">
+                            <?php foreach (['Premium', 'Executive', 'Economy', 'NA'] as $categoryOption): ?>
+                                <option value="<?= $categoryOption ?>" <?= ($product['category'] ?? 'NA') === $categoryOption ? 'selected' : '' ?>><?= $categoryOption ?></option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                     <div class="col-md-6">
@@ -150,6 +164,24 @@ require_once '../includes/layout_top.php';
                             <option value="0" <?= $product['new_lunch']==0?'selected':'' ?>>No</option>
                             <option value="1" <?= $product['new_lunch']==1?'selected':'' ?>>Yes</option>
                         </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Product Selection <span class="text-muted small fw-normal">(homepage)</span></label>
+                        <select name="is_selection" class="form-select">
+                            <option value="0" <?= ($product['is_selection']??0)==0?'selected':'' ?>>Not shown</option>
+                            <option value="1" <?= ($product['is_selection']??0)==1?'selected':'' ?>>⭐ Show in Product Selection</option>
+                        </select>
+                        <div class="text-muted small mt-1">Curates the "Product Selection" carousel on the homepage.</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Budget Tier <span class="text-muted small fw-normal">(Budget Friendly homepage section)</span></label>
+                        <select name="budget_tier" class="form-select">
+                            <option value="" <?= ($product['budget_tier']??'')===''?'selected':'' ?>>— Not Set —</option>
+                            <?php foreach ($budgetTiers as $tierKey => $tierLabel): ?>
+                            <option value="<?= $tierKey ?>" <?= ($product['budget_tier']??'')===$tierKey?'selected':'' ?>><?= $tierLabel ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <div class="text-muted small mt-1">Curates that tab of "Made to Order – Budget Friendly".</div>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Series</label>

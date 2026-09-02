@@ -12,9 +12,9 @@ $pagename = basename($_SERVER['PHP_SELF']);
 // }
 
 function findBrandLogoPath($imageno) {
-    $root = rtrim($_SERVER['DOCUMENT_ROOT'], '/\\') . '/';
+    $root = __DIR__ . '/';
 
-    foreach (['.jpg', '.jpeg', '.png', '.webp'] as $ext) {
+    foreach (['.jpg', '.jpeg', '.png', '.webp', '.gif'] as $ext) {
         $file = $root . 'images/brandlogo/image' . intval($imageno) . $ext;
 
         if (is_file($file)) {
@@ -67,38 +67,106 @@ $db = new mysqli("localhost","superehc_aiir","Aiir@8097000970","superehc_sgipl")
 if (!$db->connect_error) {
     $db->set_charset("utf8mb4");
 
+    $categoryCol = $db->query("SHOW COLUMNS FROM products LIKE 'category'");
+    if ($categoryCol && $categoryCol->num_rows === 0) {
+        $db->query("ALTER TABLE products ADD COLUMN category VARCHAR(20) NOT NULL DEFAULT 'NA' AFTER quantity");
+        $db->query("UPDATE products SET category = CASE WHEN is_premium = 1 THEN 'Premium' ELSE 'NA' END");
+    }
+
+    $brandCategoryCol = $db->query("SHOW COLUMNS FROM brandlogo LIKE 'category'");
+    if ($brandCategoryCol && $brandCategoryCol->num_rows === 0) {
+        $db->query("ALTER TABLE brandlogo ADD COLUMN category VARCHAR(50) NOT NULL DEFAULT '' AFTER flag");
+    }
+
+    $productSelectionCol = $db->query("SHOW COLUMNS FROM products LIKE 'is_selection'");
+    if ($productSelectionCol && $productSelectionCol->num_rows === 0) {
+        $db->query("ALTER TABLE products ADD COLUMN is_selection TINYINT(1) NOT NULL DEFAULT 0 AFTER new_lunch");
+    }
+
+    $budgetTierCol = $db->query("SHOW COLUMNS FROM products LIKE 'budget_tier'");
+    if ($budgetTierCol && $budgetTierCol->num_rows === 0) {
+        $db->query("ALTER TABLE products ADD COLUMN budget_tier VARCHAR(10) NOT NULL DEFAULT '' AFTER is_selection");
+    }
+
     /* Homepage banners */
     $r = $db->query("SELECT * FROM banners WHERE status=1 ORDER BY slot ASC LIMIT 4");
     if ($r) while ($row = $r->fetch_assoc()) $dbBanners[$row['slot']] = $row;
 
-    /* Authorised brand partners */
-    // $r = $db->query("SELECT id, brandname, imageno FROM brandlogo WHERE flag=1 ORDER BY seqence ASC, brandname ASC");
-    $r = $db->query("SELECT id, brandname, imageno FROM brandlogo WHERE flag=1 ORDER BY seqence ASC, brandname ASC");
-    if ($r) while ($row = $r->fetch_assoc())
-        $brandPartners[] = array_merge($row, ['logoUrl' => findBrandLogoPath($row['imageno'])]);
+    /* Authorised brand partners, grouped by category for the sectioned/auto-rotating display */
+    $brandCategoryOrder = [
+        'Electronics',
+        'Electrical',
+        'Home & Kitchen',
+        'Travel & Luggage',
+        'Apparels/Sports',
+        'Lifestyle / Personal Hygiene',
+        'Food & Beverages',
+        'Large Home & Commercial Appliances',
+    ];
+    $brandPartnersByCategory = [];
+    $r = $db->query("SELECT id, brandname, imageno, category FROM brandlogo WHERE flag=1 ORDER BY seqence ASC, brandname ASC");
+    if ($r) while ($row = $r->fetch_assoc()) {
+        $brand = array_merge($row, ['logoUrl' => findBrandLogoPath($row['imageno'])]);
+        $brandPartners[] = $brand;
+        $cat = $row['category'] ?: '';
+        if ($cat !== '' && in_array($cat, $brandCategoryOrder, true)) {
+            $brandPartnersByCategory[$cat][] = $brand;
+        }
+    }
+    // Keep only categories that actually have brands assigned, in the fixed display order
+    $brandPartnersByCategory = array_filter($brandPartnersByCategory, fn($list) => !empty($list));
+    $brandCategorySections = [];
+    foreach ($brandCategoryOrder as $cat) {
+        if (!empty($brandPartnersByCategory[$cat])) $brandCategorySections[$cat] = $brandPartnersByCategory[$cat];
+    }
 
-    /* Premium products for carousel */
-    $r = $db->query("SELECT p.id, p.name, p.image, p.mrp, p.offer_price, b.brandname AS category, b.imageno
+    /* Category products for homepage carousels */
+    $r = $db->query("SELECT p.id, p.name, p.image, p.mrp, p.offer_price, p.category, b.brandname, b.imageno
                      FROM products p JOIN brandlogo b ON p.brand_id=b.id
-                     WHERE p.status=1 AND p.is_premium=1 ORDER BY p.sequence ASC, p.id DESC LIMIT 20");
+                     WHERE p.status=1 AND p.category='Premium' ORDER BY p.sequence ASC, p.id DESC LIMIT 20");
     if ($r) while ($row = $r->fetch_assoc())
         $premiumProducts[] = array_merge($row, ['brandLogoUrl' => findBrandLogoPath($row['imageno'])]);
 
-    /* Product selection — round-robin across brands: one product per brand per pass
-       (brand A, brand B, brand C, ... then back to brand A's 2nd product, etc.)
-       so a single brand never dominates consecutive cards. Includes qty=1 items. */
-    $r = $db->query("SELECT p.id, p.name, p.image, p.mrp, p.offer_price, p.quantity, p.brand_id, b.brandname AS category, b.imageno
+    $categoryProducts = ['Executive' => [], 'Economy' => [], 'NA' => []];
+    foreach (array_keys($categoryProducts) as $categoryName) {
+        $categoryQuery = $db->prepare("SELECT p.id, p.name, p.image, p.mrp, p.offer_price, p.category, b.brandname, b.imageno
+                                       FROM products p JOIN brandlogo b ON p.brand_id=b.id
+                                       WHERE p.status=1 AND p.category=? ORDER BY p.sequence ASC, p.id DESC LIMIT 20");
+        $categoryQuery->bind_param('s', $categoryName);
+        $categoryQuery->execute();
+        $categoryResult = $categoryQuery->get_result();
+        while ($row = $categoryResult->fetch_assoc())
+            $categoryProducts[$categoryName][] = array_merge($row, ['brandLogoUrl' => findBrandLogoPath($row['imageno'])]);
+        $categoryQuery->close();
+    }
+    $executiveProducts = $categoryProducts['Executive'];
+    $economyProducts = $categoryProducts['Economy'];
+
+    /* Product Selection — admin-curated first (products flagged "Show in Product Selection"
+       in admin, ordered by their Display Order). Falls back to an automatic round-robin
+       across brands (one product per brand per pass) when nothing has been curated yet,
+       so the section is never empty on a fresh install. */
+    $r = $db->query("SELECT p.id, p.name, p.image, p.mrp, p.offer_price, p.quantity, p.brand_id, p.category, b.brandname, b.imageno
                      FROM products p JOIN brandlogo b ON p.brand_id=b.id
-                     WHERE p.status=1 AND p.quantity>=1 ORDER BY p.brand_id ASC, p.id DESC");
-    $selByBrand = [];
+                     WHERE p.status=1 AND p.quantity>=1 AND p.is_selection=1
+                     ORDER BY p.sequence ASC, p.id DESC");
     if ($r) while ($row = $r->fetch_assoc())
-        $selByBrand[$row['brand_id']][] = array_merge($row, ['brandLogoUrl' => findBrandLogoPath($row['imageno'])]);
-    while (!empty($selByBrand)) {
-        foreach ($selByBrand as $bId => &$queue) {
-            $selProducts[] = array_shift($queue);
-            if (empty($queue)) unset($selByBrand[$bId]);
+        $selProducts[] = array_merge($row, ['brandLogoUrl' => findBrandLogoPath($row['imageno'])]);
+
+    if (empty($selProducts)) {
+        $r = $db->query("SELECT p.id, p.name, p.image, p.mrp, p.offer_price, p.quantity, p.brand_id, p.category, b.brandname, b.imageno
+                         FROM products p JOIN brandlogo b ON p.brand_id=b.id
+                         WHERE p.status=1 AND p.quantity>=1 ORDER BY p.brand_id ASC, p.id DESC");
+        $selByBrand = [];
+        if ($r) while ($row = $r->fetch_assoc())
+            $selByBrand[$row['brand_id']][] = array_merge($row, ['brandLogoUrl' => findBrandLogoPath($row['imageno'])]);
+        while (!empty($selByBrand)) {
+            foreach ($selByBrand as $bId => &$queue) {
+                $selProducts[] = array_shift($queue);
+                if (empty($queue)) unset($selByBrand[$bId]);
+            }
+            unset($queue);
         }
-        unset($queue);
     }
 
     
@@ -112,15 +180,38 @@ if (!$db->connect_error) {
                      FROM reviews WHERE status='approved' AND is_hidden = 0 ORDER BY created_at DESC LIMIT 3");
     if ($r) while ($row = $r->fetch_assoc()) $testimonials[] = $row;
 
-    /* Budget products by price range */
-    $r = $db->query("SELECT p.id,p.name,p.image,p.mrp,p.offer_price FROM products p WHERE p.status=1 AND p.offer_price>=10 AND p.offer_price<=100 ORDER BY p.sequence ASC LIMIT 6");
-    if ($r) while ($row=$r->fetch_assoc()) $budgetLow[]=$row;
-    $r = $db->query("SELECT p.id,p.name,p.image,p.mrp,p.offer_price FROM products p WHERE p.status=1 AND p.offer_price>100 AND p.offer_price<=500 ORDER BY p.sequence ASC LIMIT 6");
-    if ($r) while ($row=$r->fetch_assoc()) $budgetMid[]=$row;
-    $r = $db->query("SELECT p.id,p.name,p.image,p.mrp,p.offer_price FROM products p WHERE p.status=1 AND p.offer_price>500 AND p.offer_price<=1000 ORDER BY p.sequence ASC LIMIT 6");
-    if ($r) while ($row=$r->fetch_assoc()) $budgetHigh[]=$row;
-    $r = $db->query("SELECT p.id,p.name,p.image,p.mrp,p.offer_price FROM products p WHERE p.status=1 AND p.offer_price>1000 ORDER BY p.sequence ASC LIMIT 6");
-    if ($r) while ($row=$r->fetch_assoc()) $budgetPremium[]=$row;
+    /* Budget Friendly tiers — admin-curated first (products flagged with a Budget Tier
+       in admin, ordered by Display Order). Falls back to automatic price-range bucketing
+       per tier when nothing has been curated for that tier yet. */
+    $budgetTierMeta = [
+        'tier1' => ['min' => 10,   'max' => 200],
+        'tier2' => ['min' => 200,  'max' => 500],
+        'tier3' => ['min' => 500,  'max' => 1000],
+        'tier4' => ['min' => 1000, 'max' => null],
+    ];
+    $budgetByTier = ['tier1' => [], 'tier2' => [], 'tier3' => [], 'tier4' => []];
+    foreach ($budgetTierMeta as $tierKey => $range) {
+        $stmt = $db->prepare("SELECT p.id,p.name,p.image,p.mrp,p.offer_price FROM products p
+                              WHERE p.status=1 AND p.budget_tier=? ORDER BY p.sequence ASC, p.id DESC LIMIT 6");
+        $stmt->bind_param('s', $tierKey);
+        $stmt->execute();
+        $curatedResult = $stmt->get_result();
+        while ($row = $curatedResult->fetch_assoc()) $budgetByTier[$tierKey][] = $row;
+        $stmt->close();
+
+        if (empty($budgetByTier[$tierKey])) {
+            $sql = "SELECT p.id,p.name,p.image,p.mrp,p.offer_price FROM products p
+                    WHERE p.status=1 AND p.offer_price>=" . intval($range['min']) .
+                   ($range['max'] !== null ? " AND p.offer_price<=" . intval($range['max']) : "") .
+                   " ORDER BY p.sequence ASC LIMIT 6";
+            $r = $db->query($sql);
+            if ($r) while ($row = $r->fetch_assoc()) $budgetByTier[$tierKey][] = $row;
+        }
+    }
+    $budgetLow     = $budgetByTier['tier1'];
+    $budgetMid     = $budgetByTier['tier2'];
+    $budgetHigh    = $budgetByTier['tier3'];
+    $budgetPremium = $budgetByTier['tier4'];
 
     /* Brands for appliances section */
     $r = $db->query("SELECT id, brandname, imageno FROM brandlogo WHERE flag=0 ORDER BY seqence ASC, id ASC LIMIT 8");
@@ -207,7 +298,30 @@ if (!$db->connect_error) {
             <!-- ═══════════ AUTHORISED BRAND PARTNER ═══════════ -->
             <section class="brand-partner-sec">
                 <div class="hp-sec-title">Authorised Brand Partner</div>
-                <?php if (!empty($brandPartners)): ?>
+                <?php if (!empty($brandCategorySections)): ?>
+                <div class="brand-cat-tabs" id="brandCatTabs">
+                    <?php $catIdx = 0; foreach ($brandCategorySections as $catName => $catBrands): ?>
+                    <button type="button" class="brand-cat-tab <?= $catIdx === 0 ? 'active' : '' ?>" data-cat-index="<?= $catIdx ?>">
+                        <span class="brand-cat-tab-label"><?= htmlspecialchars($catName) ?></span>
+                        <span class="brand-cat-tab-progress"></span>
+                    </button>
+                    <?php $catIdx++; endforeach; ?>
+                </div>
+                <div class="brand-cat-panels" id="brandCatPanels">
+                    <?php $catIdx = 0; foreach ($brandCategorySections as $catName => $catBrands): ?>
+                    <div class="brand-cat-panel <?= $catIdx === 0 ? 'active' : '' ?>" data-cat-index="<?= $catIdx ?>">
+                        <div class="brand-logo-grid">
+                            <?php foreach ($catBrands as $brand): ?>
+                            <a class="brand-logo-box" href="brand-products.php?brand=<?= intval($brand['id']) ?>" title="<?= htmlspecialchars($brand['brandname']) ?>">
+                                <img src="<?= htmlspecialchars($brand['logoUrl']) ?>" alt="<?= htmlspecialchars($brand['brandname']) ?>" loading="lazy">
+                            </a>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                    <?php $catIdx++; endforeach; ?>
+                </div>
+                <!-- <p class="brand-partner-more">&amp; many more...</p> -->
+                <?php elseif (!empty($brandPartners)): ?>
                 <div class="brand-logo-grid">
                     <?php foreach ($brandPartners as $brand): ?>
                     <a class="brand-logo-box" href="brand-products.php?brand=<?= intval($brand['id']) ?>" title="<?= htmlspecialchars($brand['brandname']) ?>">
@@ -215,7 +329,7 @@ if (!$db->connect_error) {
                     </a>
                     <?php endforeach; ?>
                 </div>
-                <p style="color:#6B7280;font-size:13px;text-align:right;margin-top:14px;">&amp; many more...</p>
+                <!-- <p class="brand-partner-more">&amp; many more...</p> -->
                 <?php else: ?>
                 <p style="color:#9CA3AF;font-size:14px;">Brand partners coming soon.</p>
                 <?php endif; ?>
@@ -268,12 +382,12 @@ if (!$db->connect_error) {
                 <div class="hp-carousel-header">
                     <h2>Premium Branded Product</h2>
                     <div class="hp-carousel-nav">
-                        <button class="hp-c-btn" onclick="scrollProd(-1)" aria-label="Previous">&#8249;</button>
-                        <button class="hp-c-btn" onclick="scrollProd(1)" aria-label="Next">&#8250;</button>
+                        <button class="hp-c-btn" onclick="scrollProd(this, -1)" aria-label="Previous">&#8249;</button>
+                        <button class="hp-c-btn" onclick="scrollProd(this, 1)" aria-label="Next">&#8250;</button>
                     </div>
                 </div>
                 <div class="hp-carousel-outer">
-                    <div class="hp-carousel-track" id="prodTrack">
+                    <div class="hp-carousel-track">
                         <?php if (!empty($premiumProducts)): ?>
                             <?php foreach ($premiumProducts as $p): ?>
                             <a href="product-detail.php?id=<?= intval($p['id']) ?>" class="hp-prod-card" style="text-decoration:none;color:inherit;">
@@ -286,7 +400,7 @@ if (!$db->connect_error) {
                                 </div>
                                 <div class="hp-prod-card-body">
                                     <div class="hp-prod-brand-logo">
-                                        <img src="<?= htmlspecialchars($p['brandLogoUrl']) ?>" alt="<?= htmlspecialchars($p['category']) ?>" loading="lazy" onerror="this.parentElement.style.display='none'">
+                                        <img src="<?= htmlspecialchars($p['brandLogoUrl']) ?>" alt="<?= htmlspecialchars($p['brandname']) ?>" loading="lazy" onerror="this.parentElement.style.display='none'">
                                     </div>
                                     <div class="hp-prod-name"><?= htmlspecialchars($p['name']) ?></div>
                                     <?php if (!empty($p['offer_price']) && $p['offer_price'] > 0 && $p['offer_price'] < $p['mrp']): ?>
@@ -309,9 +423,9 @@ if (!$db->connect_error) {
                     </div>
                 </div>
                 <?php $pages = max(1, ceil(count($premiumProducts) / 4)); ?>
-                <div class="hp-carousel-dots" id="prodDots">
+                <div class="hp-carousel-dots">
                     <?php for ($i = 0; $i < $pages; $i++): ?>
-                    <div class="hp-carousel-dot <?= $i === 0 ? 'active' : '' ?>" onclick="goToProdPage(<?= $i ?>)"></div>
+                    <div class="hp-carousel-dot <?= $i === 0 ? 'active' : '' ?>" onclick="goToProdPage(this, <?= $i ?>)"></div>
                     <?php endfor; ?>
                 </div>
             </section>
@@ -321,14 +435,14 @@ if (!$db->connect_error) {
                 <div class="hp-carousel-header">
                     <h2>Executive Product</h2>
                     <div class="hp-carousel-nav">
-                        <button class="hp-c-btn" onclick="scrollProd(-1)" aria-label="Previous">&#8249;</button>
-                        <button class="hp-c-btn" onclick="scrollProd(1)" aria-label="Next">&#8250;</button>
+                        <button class="hp-c-btn" onclick="scrollProd(this, -1)" aria-label="Previous">&#8249;</button>
+                        <button class="hp-c-btn" onclick="scrollProd(this, 1)" aria-label="Next">&#8250;</button>
                     </div>
                 </div>
                 <div class="hp-carousel-outer">
-                    <div class="hp-carousel-track" id="prodTrack">
-                        <?php if (!empty($premiumProducts)): ?>
-                            <?php foreach ($premiumProducts as $p): ?>
+                    <div class="hp-carousel-track">
+                        <?php if (!empty($executiveProducts)): ?>
+                            <?php foreach ($executiveProducts as $p): ?>
                             <a href="product-detail.php?id=<?= intval($p['id']) ?>" class="hp-prod-card" style="text-decoration:none;color:inherit;">
                                 <div class="hp-prod-card-image">
                                     <?php if (!empty($p['image'])): ?>
@@ -339,7 +453,7 @@ if (!$db->connect_error) {
                                 </div>
                                 <div class="hp-prod-card-body">
                                     <div class="hp-prod-brand-logo">
-                                        <img src="<?= htmlspecialchars($p['brandLogoUrl']) ?>" alt="<?= htmlspecialchars($p['category']) ?>" loading="lazy" onerror="this.parentElement.style.display='none'">
+                                        <img src="<?= htmlspecialchars($p['brandLogoUrl']) ?>" alt="<?= htmlspecialchars($p['brandname']) ?>" loading="lazy" onerror="this.parentElement.style.display='none'">
                                     </div>
                                     <div class="hp-prod-name"><?= htmlspecialchars($p['name']) ?></div>
                                     <?php if (!empty($p['offer_price']) && $p['offer_price'] > 0 && $p['offer_price'] < $p['mrp']): ?>
@@ -361,10 +475,10 @@ if (!$db->connect_error) {
                         <?php endif; ?>
                     </div>
                 </div>
-                <?php $pages = max(1, ceil(count($premiumProducts) / 4)); ?>
-                <div class="hp-carousel-dots" id="prodDots">
+                <?php $pages = max(1, ceil(count($executiveProducts) / 4)); ?>
+                <div class="hp-carousel-dots">
                     <?php for ($i = 0; $i < $pages; $i++): ?>
-                    <div class="hp-carousel-dot <?= $i === 0 ? 'active' : '' ?>" onclick="goToProdPage(<?= $i ?>)"></div>
+                    <div class="hp-carousel-dot <?= $i === 0 ? 'active' : '' ?>" onclick="goToProdPage(this, <?= $i ?>)"></div>
                     <?php endfor; ?>
                 </div>
             </section>
@@ -374,14 +488,14 @@ if (!$db->connect_error) {
                 <div class="hp-carousel-header">
                     <h2>Economy Product</h2>
                     <div class="hp-carousel-nav">
-                        <button class="hp-c-btn" onclick="scrollProd(-1)" aria-label="Previous">&#8249;</button>
-                        <button class="hp-c-btn" onclick="scrollProd(1)" aria-label="Next">&#8250;</button>
+                        <button class="hp-c-btn" onclick="scrollProd(this, -1)" aria-label="Previous">&#8249;</button>
+                        <button class="hp-c-btn" onclick="scrollProd(this, 1)" aria-label="Next">&#8250;</button>
                     </div>
                 </div>
                 <div class="hp-carousel-outer">
-                    <div class="hp-carousel-track" id="prodTrack">
-                        <?php if (!empty($premiumProducts)): ?>
-                            <?php foreach ($premiumProducts as $p): ?>
+                    <div class="hp-carousel-track">
+                        <?php if (!empty($economyProducts)): ?>
+                            <?php foreach ($economyProducts as $p): ?>
                             <a href="product-detail.php?id=<?= intval($p['id']) ?>" class="hp-prod-card" style="text-decoration:none;color:inherit;">
                                 <div class="hp-prod-card-image">
                                     <?php if (!empty($p['image'])): ?>
@@ -392,7 +506,7 @@ if (!$db->connect_error) {
                                 </div>
                                 <div class="hp-prod-card-body">
                                     <div class="hp-prod-brand-logo">
-                                        <img src="<?= htmlspecialchars($p['brandLogoUrl']) ?>" alt="<?= htmlspecialchars($p['category']) ?>" loading="lazy" onerror="this.parentElement.style.display='none'">
+                                        <img src="<?= htmlspecialchars($p['brandLogoUrl']) ?>" alt="<?= htmlspecialchars($p['brandname']) ?>" loading="lazy" onerror="this.parentElement.style.display='none'">
                                     </div>
                                     <div class="hp-prod-name"><?= htmlspecialchars($p['name']) ?></div>
                                     <?php if (!empty($p['offer_price']) && $p['offer_price'] > 0 && $p['offer_price'] < $p['mrp']): ?>
@@ -414,10 +528,10 @@ if (!$db->connect_error) {
                         <?php endif; ?>
                     </div>
                 </div>
-                <?php $pages = max(1, ceil(count($premiumProducts) / 4)); ?>
-                <div class="hp-carousel-dots" id="prodDots">
+                <?php $pages = max(1, ceil(count($economyProducts) / 4)); ?>
+                <div class="hp-carousel-dots">
                     <?php for ($i = 0; $i < $pages; $i++): ?>
-                    <div class="hp-carousel-dot <?= $i === 0 ? 'active' : '' ?>" onclick="goToProdPage(<?= $i ?>)"></div>
+                    <div class="hp-carousel-dot <?= $i === 0 ? 'active' : '' ?>" onclick="goToProdPage(this, <?= $i ?>)"></div>
                     <?php endfor; ?>
                 </div>
             </section>
@@ -465,10 +579,10 @@ if (!$db->connect_error) {
                             </div>
                             <div class="hp-sel-info">
                                 <div class="hp-prod-brand-logo">
-                                    <img src="<?= htmlspecialchars($p['brandLogoUrl']) ?>" alt="<?= htmlspecialchars($p['category']) ?>" loading="lazy" onerror="this.parentElement.style.display='none'">
+                                    <img src="<?= htmlspecialchars($p['brandLogoUrl']) ?>" alt="<?= htmlspecialchars($p['brandname']) ?>" loading="lazy" onerror="this.parentElement.style.display='none'">
                                 </div>
                                 <div class="hp-sel-name"><?= htmlspecialchars($p['name']) ?></div>
-                                <!-- <div class="hp-sel-cat"><?= htmlspecialchars($p['category']) ?></div> -->
+                                <div class="hp-sel-cat"><?= htmlspecialchars($p['category'] ?? 'NA') ?></div>
                                 <?php if (!empty($p['offer_price']) && $p['offer_price'] > 0 && $p['offer_price'] < $p['mrp']): ?>
                                 <div class="hp-sel-price-row">
                                     <div class="hp-sel-price">₹<?= number_format($p['offer_price'], 0) ?>/-</div>
@@ -496,8 +610,8 @@ if (!$db->connect_error) {
 
                 <?php
                 $budgetRanges = [
-                    ['label' => '₹10 – ₹100',    'data' => $budgetLow],
-                    ['label' => '₹100 – ₹500',   'data' => $budgetMid],
+                    ['label' => '₹10 – ₹200',    'data' => $budgetLow],
+                    ['label' => '₹200 – ₹500',   'data' => $budgetMid],
                     ['label' => '₹500 – ₹1000',  'data' => $budgetHigh],
                     ['label' => '₹1000 & Above', 'data' => $budgetPremium],
                 ];
@@ -763,16 +877,8 @@ if (!$db->connect_error) {
         }
     })();
 
-    /* ── Product Carousel (vanilla JS, runs after footer scripts) ── */
+    /* ── Product Carousels (Premium / Executive / Economy — each scrolls independently) ── */
     (function() {
-        var track = document.getElementById('prodTrack');
-        if (!track) return;
-
-        var cards = Array.from(track.querySelectorAll('.hp-prod-card'));
-        var dots  = Array.from(document.querySelectorAll('#prodDots .hp-carousel-dot'));
-        var page  = 0;
-        var timer;
-
         function perPage() {
             if (window.innerWidth < 540)  return 1;
             if (window.innerWidth < 820)  return 2;
@@ -780,35 +886,105 @@ if (!$db->connect_error) {
             return 4;
         }
 
-        function totalPages() {
-            return Math.max(1, Math.ceil(cards.length / perPage()));
-        }
+        document.querySelectorAll('.hp-carousel-sec').forEach(function(section) {
+            var track = section.querySelector('.hp-carousel-track');
+            var cards = track ? Array.from(track.querySelectorAll('.hp-prod-card')) : [];
+            if (!track || !cards.length) return;
 
-        function update() {
-            if (!cards.length) return;
-            var pp    = perPage();
-            var cardW = cards[0].getBoundingClientRect().width + 16;
-            track.style.transform = 'translateX(-' + (page * pp * cardW) + 'px)';
-            dots.forEach(function(d, i) { d.classList.toggle('active', i === page); });
-        }
+            var dots = Array.from(section.querySelectorAll('.hp-carousel-dot'));
+            var page = 0;
+            var timer;
 
-        window.scrollProd = function(dir) {
-            page = (page + dir + totalPages()) % totalPages();
+            function totalPages() {
+                return Math.max(1, Math.ceil(cards.length / perPage()));
+            }
+
+            function update() {
+                var pp    = perPage();
+                var cardW = cards[0].getBoundingClientRect().width + 16;
+                track.style.transform = 'translateX(-' + (page * pp * cardW) + 'px)';
+                dots.forEach(function(d, i) { d.classList.toggle('active', i === page); });
+            }
+
+            function goTo(p) {
+                var tp = totalPages();
+                page = ((p % tp) + tp) % tp;
+                update();
+            }
+
+            function restartAutoplay() {
+                clearInterval(timer);
+                timer = setInterval(function() { goTo(page + 1); }, 5000);
+            }
+
+            section.__carousel = { scroll: function(dir) { goTo(page + dir); }, goTo: goTo, restartAutoplay: restartAutoplay };
+
             update();
-        };
+            window.addEventListener('resize', function() {
+                page = Math.min(page, totalPages() - 1);
+                update();
+            });
 
-        window.goToProdPage = function(p) {
-            page = p;
-            update();
-        };
-
-        update();
-        window.addEventListener('resize', function() {
-            page = Math.min(page, totalPages() - 1);
-            update();
+            restartAutoplay();
         });
 
-        timer = setInterval(function() { window.scrollProd(1); }, 5000);
+        window.scrollProd = function(btn, dir) {
+            var section = btn.closest('.hp-carousel-sec');
+            if (section && section.__carousel) {
+                section.__carousel.scroll(dir);
+                section.__carousel.restartAutoplay();
+            }
+        };
+
+        window.goToProdPage = function(dot, p) {
+            var section = dot.closest('.hp-carousel-sec');
+            if (section && section.__carousel) {
+                section.__carousel.goTo(p);
+                section.__carousel.restartAutoplay();
+            }
+        };
+    })();
+
+    /* ── Authorised Brand Partner category rotation ── */
+    (function() {
+        var tabs   = Array.from(document.querySelectorAll('#brandCatTabs .brand-cat-tab'));
+        var panels = Array.from(document.querySelectorAll('#brandCatPanels .brand-cat-panel'));
+        if (!tabs.length || !panels.length) return;
+
+        var current = 0;
+        var timer;
+
+        function show(idx) {
+            current = idx;
+            tabs.forEach(function(t, i) {
+                var active = i === idx;
+                t.classList.toggle('active', active);
+                var bar = t.querySelector('.brand-cat-tab-progress');
+                if (bar) {
+                    bar.style.animation = 'none';
+                    if (active) {
+                        void bar.offsetWidth; // force reflow so the animation restarts from 0
+                        bar.style.animation = '';
+                    }
+                }
+            });
+            panels.forEach(function(p, i) { p.classList.toggle('active', i === idx); });
+        }
+
+        function startAutoplay() {
+            clearInterval(timer);
+            timer = setInterval(function() { show((current + 1) % tabs.length); }, 5000);
+        }
+
+        tabs.forEach(function(tab, i) {
+            tab.addEventListener('click', function() {
+                show(i);
+                startAutoplay();
+            });
+        });
+
+        show(0);
+        startAutoplay();
     })();
 
     /* ── Budget Friendly Tabs ── */

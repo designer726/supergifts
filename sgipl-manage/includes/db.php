@@ -11,6 +11,27 @@ if ($conn->connect_error) {
 }
 $conn->set_charset("utf8mb4");
 
+$categoryCol = $conn->query("SHOW COLUMNS FROM products LIKE 'category'");
+if ($categoryCol && $categoryCol->num_rows === 0) {
+    $conn->query("ALTER TABLE products ADD COLUMN category VARCHAR(20) NOT NULL DEFAULT 'NA' AFTER quantity");
+    $conn->query("UPDATE products SET category = CASE WHEN is_premium = 1 THEN 'Premium' ELSE 'NA' END");
+}
+
+$brandCategoryCol = $conn->query("SHOW COLUMNS FROM brandlogo LIKE 'category'");
+if ($brandCategoryCol && $brandCategoryCol->num_rows === 0) {
+    $conn->query("ALTER TABLE brandlogo ADD COLUMN category VARCHAR(50) NOT NULL DEFAULT '' AFTER flag");
+}
+
+$productSelectionCol = $conn->query("SHOW COLUMNS FROM products LIKE 'is_selection'");
+if ($productSelectionCol && $productSelectionCol->num_rows === 0) {
+    $conn->query("ALTER TABLE products ADD COLUMN is_selection TINYINT(1) NOT NULL DEFAULT 0 AFTER new_lunch");
+}
+
+$budgetTierCol = $conn->query("SHOW COLUMNS FROM products LIKE 'budget_tier'");
+if ($budgetTierCol && $budgetTierCol->num_rows === 0) {
+    $conn->query("ALTER TABLE products ADD COLUMN budget_tier VARCHAR(10) NOT NULL DEFAULT '' AFTER is_selection");
+}
+
 // $reviewColumns = $conn->query("SHOW COLUMNS FROM reviews LIKE 'is_hidden'");
 // if ($reviewColumns && $reviewColumns->num_rows === 0) {
 //     $conn->query("ALTER TABLE reviews ADD COLUMN is_hidden TINYINT(1) NOT NULL DEFAULT 0 AFTER status");

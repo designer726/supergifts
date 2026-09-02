@@ -104,6 +104,12 @@ $inBanners = strpos($currentPath, '/banners/') !== false;
         <a href="<?= $base ?>products/bulk_upload.php" class="nav-link">
             <i class="bi bi-file-earmark-excel"></i> Bulk Upload CSV
         </a>
+        <a href="<?= $base ?>products/bulk_upload_selection.php" class="nav-link">
+            <i class="bi bi-star"></i> Add Product Selection
+        </a>
+        <a href="<?= $base ?>products/bulk_upload_budget.php" class="nav-link">
+            <i class="bi bi-tags"></i> Add Budget Friendly
+        </a>
 
         <div class="nav-section">Website</div>
         <a href="<?= $isLocal ? 'http://localhost/supergifts/' : 'https://www.supergifts.in/' ?>" target="_blank" class="nav-link">
