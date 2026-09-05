@@ -55,6 +55,7 @@ $inBrands   = strpos($currentPath, '/brands/') !== false;
 $inProducts = strpos($currentPath, '/products/') !== false;
 $inVouchers = strpos($currentPath, '/vouchers/') !== false;
 $inReviews  = strpos($currentPath, '/reviews/') !== false;
+$inBudget   = strpos($currentPath, '/budget/') !== false;
 
 // Base URL — works on both localhost and live
 $isLocal = ($_SERVER['SERVER_NAME'] === 'localhost');
@@ -82,6 +83,9 @@ $inBanners = strpos($currentPath, '/banners/') !== false;
         <a href="<?= $base ?>reviews/index.php" class="nav-link <?= $inReviews?'active':'' ?>">
             <i class="bi bi-chat-square-quote"></i> Reviews
         </a>
+        <a href="<?= $base ?>budget/index.php" class="nav-link <?= $inBudget?'active':'' ?>">
+            <i class="bi bi-tags"></i> Budget Friendly
+        </a>
 
         <div class="nav-section">Blog</div>
         <a href="<?= $base ?>blogs/index.php" class="nav-link <?= $inBlogs?'active':'' ?>">
@@ -106,9 +110,6 @@ $inBanners = strpos($currentPath, '/banners/') !== false;
         </a>
         <a href="<?= $base ?>products/bulk_upload_selection.php" class="nav-link">
             <i class="bi bi-star"></i> Add Product Selection
-        </a>
-        <a href="<?= $base ?>products/bulk_upload_budget.php" class="nav-link">
-            <i class="bi bi-tags"></i> Add Budget Friendly
         </a>
 
         <div class="nav-section">Website</div>

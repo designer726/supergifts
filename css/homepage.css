@@ -975,7 +975,7 @@
 }
 
 .hp-sel-img-wrap {
-  height: 150px;
+  aspect-ratio: 8 / 5;
   position: relative;
   background: #F4F3F8;
   overflow: hidden;
@@ -1185,7 +1185,7 @@
 }
 
 .hp-budget-card-img {
-  height: 170px;
+  aspect-ratio: 4 / 3;
   background: linear-gradient(135deg, #e0e0e0, #F4F3F8);
   display: flex;
   align-items: center;
@@ -1711,6 +1711,20 @@
   .brand-logo-grid {
     --cols: 4;
   }
+  .brand-cat-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    margin: 16px -20px 22px;
+    padding: 0 20px 4px;
+  }
+  .brand-cat-tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .brand-cat-tab {
+    flex: 0 0 auto;
+  }
   .hp-prod-card {
     min-width: calc(50% - 8px);
   }
@@ -1756,6 +1770,18 @@
   }
   .brand-logo-grid {
     --cols: 3;
+    gap: 10px;
+  }
+  .brand-logo-box {
+    min-height: 60px;
+    padding: 10px 8px;
+  }
+  .brand-logo-box img {
+    max-height: 30px;
+  }
+  .brand-cat-tab {
+    padding: 8px 16px;
+    font-size: 12px;
   }
   .hp-prod-card {
     min-width: calc(80% - 8px);
@@ -1768,9 +1794,6 @@
   }
   .hp-budget-card {
     width: 180px;
-  }
-  .hp-budget-card-img {
-    height: 140px;
   }
   .hp-voucher-card {
     width: 200px;

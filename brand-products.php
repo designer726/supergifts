@@ -95,20 +95,21 @@ while ($s = $seriesResult->fetch_assoc()) {
 
         .product-img-wrap {
             background: #f8f9fa;
-            height: 200px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            aspect-ratio: 1 / 1;
             overflow: hidden;
             border-bottom: 1px solid #f0f0f0;
+            position: relative;
         }
 
         .product-img-wrap img {
-            /* max-height: 180px; */
-            max-height: 100%;
-            max-width: 100%; 
-            object-fit: contain;
-            /* padding: 10px; */
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover .product-img-wrap img {
+            transform: scale(1.04);
         }
 
         .product-info {
@@ -199,33 +200,30 @@ while ($s = $seriesResult->fetch_assoc()) {
             position: relative;
             overflow: hidden;
             background: #0d2b55;
-            aspect-ratio: 2.4 / 1;
-            display: flex;
-            align-items: center;
         }
 
         .brand-hero-carousel.no-banner {
-            aspect-ratio: auto;
             min-height: 0;
             background: none;
             overflow: visible;
         }
 
         .brand-hero-slides {
-            position: absolute;
-            inset: 0;
+            position: relative;
         }
 
         .brand-hero-slide {
-            position: absolute;
-            inset: 0;
             display: none;
-            background-size: cover;
-            background-position: center;
         }
 
         .brand-hero-slide.active {
             display: block;
+        }
+
+        .brand-hero-slide img {
+            display: block;
+            width: 100%;
+            height: auto;
         }
 
         .brand-hero-arrow {
@@ -303,9 +301,9 @@ while ($s = $seriesResult->fetch_assoc()) {
                 <?php if ($bannerCount): ?>
                     <div class="brand-hero-slides">
                         <?php foreach ($brandBanners as $i => $url): ?>
-                        <div class="brand-hero-slide<?= $i === 0 ? ' active' : '' ?>"
-                             style="background-image: url('<?= htmlspecialchars($url) ?>');"
-                             data-slide="<?= $i ?>"></div>
+                        <div class="brand-hero-slide<?= $i === 0 ? ' active' : '' ?>" data-slide="<?= $i ?>">
+                            <img src="<?= htmlspecialchars($url) ?>" alt="<?= htmlspecialchars($brand['brandname']) ?> banner">
+                        </div>
                         <?php endforeach; ?>
                     </div>
                     <?php if ($bannerCount > 1): ?>
@@ -318,21 +316,6 @@ while ($s = $seriesResult->fetch_assoc()) {
                         </div>
                     <?php endif; ?>
                 <?php endif; ?>
-                <div class="container position-relative pt-30 pt-sm-50 pb-10">
-                    <div class="text-center">
-
-                        <!-- Brand Logo -->
-                        <!-- <div class="mb-20">
-                            <div class="brand-logo-hero d-inline-flex">
-                                <img src="<?= htmlspecialchars($brand['imageno']) ?>" alt="<?= htmlspecialchars($brand['brandname']) ?>" style="max-height: 100px; max-width: 250px; object-fit: contain;">
-                            </div>
-                        </div> -->
-
-                        <!-- <p class="section-descr mb-0 wow fadeIn" data-wow-delay="0.2s">
-                            <?= $productCount ?> Product<?= $productCount != 1 ? 's' : '' ?> Available
-                        </p> -->
-                    </div>
-                </div>
             </section>
 
             <?php if ($bannerCount > 1): ?>
@@ -398,7 +381,7 @@ while ($s = $seriesResult->fetch_assoc()) {
                                                 <?php if ($product['image']): ?>
                                                     <img src="<?= htmlspecialchars($product['image']) ?>" alt="<?= htmlspecialchars($product['name']) ?>">
                                                 <?php else: ?>
-                                                    <div style="text-align:center;color:#ccc;">
+                                                    <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#ccc;">
                                                         <svg width="48" height="48" fill="currentColor" viewBox="0 0 16 16">
                                                             <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" />
                                                             <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z" />
