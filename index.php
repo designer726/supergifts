@@ -991,11 +991,20 @@ if (!$db->connect_error) {
                     if (active) {
                         void bar.offsetWidth; // force reflow so the animation restarts from 0
                         bar.style.animation = '';
-                        bar.closest('.brand-cat-tab').scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
                     }
                 }
             });
             panels.forEach(function(p, i) { p.classList.toggle('active', i === idx); });
+
+            /* Scroll the active tab into view within its own horizontal chip
+               row only — never scrollIntoView() here, it can drag the whole
+               page's vertical scroll position along with it. */
+            var activeTab = tabs[idx];
+            var tabsContainer = activeTab.closest('.brand-cat-tabs');
+            if (tabsContainer) {
+                var target = activeTab.offsetLeft - (tabsContainer.clientWidth - activeTab.offsetWidth) / 2;
+                tabsContainer.scrollTo({ left: Math.max(0, target), behavior: 'smooth' });
+            }
         }
 
         function startAutoplay() {

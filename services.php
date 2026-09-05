@@ -46,6 +46,16 @@ if ($serviceRes) {
 if (empty($serviceBanners)) {
     $serviceBanners[] = ['slot' => 0, 'file_path' => '', 'file_type' => 'image'];
 }
+
+$packagingVideos = [];
+$packagingRes = $conn->query("SELECT caption, video, thumbnail FROM packaging_videos WHERE status=1 ORDER BY sequence ASC, id ASC");
+if ($packagingRes) {
+    while ($row = $packagingRes->fetch_assoc()) {
+        if (!empty($row['video'])) {
+            $packagingVideos[] = $row;
+        }
+    }
+}
 ?>
 <!DOCTYPE html>
 
@@ -494,6 +504,172 @@ if (empty($serviceBanners)) {
                             </div>
                         </div>
                     </div>
+
+                    <?php if (!empty($packagingVideos)): ?>
+                    <!-- Slider: Packaging & Dispatch Showcase -->
+                    <style>
+                        .packaging-showcase-container { position: relative; padding: 0 60px; }
+                        .packaging-track-wrapper { overflow: hidden; }
+                        .packaging-track { display: flex; gap: 24px; transition: transform 0.5s ease; }
+                        .packaging-track.is-centered { justify-content: center; }
+                        .packaging-card {
+                            flex: 0 0 calc(25% - 18px);
+                            aspect-ratio: 9 / 16;
+                            border-radius: 20px;
+                            overflow: hidden;
+                            position: relative;
+                            background: #0d2b55;
+                            box-shadow: 0 10px 30px rgba(13, 43, 85, 0.15);
+                        }
+                        .packaging-video { width: 100%; height: 100%; object-fit: cover; display: block; }
+                        .packaging-caption {
+                            position: absolute; left: 0; right: 0; bottom: 0;
+                            padding: 16px 16px 12px;
+                            background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.7) 100%);
+                            color: #fff; font-size: 0.92rem; font-weight: 700;
+                        }
+                        .packaging-nav-btn {
+                            position: absolute; top: 50%; transform: translateY(-50%); z-index: 10;
+                            background: #0d2b55; color: #fff; border: none; width: 45px; height: 45px;
+                            border-radius: 50%; cursor: pointer; font-size: 20px; transition: all 0.3s;
+                        }
+                        .packaging-nav-btn.prev { left: 0; }
+                        .packaging-nav-btn.next { right: 0; }
+                        .packaging-nav-btn:hover { background: #ffc107; color: #0d2b55; }
+                        .packaging-nav-btn:disabled { opacity: 0.35; cursor: default; }
+                        .packaging-nav-btn:disabled:hover { background: #0d2b55; color: #fff; }
+                        .packaging-dots { display: flex; gap: 8px; margin-top: 30px; justify-content: center; }
+                        .packaging-dot { width: 12px; height: 12px; border-radius: 50%; background: #ccc; cursor: pointer; transition: all 0.3s; }
+                        .packaging-dot.active { background: #0d2b55; }
+                        @media (max-width: 992px) { .packaging-card { flex: 0 0 calc(33.333% - 16px); } }
+                        @media (max-width: 768px) {
+                            .packaging-showcase-container { padding: 0 45px; }
+                            .packaging-card { flex: 0 0 calc(50% - 12px); }
+                            .packaging-nav-btn { width: 38px; height: 38px; font-size: 16px; }
+                        }
+                        @media (max-width: 480px) { .packaging-card { flex: 0 0 80%; } }
+                    </style>
+                    <div class="informatic-slider-wrapper mb-80">
+                        <div class="slider-header" style="text-align: center; margin-bottom: 50px;">
+                            <h2 style="font-size: 2.5rem; color: #0d2b55; margin-bottom: 15px; font-weight: 700;">
+                                Packaging &amp; <span style="color: #ffc107;">Dispatch Showcase</span>
+                            </h2>
+                            <p style="font-size: 1.1rem; color: #555; max-width: 600px; margin: 0 auto;">
+                                A behind-the-scenes look at how every order is packed and dispatched
+                            </p>
+                        </div>
+
+                        <div class="packaging-showcase-container">
+                            <button type="button" class="packaging-nav-btn prev" aria-label="Previous video">❮</button>
+                            <button type="button" class="packaging-nav-btn next" aria-label="Next video">❯</button>
+
+                            <div class="packaging-track-wrapper">
+                                <div class="packaging-track" id="packagingTrack">
+                                    <?php foreach ($packagingVideos as $v):
+                                        $vidUrl = htmlspecialchars(($_SERVER['SERVER_NAME']==='localhost' ? '/supergifts/' : '/') . $v['video']);
+                                        $posterUrl = !empty($v['thumbnail']) ? htmlspecialchars(($_SERVER['SERVER_NAME']==='localhost' ? '/supergifts/' : '/') . $v['thumbnail']) : '';
+                                    ?>
+                                    <div class="packaging-card">
+                                        <video class="packaging-video" src="<?= $vidUrl ?>"
+                                               <?= $posterUrl ? 'poster="'.$posterUrl.'"' : '' ?>
+                                               autoplay muted loop playsinline></video>
+                                        <?php if (!empty($v['caption'])): ?>
+                                        <div class="packaging-caption"><?= htmlspecialchars($v['caption']) ?></div>
+                                        <?php endif; ?>
+                                    </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+
+                            <?php if (count($packagingVideos) > 1): ?>
+                            <div class="packaging-dots" id="packagingDots"></div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <script>
+                    (function() {
+                        var track = document.getElementById('packagingTrack');
+                        if (!track) return;
+                        var cards = Array.from(track.querySelectorAll('.packaging-card'));
+                        if (!cards.length) return;
+
+                        cards.forEach(function(c) {
+                            var v = c.querySelector('video');
+                            if (v) v.play().catch(function() {});
+                        });
+
+                        var prevBtn = track.closest('.packaging-showcase-container').querySelector('.packaging-nav-btn.prev');
+                        var nextBtn = track.closest('.packaging-showcase-container').querySelector('.packaging-nav-btn.next');
+                        var dotsWrap = document.getElementById('packagingDots');
+                        var page = 0;
+
+                        function perPage() {
+                            var w = window.innerWidth;
+                            if (w <= 480) return 1;
+                            if (w <= 768) return 2;
+                            if (w <= 992) return 3;
+                            return 4;
+                        }
+
+                        function totalPages() { return Math.max(1, Math.ceil(cards.length / perPage())); }
+
+                        function buildDots() {
+                            if (!dotsWrap) return;
+                            dotsWrap.innerHTML = '';
+                            var tp = totalPages();
+                            for (var i = 0; i < tp; i++) {
+                                (function(idx) {
+                                    var d = document.createElement('div');
+                                    d.className = 'packaging-dot' + (idx === page ? ' active' : '');
+                                    d.addEventListener('click', function() { goTo(idx); });
+                                    dotsWrap.appendChild(d);
+                                })(i);
+                            }
+                        }
+
+                        function update() {
+                            var pp = perPage();
+                            var fitsOnePage = cards.length <= pp;
+
+                            track.classList.toggle('is-centered', fitsOnePage);
+                            if (prevBtn) prevBtn.style.display = fitsOnePage ? 'none' : '';
+                            if (nextBtn) nextBtn.style.display = fitsOnePage ? 'none' : '';
+                            if (dotsWrap) dotsWrap.style.display = fitsOnePage ? 'none' : '';
+
+                            if (fitsOnePage) {
+                                track.style.transform = 'none';
+                                return;
+                            }
+
+                            var gap = 24;
+                            var cardW = cards[0].getBoundingClientRect().width;
+                            track.style.transform = 'translateX(-' + (page * pp * (cardW + gap)) + 'px)';
+                            if (dotsWrap) {
+                                Array.from(dotsWrap.children).forEach(function(d, i) { d.classList.toggle('active', i === page); });
+                            }
+                            if (prevBtn) prevBtn.disabled = (page === 0);
+                            if (nextBtn) nextBtn.disabled = (page >= totalPages() - 1);
+                        }
+
+                        function goTo(p) {
+                            page = Math.max(0, Math.min(p, totalPages() - 1));
+                            update();
+                        }
+
+                        if (prevBtn) prevBtn.addEventListener('click', function() { goTo(page - 1); });
+                        if (nextBtn) nextBtn.addEventListener('click', function() { goTo(page + 1); });
+
+                        buildDots();
+                        update();
+                        window.addEventListener('resize', function() {
+                            page = Math.min(page, totalPages() - 1);
+                            buildDots();
+                            update();
+                        });
+                    })();
+                    </script>
+                    <?php endif; ?>
 
                     <!-- Slider 2: Process & Workflow -->
                     <div class="informatic-slider-wrapper mb-80">

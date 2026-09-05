@@ -56,6 +56,7 @@ $inProducts = strpos($currentPath, '/products/') !== false;
 $inVouchers = strpos($currentPath, '/vouchers/') !== false;
 $inReviews  = strpos($currentPath, '/reviews/') !== false;
 $inBudget   = strpos($currentPath, '/budget/') !== false;
+$inPackaging = strpos($currentPath, '/packaging/') !== false;
 
 // Base URL — works on both localhost and live
 $isLocal = ($_SERVER['SERVER_NAME'] === 'localhost');
@@ -85,6 +86,11 @@ $inBanners = strpos($currentPath, '/banners/') !== false;
         </a>
         <a href="<?= $base ?>budget/index.php" class="nav-link <?= $inBudget?'active':'' ?>">
             <i class="bi bi-tags"></i> Budget Friendly
+        </a>
+
+        <div class="nav-section">Services Page</div>
+        <a href="<?= $base ?>packaging/index.php" class="nav-link <?= $inPackaging?'active':'' ?>">
+            <i class="bi bi-camera-reels"></i> Packaging Showcase
         </a>
 
         <div class="nav-section">Blog</div>

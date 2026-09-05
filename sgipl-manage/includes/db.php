@@ -40,6 +40,16 @@ $conn->query("CREATE TABLE IF NOT EXISTS budget_products (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
+$conn->query("CREATE TABLE IF NOT EXISTS packaging_videos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    caption VARCHAR(255) DEFAULT '',
+    video VARCHAR(255) NOT NULL DEFAULT '',
+    thumbnail VARCHAR(255) DEFAULT '',
+    sequence INT NOT NULL DEFAULT 0,
+    status TINYINT(1) NOT NULL DEFAULT 1,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
 // $reviewColumns = $conn->query("SHOW COLUMNS FROM reviews LIKE 'is_hidden'");
 // if ($reviewColumns && $reviewColumns->num_rows === 0) {
 //     $conn->query("ALTER TABLE reviews ADD COLUMN is_hidden TINYINT(1) NOT NULL DEFAULT 0 AFTER status");
