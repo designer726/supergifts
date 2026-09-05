@@ -83,10 +83,18 @@ if (!$db->connect_error) {
         $db->query("ALTER TABLE products ADD COLUMN is_selection TINYINT(1) NOT NULL DEFAULT 0 AFTER new_lunch");
     }
 
-    $budgetTierCol = $db->query("SHOW COLUMNS FROM products LIKE 'budget_tier'");
-    if ($budgetTierCol && $budgetTierCol->num_rows === 0) {
-        $db->query("ALTER TABLE products ADD COLUMN budget_tier VARCHAR(10) NOT NULL DEFAULT '' AFTER is_selection");
-    }
+    $db->query("CREATE TABLE IF NOT EXISTS budget_products (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        image VARCHAR(255) DEFAULT '',
+        mrp DECIMAL(10,2) NOT NULL DEFAULT 0,
+        offer_price DECIMAL(10,2) NOT NULL DEFAULT 0,
+        quantity INT NOT NULL DEFAULT 0,
+        budget_tier VARCHAR(10) NOT NULL DEFAULT 'tier1',
+        sequence INT NOT NULL DEFAULT 0,
+        status TINYINT(1) NOT NULL DEFAULT 1,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
     /* Homepage banners */
     $r = $db->query("SELECT * FROM banners WHERE status=1 ORDER BY slot ASC LIMIT 4");
@@ -120,10 +128,10 @@ if (!$db->connect_error) {
         if (!empty($brandPartnersByCategory[$cat])) $brandCategorySections[$cat] = $brandPartnersByCategory[$cat];
     }
 
-    /* Category products for homepage carousels */
+    /* Category products for homepage carousels — no LIMIT: show every active product in each category */
     $r = $db->query("SELECT p.id, p.name, p.image, p.mrp, p.offer_price, p.category, b.brandname, b.imageno
                      FROM products p JOIN brandlogo b ON p.brand_id=b.id
-                     WHERE p.status=1 AND p.category='Premium' ORDER BY p.sequence ASC, p.id DESC LIMIT 20");
+                     WHERE p.status=1 AND p.category='Premium' ORDER BY p.sequence ASC, p.id DESC");
     if ($r) while ($row = $r->fetch_assoc())
         $premiumProducts[] = array_merge($row, ['brandLogoUrl' => findBrandLogoPath($row['imageno'])]);
 
@@ -131,7 +139,7 @@ if (!$db->connect_error) {
     foreach (array_keys($categoryProducts) as $categoryName) {
         $categoryQuery = $db->prepare("SELECT p.id, p.name, p.image, p.mrp, p.offer_price, p.category, b.brandname, b.imageno
                                        FROM products p JOIN brandlogo b ON p.brand_id=b.id
-                                       WHERE p.status=1 AND p.category=? ORDER BY p.sequence ASC, p.id DESC LIMIT 20");
+                                       WHERE p.status=1 AND p.category=? ORDER BY p.sequence ASC, p.id DESC");
         $categoryQuery->bind_param('s', $categoryName);
         $categoryQuery->execute();
         $categoryResult = $categoryQuery->get_result();
@@ -180,32 +188,58 @@ if (!$db->connect_error) {
                      FROM reviews WHERE status='approved' AND is_hidden = 0 ORDER BY created_at DESC LIMIT 3");
     if ($r) while ($row = $r->fetch_assoc()) $testimonials[] = $row;
 
-    /* Budget Friendly tiers — admin-curated first (products flagged with a Budget Tier
-       in admin, ordered by Display Order). Falls back to automatic price-range bucketing
-       per tier when nothing has been curated for that tier yet. */
-    $budgetTierMeta = [
-        'tier1' => ['min' => 10,   'max' => 200],
-        'tier2' => ['min' => 200,  'max' => 500],
-        'tier3' => ['min' => 500,  'max' => 1000],
-        'tier4' => ['min' => 1000, 'max' => null],
+    /* Budget Friendly tiers — normally a fully independent catalog (budget_products table),
+       not tied to Brand Partners or the main product catalog, managed under its own
+       "Budget Friendly" admin section. TEMPORARY: until products are curated there,
+       fall back to auto-picking from the main product catalog bucketed by price, so the
+       section isn't empty. Remove the fallback once budget_products is populated for real. */
+    $budgetTierPriceRanges = [
+        'tier1' => [10, 200],
+        'tier2' => [200, 500],
+        'tier3' => [500, 1000],
+        'tier4' => [1000, null],
     ];
     $budgetByTier = ['tier1' => [], 'tier2' => [], 'tier3' => [], 'tier4' => []];
-    foreach ($budgetTierMeta as $tierKey => $range) {
-        $stmt = $db->prepare("SELECT p.id,p.name,p.image,p.mrp,p.offer_price FROM products p
-                              WHERE p.status=1 AND p.budget_tier=? ORDER BY p.sequence ASC, p.id DESC LIMIT 6");
+    foreach (array_keys($budgetByTier) as $tierKey) {
+        $stmt = $db->prepare("SELECT id,name,image,mrp,offer_price FROM budget_products
+                              WHERE status=1 AND budget_tier=? ORDER BY sequence ASC, id DESC LIMIT 6");
         $stmt->bind_param('s', $tierKey);
         $stmt->execute();
-        $curatedResult = $stmt->get_result();
-        while ($row = $curatedResult->fetch_assoc()) $budgetByTier[$tierKey][] = $row;
+        $result = $stmt->get_result();
+        while ($row = $result->fetch_assoc()) $budgetByTier[$tierKey][] = $row;
         $stmt->close();
 
         if (empty($budgetByTier[$tierKey])) {
-            $sql = "SELECT p.id,p.name,p.image,p.mrp,p.offer_price FROM products p
-                    WHERE p.status=1 AND p.offer_price>=" . intval($range['min']) .
-                   ($range['max'] !== null ? " AND p.offer_price<=" . intval($range['max']) : "") .
-                   " ORDER BY p.sequence ASC LIMIT 6";
-            $r = $db->query($sql);
-            if ($r) while ($row = $r->fetch_assoc()) $budgetByTier[$tierKey][] = $row;
+            [$lo, $hi] = $budgetTierPriceRanges[$tierKey];
+            $priceExpr = "CASE WHEN offer_price > 0 AND offer_price < mrp THEN offer_price ELSE mrp END";
+            if ($hi !== null) {
+                $fallbackStmt = $db->prepare("SELECT id,name,image,mrp,offer_price,brand_id FROM products
+                                              WHERE status=1 AND $priceExpr BETWEEN ? AND ?
+                                              ORDER BY brand_id ASC, sequence ASC, id DESC");
+                $fallbackStmt->bind_param('dd', $lo, $hi);
+            } else {
+                $fallbackStmt = $db->prepare("SELECT id,name,image,mrp,offer_price,brand_id FROM products
+                                              WHERE status=1 AND $priceExpr >= ?
+                                              ORDER BY brand_id ASC, sequence ASC, id DESC");
+                $fallbackStmt->bind_param('d', $lo);
+            }
+            $fallbackStmt->execute();
+            $fallbackResult = $fallbackStmt->get_result();
+
+            /* Round-robin one product per brand per pass, so the fallback doesn't
+               show 6 near-identical items from a single brand. */
+            $byBrand = [];
+            while ($row = $fallbackResult->fetch_assoc()) $byBrand[$row['brand_id']][] = $row;
+            $fallbackStmt->close();
+
+            while (!empty($byBrand) && count($budgetByTier[$tierKey]) < 6) {
+                foreach ($byBrand as $bId => &$queue) {
+                    if (count($budgetByTier[$tierKey]) >= 6) break;
+                    $budgetByTier[$tierKey][] = array_shift($queue);
+                    if (empty($queue)) unset($byBrand[$bId]);
+                }
+                unset($queue);
+            }
         }
     }
     $budgetLow     = $budgetByTier['tier1'];
@@ -403,17 +437,19 @@ if (!$db->connect_error) {
                                         <img src="<?= htmlspecialchars($p['brandLogoUrl']) ?>" alt="<?= htmlspecialchars($p['brandname']) ?>" loading="lazy" onerror="this.parentElement.style.display='none'">
                                     </div>
                                     <div class="hp-prod-name"><?= htmlspecialchars($p['name']) ?></div>
-                                    <?php if (!empty($p['offer_price']) && $p['offer_price'] > 0 && $p['offer_price'] < $p['mrp']): ?>
+                                    <?php $hasDiscount = !empty($p['offer_price']) && $p['offer_price'] > 0 && $p['offer_price'] < $p['mrp']; ?>
+                                    <?php if ($hasDiscount): ?>
                                     <div class="hp-prod-price-row">
                                         <div class="hp-prod-price">₹<?= number_format($p['offer_price'], 0) ?>/-</div>
-                                        <!-- <div class="hp-prod-mrp">₹<?= number_format($p['mrp'], 0) ?>/-</div> -->
                                     </div>
                                     <?php elseif ($p['offer_price'] > 0): ?>
                                     <div class="hp-prod-price">₹<?= number_format($p['offer_price'], 0) ?>/-</div>
                                     <?php else: ?>
-                                    <div class="hp-prod-price">Price on Request</div>
+                                    <div class="hp-prod-price">₹<?= number_format($p['mrp'], 0) ?>/-</div>
                                     <?php endif; ?>
+                                    <?php if ($hasDiscount): ?>
                                     <div class="hp-prod-mrp">₹<?= number_format($p['mrp'], 0) ?>/-</div>
+                                    <?php endif; ?>
                                 </div>
                             </a>
                             <?php endforeach; ?>
@@ -421,12 +457,6 @@ if (!$db->connect_error) {
                             <div style="padding:40px;color:#9CA3AF;font-size:14px;">Products coming soon.</div>
                         <?php endif; ?>
                     </div>
-                </div>
-                <?php $pages = max(1, ceil(count($premiumProducts) / 4)); ?>
-                <div class="hp-carousel-dots">
-                    <?php for ($i = 0; $i < $pages; $i++): ?>
-                    <div class="hp-carousel-dot <?= $i === 0 ? 'active' : '' ?>" onclick="goToProdPage(this, <?= $i ?>)"></div>
-                    <?php endfor; ?>
                 </div>
             </section>
 
@@ -456,17 +486,19 @@ if (!$db->connect_error) {
                                         <img src="<?= htmlspecialchars($p['brandLogoUrl']) ?>" alt="<?= htmlspecialchars($p['brandname']) ?>" loading="lazy" onerror="this.parentElement.style.display='none'">
                                     </div>
                                     <div class="hp-prod-name"><?= htmlspecialchars($p['name']) ?></div>
-                                    <?php if (!empty($p['offer_price']) && $p['offer_price'] > 0 && $p['offer_price'] < $p['mrp']): ?>
+                                    <?php $hasDiscount = !empty($p['offer_price']) && $p['offer_price'] > 0 && $p['offer_price'] < $p['mrp']; ?>
+                                    <?php if ($hasDiscount): ?>
                                     <div class="hp-prod-price-row">
                                         <div class="hp-prod-price">₹<?= number_format($p['offer_price'], 0) ?>/-</div>
-                                        <!-- <div class="hp-prod-mrp">₹<?= number_format($p['mrp'], 0) ?>/-</div> -->
                                     </div>
                                     <?php elseif ($p['offer_price'] > 0): ?>
                                     <div class="hp-prod-price">₹<?= number_format($p['offer_price'], 0) ?>/-</div>
                                     <?php else: ?>
-                                    <div class="hp-prod-price">Price on Request</div>
+                                    <div class="hp-prod-price">₹<?= number_format($p['mrp'], 0) ?>/-</div>
                                     <?php endif; ?>
+                                    <?php if ($hasDiscount): ?>
                                     <div class="hp-prod-mrp">₹<?= number_format($p['mrp'], 0) ?>/-</div>
+                                    <?php endif; ?>
                                 </div>
                             </a>
                             <?php endforeach; ?>
@@ -474,12 +506,6 @@ if (!$db->connect_error) {
                             <div style="padding:40px;color:#9CA3AF;font-size:14px;">Products coming soon.</div>
                         <?php endif; ?>
                     </div>
-                </div>
-                <?php $pages = max(1, ceil(count($executiveProducts) / 4)); ?>
-                <div class="hp-carousel-dots">
-                    <?php for ($i = 0; $i < $pages; $i++): ?>
-                    <div class="hp-carousel-dot <?= $i === 0 ? 'active' : '' ?>" onclick="goToProdPage(this, <?= $i ?>)"></div>
-                    <?php endfor; ?>
                 </div>
             </section>
 
@@ -509,17 +535,19 @@ if (!$db->connect_error) {
                                         <img src="<?= htmlspecialchars($p['brandLogoUrl']) ?>" alt="<?= htmlspecialchars($p['brandname']) ?>" loading="lazy" onerror="this.parentElement.style.display='none'">
                                     </div>
                                     <div class="hp-prod-name"><?= htmlspecialchars($p['name']) ?></div>
-                                    <?php if (!empty($p['offer_price']) && $p['offer_price'] > 0 && $p['offer_price'] < $p['mrp']): ?>
+                                    <?php $hasDiscount = !empty($p['offer_price']) && $p['offer_price'] > 0 && $p['offer_price'] < $p['mrp']; ?>
+                                    <?php if ($hasDiscount): ?>
                                     <div class="hp-prod-price-row">
                                         <div class="hp-prod-price">₹<?= number_format($p['offer_price'], 0) ?>/-</div>
-                                        <!-- <div class="hp-prod-mrp">₹<?= number_format($p['mrp'], 0) ?>/-</div> -->
                                     </div>
                                     <?php elseif ($p['offer_price'] > 0): ?>
                                     <div class="hp-prod-price">₹<?= number_format($p['offer_price'], 0) ?>/-</div>
                                     <?php else: ?>
-                                    <div class="hp-prod-price">Price on Request</div>
+                                    <div class="hp-prod-price">₹<?= number_format($p['mrp'], 0) ?>/-</div>
                                     <?php endif; ?>
+                                    <?php if ($hasDiscount): ?>
                                     <div class="hp-prod-mrp">₹<?= number_format($p['mrp'], 0) ?>/-</div>
+                                    <?php endif; ?>
                                 </div>
                             </a>
                             <?php endforeach; ?>
@@ -527,12 +555,6 @@ if (!$db->connect_error) {
                             <div style="padding:40px;color:#9CA3AF;font-size:14px;">Products coming soon.</div>
                         <?php endif; ?>
                     </div>
-                </div>
-                <?php $pages = max(1, ceil(count($economyProducts) / 4)); ?>
-                <div class="hp-carousel-dots">
-                    <?php for ($i = 0; $i < $pages; $i++): ?>
-                    <div class="hp-carousel-dot <?= $i === 0 ? 'active' : '' ?>" onclick="goToProdPage(this, <?= $i ?>)"></div>
-                    <?php endfor; ?>
                 </div>
             </section>
 
@@ -583,17 +605,19 @@ if (!$db->connect_error) {
                                 </div>
                                 <div class="hp-sel-name"><?= htmlspecialchars($p['name']) ?></div>
                                 <div class="hp-sel-cat"><?= htmlspecialchars($p['category'] ?? 'NA') ?></div>
-                                <?php if (!empty($p['offer_price']) && $p['offer_price'] > 0 && $p['offer_price'] < $p['mrp']): ?>
+                                <?php $hasDiscount = !empty($p['offer_price']) && $p['offer_price'] > 0 && $p['offer_price'] < $p['mrp']; ?>
+                                <?php if ($hasDiscount): ?>
                                 <div class="hp-sel-price-row">
                                     <div class="hp-sel-price">₹<?= number_format($p['offer_price'], 0) ?>/-</div>
-                                    <!-- <div class="hp-sel-mrp">₹<?= number_format($p['mrp'], 0) ?>/-</div> -->
                                 </div>
                                 <?php elseif ($p['offer_price'] > 0): ?>
                                 <div class="hp-sel-price">₹<?= number_format($p['offer_price'], 0) ?>/-</div>
                                 <?php else: ?>
-                                <div class="hp-sel-price">Price on Request</div>
+                                <div class="hp-sel-price">₹<?= number_format($p['mrp'], 0) ?>/-</div>
                                 <?php endif; ?>
+                                <?php if ($hasDiscount): ?>
                                 <div class="hp-sel-mrp">₹<?= number_format($p['mrp'], 0) ?>/-</div>
+                                <?php endif; ?>
                             </div>
                         </a>
                         <?php endforeach; ?>
@@ -636,7 +660,7 @@ if (!$db->connect_error) {
                             /* Duplicate the set so the auto-scroll loops seamlessly */
                             foreach (array_merge($items, $items) as $item):
                             ?>
-                            <a href="product-detail.php?id=<?= intval($item['id']) ?>" class="hp-budget-card" title="<?= htmlspecialchars($item['name']) ?>">
+                            <div class="hp-budget-card" title="<?= htmlspecialchars($item['name']) ?>">
                                 <div class="hp-budget-card-img">
                                     <?php if (!empty($item['image'])): ?>
                                     <img src="<?= htmlspecialchars($item['image']) ?>" alt="<?= htmlspecialchars($item['name']) ?>" loading="lazy">
@@ -653,9 +677,11 @@ if (!$db->connect_error) {
                                     </div>
                                     <?php elseif ($item['offer_price'] > 0): ?>
                                     <div class="hp-budget-card-price">₹<?= number_format($item['offer_price'], 0) ?></div>
+                                    <?php elseif ($item['mrp'] > 0): ?>
+                                    <div class="hp-budget-card-price">₹<?= number_format($item['mrp'], 0) ?></div>
                                     <?php endif; ?>
                                 </div>
-                            </a>
+                            </div>
                             <?php endforeach; ?>
                         </div>
                     </div>
@@ -965,6 +991,7 @@ if (!$db->connect_error) {
                     if (active) {
                         void bar.offsetWidth; // force reflow so the animation restarts from 0
                         bar.style.animation = '';
+                        bar.closest('.brand-cat-tab').scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
                     }
                 }
             });

@@ -27,10 +27,18 @@ if ($productSelectionCol && $productSelectionCol->num_rows === 0) {
     $conn->query("ALTER TABLE products ADD COLUMN is_selection TINYINT(1) NOT NULL DEFAULT 0 AFTER new_lunch");
 }
 
-$budgetTierCol = $conn->query("SHOW COLUMNS FROM products LIKE 'budget_tier'");
-if ($budgetTierCol && $budgetTierCol->num_rows === 0) {
-    $conn->query("ALTER TABLE products ADD COLUMN budget_tier VARCHAR(10) NOT NULL DEFAULT '' AFTER is_selection");
-}
+$conn->query("CREATE TABLE IF NOT EXISTS budget_products (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    image VARCHAR(255) DEFAULT '',
+    mrp DECIMAL(10,2) NOT NULL DEFAULT 0,
+    offer_price DECIMAL(10,2) NOT NULL DEFAULT 0,
+    quantity INT NOT NULL DEFAULT 0,
+    budget_tier VARCHAR(10) NOT NULL DEFAULT 'tier1',
+    sequence INT NOT NULL DEFAULT 0,
+    status TINYINT(1) NOT NULL DEFAULT 1,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
 // $reviewColumns = $conn->query("SHOW COLUMNS FROM reviews LIKE 'is_hidden'");
 // if ($reviewColumns && $reviewColumns->num_rows === 0) {

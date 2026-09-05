@@ -107,11 +107,13 @@ if (empty($serviceBanners)) {
                     </div>
                 </div> -->
 
+                <?php if (count($serviceBanners) > 1): ?>
                 <div class="banner-controls">
                     <button type="button" class="services-banner-arrow prev" onclick="navigateServicesBannerSlider('servicesBannerSlider', -1)">❮</button>
                     <button type="button" class="services-banner-arrow next" onclick="navigateServicesBannerSlider('servicesBannerSlider', 1)">❯</button>
                     <div class="services-banner-dots" id="servicesBannerDots"></div>
                 </div>
+                <?php endif; ?>
             </section>
             <!-- End Modern Hero Section -->
 
@@ -356,7 +358,10 @@ if (empty($serviceBanners)) {
             const servicesBannerAutoSlideTimers = {};
             document.addEventListener('DOMContentLoaded', function() {
                 initializeServicesBannerSlider('servicesBannerSlider', 'servicesBannerDots');
-                startServicesBannerAutoSlide('servicesBannerSlider', 'servicesBannerDots', 5000);
+                var slider = document.getElementById('servicesBannerSlider');
+                if (slider && slider.querySelectorAll('.banner-slide').length > 1) {
+                    startServicesBannerAutoSlide('servicesBannerSlider', 'servicesBannerDots', 5000);
+                }
             });
 
             function initializeServicesBannerSlider(sliderId, dotsId, initialSlide = 0) {
@@ -876,7 +881,7 @@ if (empty($serviceBanners)) {
                     </div>
                 </section>
                    <!-- Logotypes Section -->
-                   <section class="small-section pt-20 pb-20 services-brand-partners">
+                   <!-- <section class="small-section pt-20 pb-20 services-brand-partners">
                     <div class="container relative">
                         
                         <div class="row wow fadeInUpShort">
@@ -917,7 +922,7 @@ if (empty($serviceBanners)) {
                         </div>
                         
                      </div>
-                </section>
+                </section> -->
                 <!-- End Logotypes -->
                 
                

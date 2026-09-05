@@ -4,17 +4,9 @@ if (!isset($_SESSION['admin_logged_in'])) { header("Location: ../login.php"); ex
 require_once '../includes/db.php';
 $pageTitle = 'Products';
 
-$budgetTiers = [
-    'tier1' => '₹10 – ₹200',
-    'tier2' => '₹200 – ₹500',
-    'tier3' => '₹500 – ₹1000',
-    'tier4' => '₹1000 & Above',
-];
-
 $brand_id  = intval($_GET['brand_id'] ?? 0);
 $search    = trim($_GET['search'] ?? '');
 $selection = $_GET['selection'] ?? '';
-$budget    = $_GET['budget'] ?? '';
 
 // Load brand if filtered
 $brand = null;
@@ -30,7 +22,6 @@ $where = []; $params = []; $types = '';
 if ($brand_id) { $where[] = "p.brand_id = ?"; $params[] = $brand_id; $types .= 'i'; }
 if ($search)   { $where[] = "p.name LIKE ?";  $params[] = "%$search%"; $types .= 's'; }
 if ($selection !== '' && in_array($selection, ['0','1'])) { $where[] = "p.is_selection = ?"; $params[] = intval($selection); $types .= 'i'; }
-if ($budget !== '' && array_key_exists($budget, $budgetTiers)) { $where[] = "p.budget_tier = ?"; $params[] = $budget; $types .= 's'; }
 
 $sql = "SELECT p.*, b.brandname FROM products p
         JOIN brandlogo b ON p.brand_id = b.id"
@@ -84,14 +75,8 @@ require_once '../includes/layout_top.php';
         <option value="1" <?= $selection==='1'?'selected':'' ?>>⭐ In Product Selection</option>
         <option value="0" <?= $selection==='0'?'selected':'' ?>>Not in Product Selection</option>
     </select>
-    <select name="budget" class="form-select form-select-sm" style="width:170px;">
-        <option value="">All Budget Tiers</option>
-        <?php foreach ($budgetTiers as $tierKey => $tierLabel): ?>
-        <option value="<?= $tierKey ?>" <?= $budget===$tierKey?'selected':'' ?>><?= $tierLabel ?></option>
-        <?php endforeach; ?>
-    </select>
     <button class="btn btn-sm btn-secondary" type="submit"><i class="bi bi-search"></i></button>
-    <?php if ($search || $selection !== '' || $budget !== ''): ?>
+    <?php if ($search || $selection !== ''): ?>
         <a href="index.php<?= $brand_id?'?brand_id='.$brand_id:'' ?>" class="btn btn-sm btn-outline-secondary">Clear</a>
     <?php endif; ?>
 </form>
@@ -110,14 +95,13 @@ require_once '../includes/layout_top.php';
                 <th>Qty</th>
                 <th>Category</th>
                 <th>Selection</th>
-                <th>Budget Tier</th>
                 <th>Status</th>
                 <th style="width:100px;">Actions</th>
             </tr>
         </thead>
         <tbody>
             <?php if ($products->num_rows === 0): ?>
-                <tr><td colspan="12" class="text-center text-muted py-4">
+                <tr><td colspan="11" class="text-center text-muted py-4">
                     No products found.
                     <?php if ($brand): ?>
                         <a href="add.php?brand_id=<?= $brand_id ?>">Add first product →</a>
@@ -159,13 +143,6 @@ require_once '../includes/layout_top.php';
                 <td>
                     <?php if (!empty($row['is_selection'])): ?>
                         <span style="background:#fef3c7;color:#92400e;font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600;">⭐ Featured</span>
-                    <?php else: ?>
-                        <span class="text-muted small">—</span>
-                    <?php endif; ?>
-                </td>
-                <td>
-                    <?php if (!empty($row['budget_tier']) && isset($budgetTiers[$row['budget_tier']])): ?>
-                        <span class="badge bg-light text-dark border small"><?= htmlspecialchars($budgetTiers[$row['budget_tier']]) ?></span>
                     <?php else: ?>
                         <span class="text-muted small">—</span>
                     <?php endif; ?>
