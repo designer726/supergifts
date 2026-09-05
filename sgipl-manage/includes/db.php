@@ -50,6 +50,21 @@ $conn->query("CREATE TABLE IF NOT EXISTS packaging_videos (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
+/* Performance indexes — every homepage/listing query filters on these columns
+   but they were only ever covered by the primary key, forcing a full table
+   scan on every page load. Guarded so this only runs once per table. */
+function ensureIndex($conn, $table, $indexName, $ddl) {
+    $exists = $conn->query("SHOW INDEX FROM $table WHERE Key_name = '$indexName'");
+    if ($exists && $exists->num_rows === 0) {
+        $conn->query($ddl);
+    }
+}
+ensureIndex($conn, 'products', 'idx_status_category', "ALTER TABLE products ADD INDEX idx_status_category (status, category)");
+ensureIndex($conn, 'products', 'idx_status_quantity', "ALTER TABLE products ADD INDEX idx_status_quantity (status, quantity)");
+ensureIndex($conn, 'products', 'idx_status_brand', "ALTER TABLE products ADD INDEX idx_status_brand (status, brand_id)");
+ensureIndex($conn, 'brandlogo', 'idx_flag_category', "ALTER TABLE brandlogo ADD INDEX idx_flag_category (flag, category)");
+ensureIndex($conn, 'banners', 'idx_slot_status', "ALTER TABLE banners ADD INDEX idx_slot_status (slot, status)");
+
 // $reviewColumns = $conn->query("SHOW COLUMNS FROM reviews LIKE 'is_hidden'");
 // if ($reviewColumns && $reviewColumns->num_rows === 0) {
 //     $conn->query("ALTER TABLE reviews ADD COLUMN is_hidden TINYINT(1) NOT NULL DEFAULT 0 AFTER status");

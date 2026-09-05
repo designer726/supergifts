@@ -2,6 +2,7 @@
 session_start();
 if (!isset($_SESSION['admin_logged_in'])) { header("Location: ../login.php"); exit(); }
 require_once '../includes/db.php';
+require_once '../includes/image_helper.php';
 $pageTitle = 'Edit Packaging Video';
 $errors = []; $success = '';
 
@@ -63,6 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $filename = 'packaging-poster-'.time().'-'.uniqid().'.'.$ext;
             if (move_uploaded_file($_FILES['thumbnail']['tmp_name'], $videoUploadDir.$filename)) {
+                compressUploadedImage($videoUploadDir.$filename, 1200);
                 packagingDeleteOld($item['thumbnail']);
                 $thumbnail = 'images/packaging/'.$filename;
             } else {

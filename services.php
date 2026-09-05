@@ -15,25 +15,22 @@ function findBrandLogoPath($imageno) {
     return 'images/brandlogo/image' . intval($imageno) . '.jpg';
 }
 
-$brandDb = new mysqli("localhost", "superehc_aiir", "Aiir@8097000970", "superehc_sgipl");
-if (!$brandDb->connect_error) {
-    $sql = "SELECT id, brandname, imageno, flag FROM brandlogo ORDER BY flag DESC, seqence ASC, brandname ASC";
-    if ($result = $brandDb->query($sql)) {
-        while ($row = $result->fetch_assoc()) {
-            $logo = findBrandLogoPath($row['imageno']);
-            $item = ['id' => $row['id'], 'brandname' => $row['brandname'], 'logoUrl' => $logo];
-            if (intval($row['flag']) === 1) {
-                $brandPartners[] = $item;
-            } else {
-                $alsoDealWith[] = $item;
-            }
+require_once 'sgipl-manage/includes/db.php';
+
+$sql = "SELECT id, brandname, imageno, flag FROM brandlogo ORDER BY flag DESC, seqence ASC, brandname ASC";
+if ($result = $conn->query($sql)) {
+    while ($row = $result->fetch_assoc()) {
+        $logo = findBrandLogoPath($row['imageno']);
+        $item = ['id' => $row['id'], 'brandname' => $row['brandname'], 'logoUrl' => $logo];
+        if (intval($row['flag']) === 1) {
+            $brandPartners[] = $item;
+        } else {
+            $alsoDealWith[] = $item;
         }
-        $result->free();
     }
-    $brandDb->close();
+    $result->free();
 }
 
-require_once 'sgipl-manage/includes/db.php';
 $serviceBanners = [];
 $serviceRes = $conn->query("SELECT slot, file_path, file_type FROM banners WHERE slot BETWEEN 12 AND 15 AND status=1 ORDER BY slot ASC");
 if ($serviceRes) {

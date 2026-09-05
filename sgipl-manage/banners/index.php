@@ -3,6 +3,7 @@ session_start();
 if (!isset($_SESSION['admin_logged_in'])) { header("Location: ../login.php"); exit(); }
 require_once '../includes/db.php';
 require_once '../includes/config.php';
+require_once '../includes/image_helper.php';
 $pageTitle = 'Banner Management';
 
 /* ── Upload dir ── */
@@ -58,6 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (move_uploaded_file($tmp, $dest)) {
                 $file_path = $uploadUrl . $filename;
                 $file_type = in_array($ext, $vidExt) ? 'video' : 'image';
+                if ($file_type === 'image') compressUploadedImage($dest, 1920);
             } else {
                 $error = 'Upload failed. Check folder permissions on images/banners/.';
             }

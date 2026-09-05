@@ -2,6 +2,7 @@
 session_start();
 if (!isset($_SESSION['admin_logged_in'])) { header("Location: ../login.php"); exit(); }
 require_once '../includes/db.php';
+require_once '../includes/image_helper.php';
 $pageTitle = 'Edit Budget Item';
 $errors = []; $success = '';
 
@@ -50,6 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $filename = 'budget-'.time().'-'.uniqid().'.'.$ext;
             if (move_uploaded_file($_FILES['image']['tmp_name'], $imgUploadDir.$filename)) {
+                compressUploadedImage($imgUploadDir.$filename, 1000);
                 if ($item['image']) {
                     $oldPath = ($_SERVER['SERVER_NAME']==='localhost')
                         ? $_SERVER['DOCUMENT_ROOT'].'/supergifts/'.$item['image']
