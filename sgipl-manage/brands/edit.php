@@ -2,6 +2,7 @@
 session_start();
 if (!isset($_SESSION['admin_logged_in'])) { header("Location: ../login.php"); exit(); }
 require_once '../includes/db.php';
+require_once '../includes/image_helper.php';
 $pageTitle = 'Edit Brand';
 $errors = []; $success = '';
 
@@ -65,6 +66,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $filename = 'image' . $imageno . '.' . $ext;
             if (!move_uploaded_file($_FILES['logo']['tmp_name'], $uploadDir . $filename)) {
                 $errors[] = "Failed to upload logo. Check folder permissions.";
+            } else {
+                compressUploadedImage($uploadDir . $filename, 500);
             }
         }
     }
@@ -84,6 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             $bannerFilename = 'banner-' . $brand['imageno'] . '-' . $slot . '-' . time() . '-' . uniqid() . '.' . $ext;
             if (move_uploaded_file($_FILES[$fieldName]['tmp_name'], $bannerUploadDir . $bannerFilename)) {
+                compressUploadedImage($bannerUploadDir . $bannerFilename, 1920);
                 if ($brand[$dbCol]) {
                     $oldBanner = ($_SERVER['SERVER_NAME']==='localhost')
                         ? $_SERVER['DOCUMENT_ROOT'].'/supergifts/'.$brand[$dbCol]

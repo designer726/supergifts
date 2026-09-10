@@ -3,6 +3,7 @@
 require_once '../includes/config.php';
 require_once '../includes/db.php';
 require_once '../includes/auth.php';
+require_once '../includes/image_helper.php';
 
 $pageTitle = 'Edit Blog Post';
 $errors = [];
@@ -58,6 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $filename = 'blog-' . time() . '-' . uniqid() . '.' . $ext;
             $dest = UPLOAD_DIR . $filename;
             if (move_uploaded_file($_FILES['image']['tmp_name'], $dest)) {
+                compressUploadedImage($dest, 1200);
                 // Delete old image if it was uploaded via admin
                 if ($post['image'] && file_exists($_SERVER['DOCUMENT_ROOT'] . '/' . $post['image'])) {
                     @unlink($_SERVER['DOCUMENT_ROOT'] . '/' . $post['image']);
@@ -80,6 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $filename = 'blog-title-bg-' . time() . '-' . uniqid() . '.' . $ext;
             $dest = UPLOAD_DIR . $filename;
             if (move_uploaded_file($_FILES['title_bg_image']['tmp_name'], $dest)) {
+                compressUploadedImage($dest, 1920);
                 if ($post['title_bg_image'] && file_exists($_SERVER['DOCUMENT_ROOT'] . '/' . $post['title_bg_image'])) {
                     @unlink($_SERVER['DOCUMENT_ROOT'] . '/' . $post['title_bg_image']);
                 }

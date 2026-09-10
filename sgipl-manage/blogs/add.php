@@ -3,6 +3,7 @@
 require_once '../includes/config.php';
 require_once '../includes/db.php';
 require_once '../includes/auth.php';
+require_once '../includes/image_helper.php';
 
 $pageTitle = 'Add New Blog Post';
 $errors = [];
@@ -50,6 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $filename = 'blog-' . time() . '-' . uniqid() . '.' . $ext;
             $dest = UPLOAD_DIR . $filename;
             if (move_uploaded_file($_FILES['image']['tmp_name'], $dest)) {
+                compressUploadedImage($dest, 1200);
                 $image = 'images/blog/' . $filename;
             } else {
                 $errors[] = "Failed to upload image. Check folder permissions.";
@@ -69,6 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $filename = 'blog-title-bg-' . time() . '-' . uniqid() . '.' . $ext;
             $dest = UPLOAD_DIR . $filename;
             if (move_uploaded_file($_FILES['title_bg_image']['tmp_name'], $dest)) {
+                compressUploadedImage($dest, 1920);
                 $title_bg_image = 'images/blog/' . $filename;
             } else {
                 $errors[] = "Failed to upload title background image. Check folder permissions.";

@@ -2,6 +2,7 @@
 session_start();
 if (!isset($_SESSION['admin_logged_in'])) { header("Location: ../login.php"); exit(); }
 require_once '../includes/db.php';
+require_once '../includes/image_helper.php';
 $pageTitle = 'Add Voucher';
 $errors = []; $success = '';
 
@@ -30,6 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $filename = 'voucher-' . time() . '-' . uniqid() . '.' . $ext;
             if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadDir . $filename)) {
+                compressUploadedImage($uploadDir . $filename, 1200);
                 $image = $uploadUrl . $filename;
             } else {
                 $errors[] = "Failed to upload image. Check images/vouchers/ folder permissions.";
