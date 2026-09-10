@@ -32,6 +32,7 @@ RewriteRule ^([^/.]+)$ $1.php [L]
     </FilesMatch>
 
 </IfModule>
+
 # php -- BEGIN cPanel-generated handler, do not edit
 # Set the “ea-php82” package as the default “PHP” programming language.
 <IfModule mime_module>
