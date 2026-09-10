@@ -3,7 +3,7 @@ $pagename = basename($_SERVER['PHP_SELF']);
 require_once('sgipl-manage/includes/db.php'); // Your existing DB connection file
 
 // Fetch published blog posts
-$result = $conn->query("SELECT * FROM blogs WHERE status = 'published' ORDER BY created_at DESC");
+$result = $conn->query("SELECT * FROM blogs WHERE status = 'published' ORDER BY (sequence = 0) ASC, sequence ASC, created_at DESC");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -59,12 +59,15 @@ $result = $conn->query("SELECT * FROM blogs WHERE status = 'published' ORDER BY 
                             <div class="blog-item box-shadow round p-4 h-100 d-flex flex-column">
 
                                 <!-- Image -->
-                                <div class="blog-media mb-3">
+                                <div class="blog-media mb-3" style="position:relative;">
                                     <a href="blog_details?BlogDetails=<?= htmlspecialchars($blog['slug']) ?>">
                                         <img src="<?= htmlspecialchars($blog['image']) ?>"
                                              alt="<?= htmlspecialchars($blog['title']) ?>"
                                              class="img-fluid rounded"
                                              style="width:100%;height:200px;object-fit:cover;" />
+                                        <?php if (!empty($blog['video'] ?? '')): ?>
+                                        <span style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.7);color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;letter-spacing:.04em;">▶ VIDEO</span>
+                                        <?php endif; ?>
                                     </a>
                                 </div>
 

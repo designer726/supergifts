@@ -27,6 +27,16 @@ if ($productSelectionCol && $productSelectionCol->num_rows === 0) {
     $conn->query("ALTER TABLE products ADD COLUMN is_selection TINYINT(1) NOT NULL DEFAULT 0 AFTER new_lunch");
 }
 
+$blogSequenceCol = $conn->query("SHOW COLUMNS FROM blogs LIKE 'sequence'");
+if ($blogSequenceCol && $blogSequenceCol->num_rows === 0) {
+    $conn->query("ALTER TABLE blogs ADD COLUMN sequence INT NOT NULL DEFAULT 0 AFTER status");
+}
+
+$blogVideoCol = $conn->query("SHOW COLUMNS FROM blogs LIKE 'video'");
+if ($blogVideoCol && $blogVideoCol->num_rows === 0) {
+    $conn->query("ALTER TABLE blogs ADD COLUMN video VARCHAR(255) NOT NULL DEFAULT '' AFTER image");
+}
+
 $conn->query("CREATE TABLE IF NOT EXISTS budget_products (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,

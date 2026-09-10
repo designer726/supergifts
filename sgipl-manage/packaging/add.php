@@ -42,8 +42,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $ext = strtolower(pathinfo($_FILES['thumbnail']['name'], PATHINFO_EXTENSION));
         if (!in_array($ext, $imgExt)) {
             $errors[] = "Poster image must be JPG, PNG or WEBP.";
-        } elseif ($_FILES['thumbnail']['size'] > 3 * 1024 * 1024) {
-            $errors[] = "Poster image must be under 3MB.";
+        } elseif ($_FILES['thumbnail']['size'] > 10 * 1024 * 1024) {
+            $errors[] = "Poster image must be under 10MB.";
         } else {
             $filename = 'packaging-poster-'.time().'-'.uniqid().'.'.$ext;
             if (move_uploaded_file($_FILES['thumbnail']['tmp_name'], $videoUploadDir.$filename)) {
@@ -129,7 +129,7 @@ require_once '../includes/layout_top.php';
                 </div>
                 <input type="file" name="thumbnail" class="form-control"
                        accept="image/jpeg,image/png,image/webp" onchange="previewThumb(this)">
-                <div class="text-muted small mt-1">Shown while the video loads. Max 3MB.</div>
+                <div class="text-muted small mt-1">Shown while the video loads. Max 10MB.</div>
             </div>
         </div>
     </div>

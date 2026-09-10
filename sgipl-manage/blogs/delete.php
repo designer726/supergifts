@@ -6,8 +6,8 @@ require_once '../includes/auth.php';
 
 $id = intval($_GET['id'] ?? 0);
 if ($id) {
-    // Get image path before deleting
-    $stmt = $conn->prepare("SELECT image FROM blogs WHERE id = ?");
+    // Get file paths before deleting
+    $stmt = $conn->prepare("SELECT image, video FROM blogs WHERE id = ?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
     $row = $stmt->get_result()->fetch_assoc();
@@ -20,10 +20,12 @@ if ($id) {
         $del->execute();
         $del->close();
 
-        // Delete image file if it was uploaded via admin
-        if (!empty($row['image']) && strpos($row['image'], 'blog-') !== false) {
-            $path = $_SERVER['DOCUMENT_ROOT'] . '/' . $row['image'];
-            if (file_exists($path)) @unlink($path);
+        // Delete uploaded files (image + video)
+        foreach ([$row['image'] ?? '', $row['video'] ?? ''] as $file) {
+            if (!empty($file) && strpos($file, 'blog-') !== false) {
+                $path = $_SERVER['DOCUMENT_ROOT'] . '/' . $file;
+                if (file_exists($path)) @unlink($path);
+            }
         }
     }
 }
