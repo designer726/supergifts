@@ -6,23 +6,29 @@
         </a>
     </div>
 
-    <!-- Desktop Nav -->
-    <nav class="nav-menu" id="navMenu">
-        <a href="index" <?php if (isset($pagename) && $pagename == "index.php") echo "class='active'"; ?>>Home</a>
-        <a href="about" <?php if (isset($pagename) && $pagename == "about.php") echo "class='active'"; ?>>About us</a>
-        <a href="services" <?php if (isset($pagename) && $pagename == "services.php") echo "class='active'"; ?>>Services</a>
-        <a href="clients" <?php if (isset($pagename) && $pagename == "clients.php") echo "class='active'"; ?>>Clients</a>
-        <a href="events" <?php if (isset($pagename) && $pagename == "events.php") echo "class='active'"; ?>>News</a>
-        <a href="Careers" <?php if (isset($pagename) && $pagename == "Careers.php") echo "class='active'"; ?>>Careers</a>
-        <a href="blog" <?php if (isset($pagename) && $pagename == "blog.php") echo "class='active'"; ?>>Blog</a>
-        <a href="reviews" <?php if (isset($pagename) && $pagename == "reviews.php") echo "class='active'"; ?>>Reviews</a>
-        <a href="contact" class="header-cta <?php if (isset($pagename) && $pagename == "contact.php") echo "active"; ?>">Contact Us</a>
-    </nav>
+    <div class="nav-right">
+        <!-- Desktop Nav -->
+        <nav class="nav-menu" id="navMenu">
+            <a href="index" <?php if (isset($pagename) && $pagename == "index.php") echo "class='active'"; ?>>Home</a>
+            <a href="about" <?php if (isset($pagename) && $pagename == "about.php") echo "class='active'"; ?>>About us</a>
+            <a href="services" <?php if (isset($pagename) && $pagename == "services.php") echo "class='active'"; ?>>Services</a>
+            <a href="clients" <?php if (isset($pagename) && $pagename == "clients.php") echo "class='active'"; ?>>Clients</a>
+            <a href="events" <?php if (isset($pagename) && $pagename == "events.php") echo "class='active'"; ?>>News</a>
+            <a href="Careers" <?php if (isset($pagename) && $pagename == "Careers.php") echo "class='active'"; ?>>Careers</a>
+            <a href="blog" <?php if (isset($pagename) && $pagename == "blog.php") echo "class='active'"; ?>>Blog</a>
+            <a href="reviews" <?php if (isset($pagename) && $pagename == "reviews.php") echo "class='active'"; ?>>Reviews</a>
+        </nav>
 
-    <!-- Hamburger Button (mobile) -->
-    <button class="nav-hamburger" id="navHamburger" aria-label="Toggle menu" onclick="toggleMobileNav()">
-        <span></span><span></span><span></span>
-    </button>
+        <a href="contact" class="header-cta <?php if (isset($pagename) && $pagename == "contact.php") echo "active"; ?>">
+            Contact Us
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+
+        <!-- Hamburger Button (mobile) -->
+        <button class="nav-hamburger" id="navHamburger" aria-label="Toggle menu" onclick="toggleMobileNav()">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
 </header>
 
 <!-- Mobile Nav Overlay -->
@@ -46,6 +52,18 @@
 </nav>
 
 <style>
+/* Right-side group: nav links + Contact Us CTA + hamburger, always together */
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.header-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
 /* Hamburger */
 .nav-hamburger {
     display: none;
@@ -127,6 +145,7 @@
 
 @media (max-width: 860px) {
     .nav-menu { display: none; }
+    .nav-right .header-cta { display: none; }
     .nav-hamburger { display: flex; }
 }
 </style>

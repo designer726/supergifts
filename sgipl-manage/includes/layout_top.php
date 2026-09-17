@@ -9,7 +9,7 @@
     <style>
         :root { --gold: #c8a96e; --gold-dark: #a07840; --sidebar-bg: #1a1a2e; --sidebar-text: #ccc; }
         body { background: #f4f6fb; min-height: 100vh; }
-        .sidebar { width: 240px; min-height: 100vh; background: var(--sidebar-bg); position: fixed; top: 0; left: 0; z-index: 100; display: flex; flex-direction: column; }
+        .sidebar { width: 240px; height: 100vh; background: var(--sidebar-bg); position: fixed; top: 0; left: 0; z-index: 100; display: flex; flex-direction: column; overflow: hidden; }
         .sidebar-logo { padding: 20px 20px 16px; border-bottom: 1px solid rgba(255,255,255,0.08); }
         .sidebar-logo img { height: 36px; filter: brightness(0) invert(1); }
         .sidebar-logo span { display: block; color: var(--gold); font-size: 10px; font-weight: 700; letter-spacing: 2px; margin-top: 6px; text-transform: uppercase; }
@@ -57,6 +57,8 @@ $inVouchers = strpos($currentPath, '/vouchers/') !== false;
 $inReviews  = strpos($currentPath, '/reviews/') !== false;
 $inBudget   = strpos($currentPath, '/budget/') !== false;
 $inPackaging = strpos($currentPath, '/packaging/') !== false;
+$inTestimonials = strpos($currentPath, '/testimonials/') !== false;
+$inEmployeeReviews = strpos($currentPath, '/employee-reviews/') !== false;
 
 // Base URL — works on both localhost and live
 $isLocal = ($_SERVER['SERVER_NAME'] === 'localhost');
@@ -91,6 +93,22 @@ $inBanners = strpos($currentPath, '/banners/') !== false;
         <div class="nav-section">Services Page</div>
         <a href="<?= $base ?>packaging/index.php" class="nav-link <?= $inPackaging?'active':'' ?>">
             <i class="bi bi-camera-reels"></i> Packaging Showcase
+        </a>
+
+        <div class="nav-section">Clients Page</div>
+        <a href="<?= $base ?>banners/index.php" class="nav-link <?= $inBanners?'active':'' ?>">
+            <i class="bi bi-image"></i> Clients Banner
+        </a>
+        <a href="<?= $base ?>testimonials/index.php" class="nav-link <?= $inTestimonials?'active':'' ?>">
+            <i class="bi bi-chat-square-quote"></i> Client Testimonials
+        </a>
+
+        <div class="nav-section">Careers Page</div>
+        <a href="<?= $base ?>banners/index.php#careers-banner" class="nav-link">
+            <i class="bi bi-image"></i> Careers Banner
+        </a>
+        <a href="<?= $base ?>employee-reviews/index.php" class="nav-link <?= $inEmployeeReviews?'active':'' ?>">
+            <i class="bi bi-chat-square-quote"></i> Employee Reviews
         </a>
 
         <div class="nav-section">Blog</div>

@@ -135,11 +135,12 @@ body {
 }
 
 .header-cta {
-  background: #d0021b; /* Brand red — primary CTA */
+  background: #d0021b !important; /* Brand red — primary CTA (always wins over .nav-menu a.active) */
   color: #ffffff !important;
   border-radius: 8px;
   padding: 8px 18px !important;
   font-weight: 600 !important;
+  text-decoration: none !important; /* not a .nav-menu descendant anymore — needs its own reset */
   transition: all 0.2s ease;
 }
 
