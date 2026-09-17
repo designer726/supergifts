@@ -63,7 +63,7 @@ function renderStars($rating, $size = 18) {
                                         $result = $stmt->get_result();
 
                                         if ($result->num_rows === 0) {
-                                            echo '<p class="text-center text-muted">No reviews yet. Be the first to share your feedback!</p>';
+                                            // No reviews yet — show nothing instead of a placeholder message.
                                         } else {
                                             while($review = $result->fetch_assoc()):
                                 ?>
