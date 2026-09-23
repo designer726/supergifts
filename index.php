@@ -83,6 +83,11 @@ if (!$db->connect_error) {
         $db->query("ALTER TABLE products ADD COLUMN is_selection TINYINT(1) NOT NULL DEFAULT 0 AFTER new_lunch");
     }
 
+    $blogSequenceCol = $db->query("SHOW COLUMNS FROM blogs LIKE 'sequence'");
+    if ($blogSequenceCol && $blogSequenceCol->num_rows === 0) {
+        $db->query("ALTER TABLE blogs ADD COLUMN sequence INT NOT NULL DEFAULT 0 AFTER status");
+    }
+
     $db->query("CREATE TABLE IF NOT EXISTS budget_products (
         id INT AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
@@ -129,11 +134,23 @@ if (!$db->connect_error) {
     }
 
     /* Category products for homepage carousels — no LIMIT: show every active product in each category */
-    $r = $db->query("SELECT p.id, p.name, p.image, p.mrp, p.offer_price, p.category, b.brandname, b.imageno
+    $r = $db->query("SELECT p.id, p.name, p.image, p.mrp, p.offer_price, p.category, p.brand_id, b.brandname, b.imageno
                      FROM products p JOIN brandlogo b ON p.brand_id=b.id
                      WHERE p.status=1 AND p.category='Premium' ORDER BY p.sequence ASC, p.id DESC");
+    /* Round-robin across brands so the carousel alternates brands
+       (KENT, Hafele, Blaupunkt, ASICS, …) instead of showing every KENT
+       first, then every Hafele, and so on. Product order within a brand
+       still follows its admin sequence. */
+    $premiumByBrand = [];
     if ($r) while ($row = $r->fetch_assoc())
-        $premiumProducts[] = array_merge($row, ['brandLogoUrl' => findBrandLogoPath($row['imageno'])]);
+        $premiumByBrand[$row['brand_id']][] = array_merge($row, ['brandLogoUrl' => findBrandLogoPath($row['imageno'])]);
+    while (!empty($premiumByBrand)) {
+        foreach ($premiumByBrand as $bId => &$queue) {
+            $premiumProducts[] = array_shift($queue);
+            if (empty($queue)) unset($premiumByBrand[$bId]);
+        }
+        unset($queue);
+    }
 
     $categoryProducts = ['Executive' => [], 'Economy' => [], 'NA' => []];
     foreach (array_keys($categoryProducts) as $categoryName) {
@@ -180,7 +197,8 @@ if (!$db->connect_error) {
     
     /* Blog posts */
     $r = $db->query("SELECT id, title, slug, excerpt, image, category, created_at
-                     FROM blogs WHERE status='published' ORDER BY created_at DESC LIMIT 6");
+                     FROM blogs WHERE status='published'
+                     ORDER BY (sequence = 0) ASC, sequence ASC, created_at DESC LIMIT 6");
     if ($r) while ($row = $r->fetch_assoc()) $blogPosts[] = $row;
 
     /* Testimonials */
@@ -206,7 +224,12 @@ if (!$db->connect_error) {
         $stmt->bind_param('s', $tierKey);
         $stmt->execute();
         $result = $stmt->get_result();
-        while ($row = $result->fetch_assoc()) $budgetByTier[$tierKey][] = $row;
+        while ($row = $result->fetch_assoc()) {
+            /* budget_products is its own catalog with no detail page — send
+               clicks to the enquiry form so customers can request a quote. */
+            $row['href'] = 'contact';
+            $budgetByTier[$tierKey][] = $row;
+        }
         $stmt->close();
 
         if (empty($budgetByTier[$tierKey])) {
@@ -235,7 +258,10 @@ if (!$db->connect_error) {
             while (!empty($byBrand) && count($budgetByTier[$tierKey]) < 6) {
                 foreach ($byBrand as $bId => &$queue) {
                     if (count($budgetByTier[$tierKey]) >= 6) break;
-                    $budgetByTier[$tierKey][] = array_shift($queue);
+                    $picked = array_shift($queue);
+                    /* fallback rows are real products — link straight to their detail page */
+                    $picked['href'] = 'product-detail.php?id=' . intval($picked['id']);
+                    $budgetByTier[$tierKey][] = $picked;
                     if (empty($queue)) unset($byBrand[$bId]);
                 }
                 unset($queue);
@@ -660,7 +686,7 @@ if (!$db->connect_error) {
                             /* Duplicate the set so the auto-scroll loops seamlessly */
                             foreach (array_merge($items, $items) as $item):
                             ?>
-                            <div class="hp-budget-card" title="<?= htmlspecialchars($item['name']) ?>">
+                            <a href="<?= htmlspecialchars($item['href'] ?? 'contact') ?>" class="hp-budget-card" style="display:block;text-decoration:none;color:inherit;" title="<?= htmlspecialchars($item['name']) ?>">
                                 <div class="hp-budget-card-img">
                                     <?php if (!empty($item['image'])): ?>
                                     <img src="<?= htmlspecialchars($item['image']) ?>" alt="<?= htmlspecialchars($item['name']) ?>" loading="lazy">
@@ -681,7 +707,7 @@ if (!$db->connect_error) {
                                     <div class="hp-budget-card-price">₹<?= number_format($item['mrp'], 0) ?></div>
                                     <?php endif; ?>
                                 </div>
-                            </div>
+                            </a>
                             <?php endforeach; ?>
                         </div>
                     </div>
@@ -807,26 +833,26 @@ if (!$db->connect_error) {
                 else: ?>
                     <div class="hp-review-card">
                         <div class="hp-review-stars">★★★★★</div>
-                        <div class="hp-review-text">"Super Gifts delivered 5,000 custom gift boxes flawlessly. Every pack was perfectly branded and arrived on time. Exceptional service!"</div>
+                        <div class="hp-review-text">"Super Gifts is our corporate gifting distribution partner. Every consignment is branded to spec and delivered on schedule across our dealer network."</div>
                         <div class="hp-reviewer">
                             <div class="hp-reviewer-avatar">R</div>
-                            <div><div class="hp-reviewer-name">Rahul Mehta</div><div class="hp-reviewer-role">Procurement Head, TCS</div></div>
+                            <div><div class="hp-reviewer-name">Rohit Deshpande</div><div class="hp-reviewer-role">Brand Partner &middot; Consumer Electronics &amp; Appliances</div></div>
                         </div>
                     </div>
                     <div class="hp-review-card">
                         <div class="hp-review-stars">★★★★★</div>
-                        <div class="hp-review-text">"We've been ordering quarterly for 2 years. Product quality is consistently excellent and the after-sales support is second to none."</div>
+                        <div class="hp-review-text">"From bulk orders to last-mile individual delivery, the team runs our entire gifting programme end to end. Quality and communication are consistently strong."</div>
                         <div class="hp-reviewer">
-                            <div class="hp-reviewer-avatar" style="background:#0B7A43;">P</div>
-                            <div><div class="hp-reviewer-name">Priya Sharma</div><div class="hp-reviewer-role">HR Manager, Infosys</div></div>
+                            <div class="hp-reviewer-avatar" style="background:#0B7A43;">S</div>
+                            <div><div class="hp-reviewer-name">Sneha Kulkarni</div><div class="hp-reviewer-role">Corporate Client &middot; Manufacturing &amp; Engineering</div></div>
                         </div>
                     </div>
                     <div class="hp-review-card">
                         <div class="hp-review-stars">★★★★☆</div>
-                        <div class="hp-review-text">"The bulk order facility and inventory management saved us weeks of effort. Highly recommend for large enterprise gifting needs."</div>
+                        <div class="hp-review-text">"Their in-house branding, warehousing and inventory management saved our team weeks of coordination during our annual employee gifting."</div>
                         <div class="hp-reviewer">
-                            <div class="hp-reviewer-avatar" style="background:#FFD400;color:#241C6B;">A</div>
-                            <div><div class="hp-reviewer-name">Arjun Nair</div><div class="hp-reviewer-role">Operations Lead, HDFC</div></div>
+                            <div class="hp-reviewer-avatar" style="background:#FFD400;color:#241C6B;">V</div>
+                            <div><div class="hp-reviewer-name">Vikram Iyer</div><div class="hp-reviewer-role">Procurement Team &middot; Corporate Gifting Programme</div></div>
                         </div>
                     </div>
                 <?php endif; ?>

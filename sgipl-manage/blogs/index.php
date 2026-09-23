@@ -26,7 +26,7 @@ if ($filter && in_array($filter, ['published', 'draft'])) {
     $types .= 's';
 }
 
-$sql = "SELECT * FROM blogs" . ($where ? " WHERE " . implode(" AND ", $where) : "") . " ORDER BY created_at DESC";
+$sql = "SELECT * FROM blogs" . ($where ? " WHERE " . implode(" AND ", $where) : "") . " ORDER BY (sequence = 0) ASC, sequence ASC, created_at DESC";
 $stmt = $conn->prepare($sql);
 if ($params) $stmt->bind_param($types, ...$params);
 $stmt->execute();
@@ -58,6 +58,7 @@ require_once '../includes/layout_top.php';
         <thead>
             <tr>
                 <th style="width:50px;">#</th>
+                <th style="width:70px;">Order</th>
                 <th style="width:70px;">Image</th>
                 <th>Title</th>
                 <th>Category</th>
@@ -68,11 +69,12 @@ require_once '../includes/layout_top.php';
         </thead>
         <tbody>
             <?php if ($blogs->num_rows === 0): ?>
-            <tr><td colspan="7" class="text-center text-muted py-4">No blog posts found.</td></tr>
+            <tr><td colspan="8" class="text-center text-muted py-4">No blog posts found.</td></tr>
             <?php endif; ?>
             <?php $i = 1; while($row = $blogs->fetch_assoc()): ?>
             <tr>
                 <td class="text-muted small"><?= $i++ ?></td>
+                <td class="fw-bold text-muted small"><?= intval($row['sequence'] ?? 0) ?></td>
                 <td>
                     <?php if($row['image']): ?>
                         <img src="https://www.supergifts.in/<?= htmlspecialchars($row['image']) ?>" style="width:56px;height:40px;object-fit:cover;border-radius:6px;" onerror="this.src='https://via.placeholder.com/56x40?text=IMG'">

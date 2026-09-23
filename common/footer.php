@@ -61,7 +61,7 @@
               <ul>
                   <li><a href="about">About Us</a></li>
                   <li><a href="#">Our Team</a></li>
-                  <li><a href="events">News</a></li>
+                  <!-- <li><a href="events">News</a></li> -->
                   <li><a href="reviews">Reviews</a></li>
                   <li><a href="contact">Contact</a></li>
               </ul>

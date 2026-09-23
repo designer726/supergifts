@@ -18,8 +18,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $author   = trim($_POST['author'] ?? 'SGIPL Team');
     $link             = trim($_POST['link'] ?? '');
     $status           = in_array($_POST['status'] ?? '', ['published', 'draft']) ? $_POST['status'] : 'published';
+    $sequence         = max(0, intval($_POST['sequence'] ?? 0));
     $image            = '';
     $title_bg_image   = '';
+    $video            = '';
 
     // Validate
     if (!$title)   $errors[] = "Title is required.";
@@ -79,14 +81,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    // Handle blog video upload
+    if (!$errors && !empty($_FILES['video']['name'])) {
+        $allowed = ['mp4', 'webm', 'mov'];
+        $ext = strtolower(pathinfo($_FILES['video']['name'], PATHINFO_EXTENSION));
+        if (!in_array($ext, $allowed)) {
+            $errors[] = "Only MP4, WEBM or MOV videos are allowed.";
+        } elseif ($_FILES['video']['size'] > 30 * 1024 * 1024) {
+            $errors[] = "Video must be under 30MB.";
+        } else {
+            $filename = 'blog-video-' . time() . '-' . uniqid() . '.' . $ext;
+            $dest = UPLOAD_DIR . $filename;
+            if (move_uploaded_file($_FILES['video']['tmp_name'], $dest)) {
+                $video = 'images/blog/' . $filename;
+            } else {
+                $errors[] = "Failed to upload video. Check folder permissions.";
+            }
+        }
+    }
+
     // Save to DB
     if (!$errors) {
-        $stmt = $conn->prepare("INSERT INTO blogs (title, slug, excerpt, content, image, title_bg_image, category, author, status, link) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("ssssssssss", $title, $slug, $excerpt, $content, $image, $title_bg_image, $category, $author, $status, $link);
+        $stmt = $conn->prepare("INSERT INTO blogs (title, slug, excerpt, content, image, video, title_bg_image, category, author, status, link, sequence) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssssssssssi", $title, $slug, $excerpt, $content, $image, $video, $title_bg_image, $category, $author, $status, $link, $sequence);
         if ($stmt->execute()) {
             $success = "Blog post added successfully!";
-            $title = $slug = $excerpt = $content = $category = $author = $link = $title_bg_image = '';
+            $title = $slug = $excerpt = $content = $category = $author = $link = $title_bg_image = $video = '';
             $status = 'published';
+            $sequence = 0;
         } else {
             $errors[] = "Database error: " . $conn->error;
         }
@@ -153,6 +175,11 @@ require_once '../includes/layout_top.php';
                     <label class="form-label">Category</label>
                     <input type="text" name="category" class="form-control" value="<?= htmlspecialchars($category ?? 'Blog') ?>" placeholder="e.g. Corporate, Branding, Tips">
                 </div>
+                <div class="mb-3">
+                    <label class="form-label">Display Order</label>
+                    <input type="number" name="sequence" class="form-control" value="<?= intval($sequence ?? 0) ?>" min="0">
+                    <div class="text-muted small mt-1">1 = shown first. Leave 0 for automatic order (newest first) after the numbered posts.</div>
+                </div>
                 <div class="mb-0">
                     <label class="form-label">Author</label>
                     <input type="text" name="author" class="form-control" value="<?= htmlspecialchars($author ?? 'SGIPL Team') ?>">
@@ -176,6 +203,14 @@ require_once '../includes/layout_top.php';
                 <label class="form-label">Title Background Image</label>
                 <input type="file" name="title_bg_image" class="form-control" accept="image/jpeg,image/png,image/webp" onchange="previewImage(this, 'img-preview-bg', 'preview-box-bg')">
                 <div class="text-muted small mt-1">This image appears behind the blog title. Leave empty to use the featured image or default background.</div>
+
+                <hr class="my-3">
+                <div id="preview-box-video" class="mb-2" style="display:none;">
+                    <video id="video-preview" src="" controls muted style="width:100%;max-height:170px;border-radius:8px;border:1px solid #e9ecef;background:#000;"></video>
+                </div>
+                <label class="form-label">Blog Video</label>
+                <input type="file" name="video" class="form-control" accept="video/mp4,video/webm,video/quicktime" onchange="previewVideo(this)">
+                <div class="text-muted small mt-1">Optional. MP4, WEBM or MOV — max 30MB. Shown on the blog post page.</div>
             </div>
         </div>
     </div>
@@ -199,6 +234,12 @@ function previewImage(input, previewId, previewBoxId) {
             document.getElementById(previewBoxId).style.display = 'block';
         };
         reader.readAsDataURL(input.files[0]);
+    }
+}
+function previewVideo(input) {
+    if (input.files && input.files[0]) {
+        document.getElementById('video-preview').src = URL.createObjectURL(input.files[0]);
+        document.getElementById('preview-box-video').style.display = 'block';
     }
 }
 </script>

@@ -126,6 +126,16 @@ $next = $conn->query("SELECT title, slug FROM blogs WHERE status='published' AND
                             <?php endif; ?>
                             <!-- End Featured Image -->
 
+                            <!-- Blog Video -->
+                            <?php if (!empty($blog['video'] ?? '')): ?>
+                            <div class="blog-media mb-50">
+                                <video src="<?= htmlspecialchars($blog['video']) ?>"
+                                       controls playsinline preload="metadata"
+                                       style="width:100%;height:auto;border-radius:8px;background:#000;"></video>
+                            </div>
+                            <?php endif; ?>
+                            <!-- End Blog Video -->
+
                             <!-- Post Content -->
                             <article>
 

@@ -153,6 +153,12 @@ while ($s = $seriesResult->fetch_assoc()) {
             text-decoration: line-through;
         }
 
+        .product-price-request {
+            font-size: 14px;
+            font-weight: 700;
+            color: #6b7280;
+        }
+
         .brand-logo-hero {
             background: #fff;
             border: 1px solid #e9ecef;
@@ -399,6 +405,8 @@ while ($s = $seriesResult->fetch_assoc()) {
                                                     </div>
                                                 <?php elseif ($product['mrp'] > 0): ?>
                                                     <div class="product-mrp">MRP: ₹<?= number_format($product['mrp'], 2) ?></div>
+                                                <?php else: ?>
+                                                    <div class="product-price-request">Price on Request</div>
                                                 <?php endif; ?>
                                             </div>
                                         </div>

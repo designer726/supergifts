@@ -62,19 +62,19 @@ $imgUrl = $product['image']
             background: #fff;
             border: 1px solid #e9ecef;
             border-radius: 16px;
-            padding: 30px;
+            padding: 16px;
+            aspect-ratio: 1 / 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 400px;
             overflow: hidden;
         }
 
         .product-image-wrap img {
-            max-width: 100%;
-            max-height: 380px;
+            width: 100%;
+            height: 100%;
             object-fit: contain;
-            width: auto;
+            display: block;
         }
 
         .product-details-info {
@@ -246,20 +246,22 @@ $imgUrl = $product['image']
         }
 
         .related-img-wrap {
-            background: #f5f5f5;
-            height: 200px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background: #f8f9fa;
+            aspect-ratio: 1 / 1;
             overflow: hidden;
-            border-bottom: 1px solid #e9ecef;
+            border-bottom: 1px solid #f0f0f0;
         }
 
         .related-img-wrap img {
-            max-height: 180px;
-            max-width: 100%;
-            object-fit: contain;
-            padding: 10px;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .related-card:hover .related-img-wrap img {
+            transform: scale(1.04);
         }
 
         .related-info {
@@ -338,7 +340,7 @@ $imgUrl = $product['image']
             }
 
             .product-image-wrap {
-                min-height: 300px;
+                padding: 12px;
             }
 
             .section-title {

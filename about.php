@@ -53,23 +53,12 @@ $pagename = basename($_SERVER['PHP_SELF']);
                                 <?php else: ?>
                                     <div class="banner-fallback"></div>
                                 <?php endif; ?>
-                                <!-- <div class="banner-overlay">
-                                    <div>
-                                        <h3><?= htmlspecialchars($banner['title'] ?: 'Corporate Gifting') ?></h3>
-                                        <p><?= htmlspecialchars($banner['subtitle'] ?: 'Tailored corporate gifting solutions with custom branding.') ?></p>
-                                    </div>
-                                    <?php if (!empty($banner['btn_link'])): ?>
-                                        <a href="<?= htmlspecialchars($banner['btn_link']) ?>" class="banner-button"><?= htmlspecialchars($banner['btn_text'] ?: 'Learn More') ?></a>
-                                    <?php endif; ?>
-                                </div> -->
                             </div>
                         <?php endforeach; ?>
-                    </div>
 
-                    <div class="banner-controls" style="margin-top:12px; text-align:center;">
-                        <button type="button" class="banner-nav prev" onclick="navigateBannerSlider('aboutBannerSlider', -1)">❮</button>
+                        <button type="button" class="banner-nav prev" onclick="navigateBannerSlider('aboutBannerSlider', -1)" aria-label="Previous">&#10094;</button>
+                        <button type="button" class="banner-nav next" onclick="navigateBannerSlider('aboutBannerSlider', 1)" aria-label="Next">&#10095;</button>
                         <div class="slider-dots" id="aboutBannerDots"></div>
-                        <button type="button" class="banner-nav next" onclick="navigateBannerSlider('aboutBannerSlider', 1)">❯</button>
                     </div>
 
                     <!-- <?php if (!empty($_SESSION['admin_logged_in'])): ?>
@@ -95,20 +84,13 @@ $pagename = basename($_SERVER['PHP_SELF']);
             .about-banner-container {
                 width: 100%;
             }
+            /* Homepage-style carousel frame. 10/3 is only a fallback ratio —
+               JS (fitAboutBanner) resizes it to the active banner's real
+               dimensions so the whole image always shows with no cropping. */
             .about-banner-slider {
                 position: relative;
                 width: 100%;
-                height: 600px;
-                min-height: 600px;
-                border-radius: 0;
-                overflow: hidden;
-                background: #121826;
-                margin-bottom: 0;
-            }
-            .page-banner-slider {
-                position: relative;
-                width: 100%;
-                min-height: 280px;
+                aspect-ratio: 10 / 3;
                 border-radius: 0;
                 overflow: hidden;
                 background: #121826;
@@ -118,15 +100,14 @@ $pagename = basename($_SERVER['PHP_SELF']);
                 position: absolute;
                 inset: 0;
                 opacity: 0;
-                transition: opacity .45s ease;
+                transition: opacity .5s ease;
                 display: none;
-                width: 100%;
-                height: 100%;
+                z-index: 1;
             }
             .banner-slide.active {
                 opacity: 1;
                 display: block;
-                z-index: 1;
+                z-index: 2;
             }
             .edia {
                 width: 100%;
@@ -138,82 +119,60 @@ $pagename = basename($_SERVER['PHP_SELF']);
             .banner-slide video.edia {
                 display: block;
             }
-            .banner-placeholder {
-                color: #e2e8f0;
-                font-weight: 700;
-                padding: 16px;
-                text-align: center;
-                width: 100%;
-            }
-            .banner-overlay {
+            .banner-fallback {
                 position: absolute;
-                bottom: 24px;
-                left: 24px;
-                right: 24px;
-                background: rgba(12, 17, 36, 0.75);
-                border-radius: 14px;
-                padding: 18px 20px;
+                inset: 0;
+                background: linear-gradient(135deg, #241C6B 0%, #4B3F9E 60%, #241C6B 100%);
+            }
+            /* Arrow nav — overlaid, glassmorphic (matches homepage) */
+            .banner-nav {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                z-index: 10;
+                background: rgba(255,255,255,0.15);
                 color: #fff;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                gap: 16px;
-                flex-wrap: wrap;
-                max-width: calc(100% - 48px);
-            }
-            .banner-overlay h3 {
-                margin: 0 0 6px;
-                font-size: 24px;
-            }
-            .banner-overlay p {
-                margin: 0;
-                font-size: 15px;
-                color: #d1d5db;
-            }
-            .banner-button {
-                display: inline-block;
-                background: #d4af37;
-                color: #111;
-                padding: 10px 18px;
-                border-radius: 999px;
-                text-decoration: none;
-                font-weight: 700;
-                transition: transform .2s ease;
-            }
-            .banner-button:hover {
-                transform: translateY(-1px);
-            }
-            .banner-controls {
+                border: 1.5px solid rgba(255,255,255,0.3);
+                width: 44px;
+                height: 44px;
+                border-radius: 50%;
+                cursor: pointer;
+                font-size: 20px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                gap: 12px;
-                margin-top: 16px;
+                transition: all .2s;
+                backdrop-filter: blur(6px);
+                line-height: 1;
             }
-            .banner-nav {
-                border: 0;
-                background: rgba(0,0,0,0.55);
-                color: #fff;
-                width: 38px;
-                height: 38px;
-                border-radius: 50%;
-                cursor: pointer;
-                font-size: 18px;
+            .banner-nav:hover {
+                background: rgba(208,2,27,0.35);
+                border-color: #D0021B;
             }
+            .banner-nav.prev { left: 20px; }
+            .banner-nav.next { right: 20px; }
+            /* Dots — overlaid bottom-left (matches homepage) */
             .slider-dots {
+                position: absolute;
+                bottom: 20px;
+                left: 48px;
                 display: flex;
                 align-items: center;
                 gap: 8px;
+                z-index: 10;
             }
             .slider-dots .dot {
-                width: 10px;
-                height: 10px;
+                width: 8px;
+                height: 8px;
                 border-radius: 50%;
                 background: rgba(255,255,255,0.35);
                 cursor: pointer;
+                transition: all .3s;
             }
             .slider-dots .dot.active {
-                background: #d4af37;
+                background: #D0021B;
+                width: 20px;
+                border-radius: 4px;
             }
             .page-section#about {
                 padding-top: 40px;
@@ -246,90 +205,23 @@ $pagename = basename($_SERVER['PHP_SELF']);
                     margin-top: 0 !important;
                 }
             }
-            @media (max-width: 1200px) {
-                .about-banner-slider {
-                    height: 520px;
-                    min-height: 520px;
-                }
-            }
             @media (max-width: 991px) {
-                .about-banner-slider {
-                    height: auto;
-                    min-height: 520px;
-                }
                 .banner-nav {
-                    width: 34px;
-                    height: 34px;
-                    font-size: 16px;
+                    width: 38px;
+                    height: 38px;
+                    font-size: 17px;
                 }
-                .slider-dots .dot {
-                    width: 9px;
-                    height: 9px;
-                }
-                .banner-overlay {
-                    padding: 14px 16px;
-                    bottom: 16px;
-                    left: 16px;
-                    right: 16px;
-                }
-                .banner-overlay h3 {
-                    font-size: 20px;
-                }
-                .banner-overlay p {
-                    font-size: 14px;
+                .slider-dots {
+                    left: 24px;
                 }
             }
-            @media (max-width: 767px) {
-                .about-banner-slider {
-                    width: 100%;
-                    aspect-ratio: auto;
-                    height: auto;
-                    min-height: 0;
-                    max-height: none;
-                    background: transparent;
-                }
-                .about-banner-hero,
-                .about-banner-container,
-                .about-banner-slider .banner-slide {
-                    width: 100%;
-                    max-width: 100%;
-                }
-                .about-banner-slider .banner-slide.active {
-                    position: relative;
-                    inset: auto;
-                    display: block;
-                    height: auto;
-                }
-                .about-banner-slider .edia {
-                    width: 100%;
-                    height: auto;
-                    max-width: 100%;
-                    max-height: none;
-                    object-fit: contain;
-                    object-position: center;
-                    vertical-align: middle;
-                }
-                .banner-controls {
-                    flex-wrap: wrap;
-                    gap: 10px;
-                    margin-top: 12px;
-                }
+            @media (max-width: 600px) {
                 .banner-nav {
-                    width: 34px;
-                    height: 34px;
+                    display: none;
                 }
-                .banner-overlay {
-                    position: static;
-                    background: rgba(12, 17, 36, 0.85);
-                    border-radius: 12px;
-                    padding: 14px;
-                    margin: 16px;
-                }
-                .banner-overlay h3 {
-                    font-size: 18px;
-                }
-                .banner-overlay p {
-                    font-size: 13px;
+                .slider-dots {
+                    left: 16px;
+                    bottom: 14px;
                 }
             }
             </style>
@@ -352,6 +244,19 @@ $pagename = basename($_SERVER['PHP_SELF']);
             document.addEventListener('DOMContentLoaded', function() {
                 initializeBannerSlider('aboutBannerSlider', 'aboutBannerDots');
                 startBannerAutoSlide('aboutBannerSlider', 'aboutBannerDots');
+
+                /* Swipe support — matches the homepage hero carousel */
+                var slider = document.getElementById('aboutBannerSlider');
+                if (slider) {
+                    var touchX = 0;
+                    slider.addEventListener('touchstart', function(e) { touchX = e.changedTouches[0].screenX; }, { passive: true });
+                    slider.addEventListener('touchend', function(e) {
+                        var dx = e.changedTouches[0].screenX - touchX;
+                        if (Math.abs(dx) > 40) {
+                            navigateBannerSlider('aboutBannerSlider', dx < 0 ? 1 : -1);
+                        }
+                    }, { passive: true });
+                }
             });
 
             function initializeBannerSlider(sliderId, dotsId, initialSlide = 0) {
@@ -376,7 +281,7 @@ $pagename = basename($_SERVER['PHP_SELF']);
                 updateBannerSlider(sliderId, dotsId);
             }
 
-            function startBannerAutoSlide(sliderId, dotsId, interval = 5000) {
+            function startBannerAutoSlide(sliderId, dotsId, interval = 3000) {
                 if (bannerAutoSlideTimers[sliderId]) {
                     clearTimeout(bannerAutoSlideTimers[sliderId]);
                 }
@@ -446,6 +351,28 @@ $pagename = basename($_SERVER['PHP_SELF']);
                 if (dots) {
                     dots.querySelectorAll('.dot').forEach((dot, index) => {
                         dot.classList.toggle('active', index === bannerSliderState[sliderId].current);
+                    });
+                }
+                fitAboutBanner(sliderId);
+            }
+
+            /* Size the carousel frame to the ACTIVE banner's real dimensions so
+               the whole image shows — no cropping, no letterbox bars. */
+            function fitAboutBanner(sliderId) {
+                const slider = document.getElementById(sliderId);
+                if (!slider) return;
+                const active = slider.querySelector('.banner-slide.active');
+                const media = active && active.querySelector('img, video');
+                if (!media) return;
+                const w = media.naturalWidth || media.videoWidth;
+                const h = media.naturalHeight || media.videoHeight;
+                if (w && h) {
+                    slider.style.aspectRatio = w + ' / ' + h;
+                } else {
+                    const evt = media.tagName === 'VIDEO' ? 'loadedmetadata' : 'load';
+                    media.addEventListener(evt, function once() {
+                        media.removeEventListener(evt, once);
+                        fitAboutBanner(sliderId);
                     });
                 }
             }

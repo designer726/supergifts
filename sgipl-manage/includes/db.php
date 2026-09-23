@@ -27,6 +27,16 @@ if ($productSelectionCol && $productSelectionCol->num_rows === 0) {
     $conn->query("ALTER TABLE products ADD COLUMN is_selection TINYINT(1) NOT NULL DEFAULT 0 AFTER new_lunch");
 }
 
+$blogSequenceCol = $conn->query("SHOW COLUMNS FROM blogs LIKE 'sequence'");
+if ($blogSequenceCol && $blogSequenceCol->num_rows === 0) {
+    $conn->query("ALTER TABLE blogs ADD COLUMN sequence INT NOT NULL DEFAULT 0 AFTER status");
+}
+
+$blogVideoCol = $conn->query("SHOW COLUMNS FROM blogs LIKE 'video'");
+if ($blogVideoCol && $blogVideoCol->num_rows === 0) {
+    $conn->query("ALTER TABLE blogs ADD COLUMN video VARCHAR(255) NOT NULL DEFAULT '' AFTER image");
+}
+
 $conn->query("CREATE TABLE IF NOT EXISTS budget_products (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -45,6 +55,36 @@ $conn->query("CREATE TABLE IF NOT EXISTS packaging_videos (
     caption VARCHAR(255) DEFAULT '',
     video VARCHAR(255) NOT NULL DEFAULT '',
     thumbnail VARCHAR(255) DEFAULT '',
+    sequence INT NOT NULL DEFAULT 0,
+    status TINYINT(1) NOT NULL DEFAULT 1,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+/* Client testimonials shown on the Clients page ("SGIPL is trusted by
+   1,000+ customers" card). headline supports **bold+underline** markup
+   around the highlighted number, e.g. "SGIPL is trusted by **1,000+**
+   customers." — parsed into <span class="cl-hl"> on the frontend. */
+$conn->query("CREATE TABLE IF NOT EXISTS client_testimonials (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    headline VARCHAR(300) NOT NULL DEFAULT '',
+    content TEXT NOT NULL,
+    client_name VARCHAR(150) NOT NULL DEFAULT '',
+    client_location VARCHAR(150) NOT NULL DEFAULT '',
+    avatar VARCHAR(300) NOT NULL DEFAULT '',
+    image VARCHAR(300) NOT NULL DEFAULT '',
+    sequence INT NOT NULL DEFAULT 0,
+    status TINYINT(1) NOT NULL DEFAULT 1,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+/* Employee reviews shown in the "What Our People Say" carousel on the
+   Careers page. */
+$conn->query("CREATE TABLE IF NOT EXISTS employee_testimonials (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    photo VARCHAR(300) NOT NULL DEFAULT '',
+    quote TEXT NOT NULL,
+    employee_name VARCHAR(150) NOT NULL DEFAULT '',
+    role VARCHAR(150) NOT NULL DEFAULT '',
     sequence INT NOT NULL DEFAULT 0,
     status TINYINT(1) NOT NULL DEFAULT 1,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
