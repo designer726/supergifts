@@ -285,13 +285,23 @@ if ($packagingRes) {
                 }
             }
             @media(max-width: 1200px) {
-                .services-banner-hero { height: 520px; }
+                /* Below full desktop widths the banner image is wider (2.5:1) than
+                   the fixed-height box, so object-fit:cover was cropping its edges —
+                   heading on the left, icon grid and feature strip on the right.
+                   Switch to the same uncropped, height-follows-content treatment
+                   mobile already uses. Covers tablets up to ~1200px (e.g. iPad Pro
+                   portrait at 1032px), not just the ≤991px range. */
+                .services-banner-hero { height: auto; min-height: 0; }
+                .services-banner-hero .services-banner-slides { position: relative; height: auto; }
+                .services-banner-hero .banner-slide { position: relative; inset: auto; display: none; height: auto; }
+                .services-banner-hero .banner-slide.active { display: block; }
+                .services-banner-hero .services-banner-media { width: 100%; height: auto; max-height: none; object-fit: contain; object-position: center; }
+                .services-banner-hero .banner-fallback { aspect-ratio: 16 / 9; height: auto; }
                 .services-banner-hero .services-banner-overlay { padding: 60px 24px; }
                 .services-banner-hero .hero-content h1 { font-size: 3.2rem; }
                 .services-banner-hero .hero-right { gap: 16px; }
             }
             @media(max-width: 991px) {
-                .services-banner-hero { height: auto; min-height: 520px; }
                 .services-banner-hero .services-banner-overlay { grid-template-columns: 1fr; padding: 60px 20px; min-height: 520px; }
                 .services-banner-hero .hero-right { grid-template-columns: repeat(3, minmax(0, 1fr)); }
                 .slider-nav-btn { width: 42px; height: 42px; font-size: 18px; }
